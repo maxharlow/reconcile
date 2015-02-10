@@ -1,0 +1,14 @@
+{
+    "name": "company-lookup",
+    "private": true,
+    "dependencies": {
+	"highland": "2.0.x",
+	"moment": "2.8.x",
+	"request": "2.44.x",
+	"csv-parser": "1.4.x",
+	"csv-write-stream": "0.2.x"
+    },
+    "scripts": {
+        "start": "node company-lookup"
+    }
+}
