@@ -1,5 +1,5 @@
 {
-    "name": "company-lookup",
+    "name": "find-company-officers",
     "private": true,
     "dependencies": {
 	"highland": "2.0.x",
@@ -9,6 +9,6 @@
 	"csv-write-stream": "0.2.x"
     },
     "scripts": {
-        "start": "node company-lookup"
+        "start": "node find-company-officers"
     }
 }
