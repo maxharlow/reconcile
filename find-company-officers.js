@@ -16,11 +16,11 @@ var http = highland.wrapCallback(function (location, callback) {
 var read = highland.wrapCallback(fs.readFile)
 
 function locate(entry) {
-    return "https://api.opencorporates.com/companies/gb/" + entry['companyNumber'] + "?api_token=" + config.opencorporatesToken
+    return 'https://api.opencorporates.com/companies/gb/' + entry['companyNumber'] + '?api_token=' + config.opencorporatesToken
 }
 
 function parse(response) {
-    if (response.results.length === 0) throw new Error("No results")
+    if (response.results.length === 0) throw new Error('No results')
     var officers = response.results.company.officers.map(function (officer) {
 	return {
 	    companyName: response.results.company.name,
