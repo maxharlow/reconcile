@@ -8,7 +8,7 @@ var config = require('./config.json')
 
 var http = highland.wrapCallback(function (location, callback) {
     request(location, function (error, response, body) {
-	var errorStatus = (response.statusCode >= 400) ? new Error(response.statusCode) : null
+	var errorStatus = (response.statusCode >= 400) ? new Error(response.statusCode + ' for ' + location) : null
 	callback(error || errorStatus, JSON.parse(response.body))
     })
 })
@@ -47,5 +47,6 @@ highland(read('companies.csv'))
     .map(locate)
     .flatMap(http)
     .flatMap(parse)
+    .errors(function (e) { console.error('Error: ' + e.message) })
     .through(csvWriter())
     .pipe(fs.createWriteStream('find-company-officers.csv'))
