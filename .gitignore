@@ -2,6 +2,3 @@
 !.gitignore
 
 node_modules/
-config.json
-find-company-officers.csv
-companies.csv

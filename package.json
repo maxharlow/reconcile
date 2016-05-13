@@ -1,14 +1,14 @@
 {
-    "name": "find-company-officers",
-    "private": true,
+    "name": "reconcile",
     "dependencies": {
-	"highland": "2.0.x",
-	"moment": "2.8.x",
-	"request": "2.44.x",
-	"csv-parser": "1.4.x",
-	"csv-write-stream": "0.2.x"
+        "commander": "2.9.x",
+        "highland": "2.8.x",
+        "request": "2.72.x",
+        "csv-parser": "1.9.x",
+        "csv-write-stream": "2.0.x"
     },
-    "scripts": {
-        "start": "node find-company-officers"
+    "preferGlobal": true,
+    "bin": {
+        "reconcile": "./reconcile"
     }
 }
