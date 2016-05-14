@@ -1,24 +1,23 @@
+const Stream = require('stream')
 const Highland = require('highland')
 const Request = require('request')
-const FS = require('fs')
-const CSVParser = require('csv-parser')
-const CSVWriter = require('csv-write-stream')
-
-const version = 'v0.4.5'
 
 const http = Highland.wrapCallback((location, callback) => {
-    Request(location, (error, response, body) => {
-	    const errorStatus = (response.statusCode >= 400) ? new Error(response.statusCode + ' for ' + location) : null
-	    callback(error || errorStatus, JSON.parse(response.body))
+    Request(location, (error, response) => {
+        const failure = error ? error : (response.statusCode >= 400) ? new Error(response.statusCode) : null
+        callback(failure, JSON.parse(response.body))
     })
 })
 
 function locate(entry) {
-    return 'https://api.opencorporates.com/' + version + '/officers/search?q=' + entry['individualName'] + '?jurisdiction_code=' + entry['companyJurisdiction'] // + '&api_token=' + config.opencorporatesToken
+    const apiVersion = 'v0.4.5'
+    return 'https://api.opencorporates.com/' + apiVersion + '/officers/search'
+        + '?q=' + entry.individualName
+        + (entry.individualJuristiction ? '&jurisdiction_code=' + entry.individualJuristiction : '')
+        + (entry.apiToken ? '&api_token=' + entry.apiToken : '')
 }
 
 function parse(response) {
-    if (response.results.length === 0) throw new Error('No results')
     return response.results.officers.map(officer => {
 	    return {
 	        officerName: officer.officer.name,
@@ -29,10 +28,21 @@ function parse(response) {
     })
 }
 
-highland(Highland.wrapCallback(FS.readFile)('individual-names.csv'))
-    .through(CSVParser())
-    .map(locate)
-    .flatMap(http)
-    .flatMap(parse)
-    .through(CSVWriter())
-    .pipe(FS.createWriteStream('company-officer-names.csv'))
+function execute(input, output) {
+    Highland([input])
+        .map(locate)
+        .flatMap(http)
+        .flatMap(parse)
+        .collect()
+        .each(output)
+}
+
+const run = new Stream.Transform({ objectMode: true })
+run._transform = (chunk, _, done) => {
+    execute(chunk, data => {
+        run.push(data)
+        done()
+    })
+}
+
+module.exports = run
