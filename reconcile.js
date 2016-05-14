@@ -6,10 +6,18 @@ const CSVParser = require('csv-parser')
 const CSVWriter = require('csv-write-stream')
 
 function setup() {
+    const reconcilers = FS.readdirSync('.')
+          .filter(f => f.startsWith('reconcile-'))
+          .map(f => f.match(/reconcile-(.+).js/)[1])
     Commander
         .arguments('<command> [filename]')
         .action(run)
-        .parse(Process.argv)
+    Commander.on('--help', () => {
+        console.log('  Command must be one of the following:')
+        console.log('')
+        reconcilers.forEach(reconciler => console.log('    * ' + reconciler))
+    })
+    Commander.parse(Process.argv)
     if (Commander.args.length === 0) Commander.help()
 }
 
