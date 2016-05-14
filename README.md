@@ -1,19 +1,21 @@
 Reconcile
 =========
 
-Tools for converting lists of one type of thing into lists of another.
+Converts lists of one type of thing into lists of another using online services such as [OpenCorporates](https://opencorporates.com/).
 
-Requires [Node] (http://nodejs.org/).
+Requires [Node](http://nodejs.org/).
 
-Install the dependencies with `npm install`.
+
+Installing
+----------
+
+    $ npm install reconcile
 
 
 Usage
 -----
 
-```bash
-$ node reconcile <command> <filename>
-```
+    $ reconcile <command> <filename>
 
 Where `<command>` is one of the following operations:
 

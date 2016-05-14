@@ -1,6 +1,10 @@
 {
     "name": "reconcile",
-    "licence": "Apache-2.0",
+    "description": "Converts lists of one type of thing into lists of another.",
+    "version": "1.0.0",
+    "author": "Max Harlow <maxharlow@gmail.com> (http://maxharlow.com/)",
+    "license": "Apache-2.0",
+    "preferGlobal": true,
     "repository": {
         "type": "git",
         "url": "https://github.com/maxharlow/reconcile.git"
@@ -12,7 +16,6 @@
         "csv-parser": "1.9.x",
         "csv-write-stream": "2.0.x"
     },
-    "preferGlobal": true,
     "bin": {
         "reconcile": "./reconcile"
     }
