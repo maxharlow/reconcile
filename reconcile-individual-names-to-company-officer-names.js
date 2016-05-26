@@ -7,6 +7,7 @@ module.exports = parameters => {
         Request(location, (error, response) => {
             const failureSource = location.query.individualName + (location.query.individualJurisdiction ? ' (' + location.query.individualJurisdiction + ')' : '')
             const failure = error ? error
+                  : response.statusCode === 401 ? new Error('API token is invalid!')
                   : response.statusCode >=  400 ? new Error('Error ' + response.statusCode + ': ' + failureSource)
                   : null
             callback(failure, response)
