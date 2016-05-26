@@ -5,7 +5,7 @@ module.exports = parameters => {
 
     const http = Highland.wrapCallback((location, callback) => {
         Request(location, (error, response) => {
-            const jurisdiction = location.query.individualJuristiction ? ' (' + location.query.individualJuristiction + ')' : ''
+            const jurisdiction = location.query.individualJurisdiction ? ' (' + location.query.individualJurisdiction + ')' : ''
             const failure = error ? error
                   : response.statusCode >=  400 ? new Error('Error ' + response.statusCode + ': ' + location.query.individualName + ' (' + juristiction + ')')
                   : null
@@ -17,13 +17,13 @@ module.exports = parameters => {
         const apiVersion = 'v0.4.5'
         const location = 'https://api.opencorporates.com/' + apiVersion + '/officers/search'
               + '?q=' + entry.individualName.trim()
-              + (entry.individualJuristiction ? '&jurisdiction_code=' + entry.individualJuristiction.trim() : '')
+              + (entry.individualJurisdiction ? '&jurisdiction_code=' + entry.individualJurisdiction.trim() : '')
               + (parameters.apiToken ? '&api_token=' + parameters.apiToken : '')
         return {
             uri: location,
             query: {
                 individualName: entry.individualName,
-                individualJuristiction: entry.individualJuristiction
+                individualJurisdiction: entry.individualJurisdiction
             }
         }
     }
@@ -31,7 +31,7 @@ module.exports = parameters => {
     function parse(response) {
         const body = JSON.parse(response.body)
         if (body.results.officers.length === 0) {
-            const jurisdiction = response.request.query.individualJuristiction ? ' (' + response.request.query.individualJuristiction + ')' : ''
+            const jurisdiction = response.request.query.individualJurisdiction ? ' (' + response.request.query.individualJurisdiction + ')' : ''
             throw new Error('Individual not found: ' + response.request.query.individualName + jurisdiction)
         }
         return body.results.officers.map(officer => {
