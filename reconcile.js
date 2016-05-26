@@ -12,7 +12,8 @@ function setup() {
     Commander
         .version(require('./package.json').version)
         .arguments('<command> [filename]')
-        .action(run)
+        .option('-p, --parameters <parameters>', 'a Json object that will be passed to the reconciler')
+        .action((command, input) => run(command, input, Commander.parameters))
     Commander.on('--help', () => {
         console.log('  Command must be one of the following:')
         console.log('')
@@ -26,10 +27,11 @@ function combine(fn) {
     return input => fn(input).then(output => Object.assign({}, input, output))
 }
 
-function run(command, input) {
+function run(command, input, parametersData) {
     const filename = input === undefined || input === '-' ? '/dev/stdin' : input
     try {
-        const reconciler = require('./reconcile-' + command)()
+        const parameters = parametersData ? JSON.parse(parametersData) : {}
+        const reconciler = require('./reconcile-' + command)(parameters)
         const reconcilerCombined = item => Highland(combine(reconciler)(item))
         Highland(Highland.wrapCallback(FS.readFile)(filename))
             .through(CSVParser())
