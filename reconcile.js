@@ -10,6 +10,7 @@ function setup() {
           .filter(f => f.startsWith('reconcile-'))
           .map(f => f.match(/reconcile-(.+).js/)[1])
     Commander
+        .version(require('./package.json').version)
         .arguments('<command> [filename]')
         .action(run)
     Commander.on('--help', () => {
