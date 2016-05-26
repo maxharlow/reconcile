@@ -1,7 +1,7 @@
 const Highland = require('highland')
 const Request = require('request')
 
-module.exports = (apiToken) => {
+module.exports = parameters => {
 
     const http = Highland.wrapCallback((location, callback) => {
         Request(location, (error, response) => {
@@ -19,7 +19,7 @@ module.exports = (apiToken) => {
               + '?q=' + encodeURIComponent(entry.companyName.trim())
               + '&normalise_company_name=true'
               + (entry.companyJuristiction ? '&jurisdiction_code=' + entry.companyJuristiction.trim() : '')
-              + (apiToken ? '&api_token=' + apiToken : '')
+              + (parameters.apiToken ? '&api_token=' + parameters.apiToken : '')
         return {
             uri: location,
             query: {
