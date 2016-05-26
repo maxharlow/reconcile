@@ -31,7 +31,6 @@ function parse(response) {
     const company = body.results.company
     return {
         companyJuristiction: company.jurisdiction_code,
-        companyNumber: company.company_number,
         companyName: company.name,
         companyIncorporationDate: company.incorporation_date,
         companyDissolutionDate: company.dissolution_date,
