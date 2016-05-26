@@ -5,9 +5,10 @@ module.exports = parameters => {
 
     const http = Highland.wrapCallback((location, callback) => {
         Request(location, (error, response) => {
+            const failureSource = location.query.companyNumber + ' (' + location.query.companyJurisdiction + ')'
             const failure = error ? error
-                  : response.statusCode === 404 ? new Error('Company not found: ' + location.query.companyNumber + ' (' + location.query.companyJurisdiction + ')')
-                  : response.statusCode >=  400 ? new Error('Error ' + response.statusCode + ': ' + location.query.companyNumber + ' (' + location.query.companyJurisdiction + ')')
+                  : response.statusCode === 404 ? new Error('Company not found: ' + failureSource)
+                  : response.statusCode >=  400 ? new Error('Error ' + response.statusCode + ': ' + failureSource)
                   : null
             callback(failure, response)
         })
