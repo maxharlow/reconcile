@@ -14,8 +14,8 @@ const http = Highland.wrapCallback((location, callback) => {
 function locate(entry) {
     const apiVersion = 'v0.4.5'
     const location = 'https://api.opencorporates.com/' + apiVersion + '/officers/search'
-          + '?q=' + entry.individualName
-          + (entry.individualJuristiction ? '&jurisdiction_code=' + entry.individualJuristiction : '')
+          + '?q=' + entry.individualName.trim()
+          + (entry.individualJuristiction ? '&jurisdiction_code=' + entry.individualJuristiction.trim() : '')
           + (entry.apiToken ? '&api_token=' + entry.apiToken : '')
     return {
         uri: location,
