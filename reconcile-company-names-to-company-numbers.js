@@ -5,9 +5,9 @@ module.exports = parameters => {
 
     const http = Highland.wrapCallback((location, callback) => {
         Request(location, (error, response) => {
-            const jurisdiction = location.query.companyJuristiction ? ' (' + location.query.companyJuristiction + ')' : ''
+            const jurisdiction = location.query.companyJurisdiction ? ' (' + location.query.companyJurisdiction + ')' : ''
             const failure = error ? error
-                  : response.statusCode >= 400 ? new Error('Error ' + response.statusCode + ': ' + location.query.companyNumber + ' (' + juristiction + ')')
+                  : response.statusCode >= 400 ? new Error('Error ' + response.statusCode + ': ' + location.query.companyNumber + ' (' + jurisdiction + ')')
                   : null
             callback(failure, response)
         })
@@ -18,13 +18,13 @@ module.exports = parameters => {
         const location = 'https://api.opencorporates.com/' + apiVersion + '/companies/search'
               + '?q=' + encodeURIComponent(entry.companyName.trim())
               + '&normalise_company_name=true'
-              + (entry.companyJuristiction ? '&jurisdiction_code=' + entry.companyJuristiction.trim() : '')
+              + (entry.companyJurisdiction ? '&jurisdiction_code=' + entry.companyJurisdiction.trim() : '')
               + (parameters.apiToken ? '&api_token=' + parameters.apiToken : '')
         return {
             uri: location,
             query: {
                 companyName: entry.companyName,
-                companyJuristiction: entry.companyJuristiction
+                companyJurisdiction: entry.companyJurisdiction
             }
         }
     }
@@ -32,12 +32,12 @@ module.exports = parameters => {
     function parse(response) {
         const body = JSON.parse(response.body)
         if (body.results.companies.length === 0) {
-            const jurisdiction = response.request.query.companyJuristiction ? ' (' + response.request.query.companyJuristiction + ')' : ''
+            const jurisdiction = response.request.query.companyJurisdiction ? ' (' + response.request.query.companyJurisdiction + ')' : ''
             throw new Error('Company not found: ' + response.request.query.companyName + jurisdiction)
         }
         const company = body.results.companies[0].company
         return {
-            companyJuristiction: company.jurisdiction_code,
+            companyJurisdiction: company.jurisdiction_code,
             companyNumber: company.company_number,
             companyName: company.name
         }
