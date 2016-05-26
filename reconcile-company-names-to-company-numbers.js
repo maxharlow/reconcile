@@ -14,10 +14,10 @@ const http = Highland.wrapCallback((location, callback) => {
 function locate(entry) {
     const apiVersion = 'v0.4.5'
     const location = 'https://api.opencorporates.com/' + apiVersion + '/companies/search'
-        + '?q=' + encodeURIComponent(entry.companyName)
-        + '&normalise_company_name=true'
-        + (entry.companyJuristiction ? '&jurisdiction_code=' + entry.companyJuristiction : '')
-        + (entry.apiToken ? '&api_token=' + entry.apiToken : '')
+          + '?q=' + encodeURIComponent(entry.companyName)
+          + '&normalise_company_name=true'
+          + (entry.companyJuristiction ? '&jurisdiction_code=' + entry.companyJuristiction : '')
+          + (entry.apiToken ? '&api_token=' + entry.apiToken : '')
     return {
         uri: location,
         query: {
