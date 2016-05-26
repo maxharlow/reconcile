@@ -19,7 +19,7 @@ function run(command, input) {
         const reconciler = require('./reconcile-' + command)
         Highland(Highland.wrapCallback(FS.readFile)(filename))
             .through(CSVParser())
-            .through(reconciler)
+            .flatMap(item => Highland(reconciler(item)))
             .flatten()
             .errors(e => console.error(e.message))
             .through(CSVWriter())

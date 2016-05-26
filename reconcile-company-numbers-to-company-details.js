@@ -1,24 +1,34 @@
-const Stream = require('stream')
 const Highland = require('highland')
 const Request = require('request')
 
 const http = Highland.wrapCallback((location, callback) => {
     Request(location, (error, response) => {
-        const failure = error ? error : (response.statusCode >= 400) ? new Error(response.statusCode) : null
-        callback(failure, JSON.parse(response.body))
+        const failure = error ? error
+              : response.statusCode === 404 ? new Error('Company not found: ' + location.query.companyNumber + ' (' + location.query.companyJuristiction + ')')
+              : response.statusCode >=  400 ? new Error('Error ' + response.statusCode + ': ' + location.query.companyNumber + ' (' + location.query.companyJuristiction + ')')
+              : null
+        callback(failure, response)
     })
 })
 
 function locate(entry) {
     const apiVersion = 'v0.4.5'
-    return 'https://api.opencorporates.com/' + apiVersion + '/companies'
+    const location = 'https://api.opencorporates.com/' + apiVersion + '/companies'
         + '/' + entry.companyJuristiction
         + '/' + entry.companyNumber
         + (entry.apiToken ? '?api_token=' + entry.apiToken : '')
+    return {
+        uri: location,
+        query: {
+            companyNumber: entry.companyNumber,
+            companyJuristiction: entry.companyJuristiction
+        }
+    }
 }
 
 function parse(response) {
-    const company = response.results.company
+    const body = JSON.parse(response.body)
+    const company = body.results.company
     return {
         companyJuristiction: company.jurisdiction_code,
         companyNumber: company.company_number,
@@ -35,19 +45,14 @@ function parse(response) {
     }
 }
 
-function execute(input, output) {
-    Highland([input])
-        .map(locate)
-        .flatMap(http)
-        .map(parse)
-        .each(output)
-}
-
-const run = new Stream.Transform({ objectMode: true })
-run._transform = (chunk, _, done) => {
-    execute(chunk, data => {
-        run.push(data)
-        done()
+function run(input) {
+    return new Promise((resolve, reject) => {
+        Highland([input])
+            .map(locate)
+            .flatMap(http)
+            .map(parse)
+            .errors(reject)
+            .each(resolve)
     })
 }
 
