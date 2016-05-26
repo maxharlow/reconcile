@@ -5,9 +5,9 @@ module.exports = parameters => {
 
     const http = Highland.wrapCallback((location, callback) => {
         Request(location, (error, response) => {
-            const jurisdiction = location.query.companyJurisdiction ? ' (' + location.query.companyJurisdiction + ')' : ''
+            const failureSource = location.query.companyName + (location.query.companyJurisdiction ? ' (' + location.query.companyJurisdiction + ')' : '')
             const failure = error ? error
-                  : response.statusCode >= 400 ? new Error('Error ' + response.statusCode + ': ' + location.query.companyName + ' (' + jurisdiction + ')')
+                  : response.statusCode >= 400 ? new Error('Error ' + response.statusCode + ': ' + failureSource)
                   : null
             callback(failure, response)
         })
