@@ -1,7 +1,7 @@
 const Highland = require('highland')
 const Request = require('request')
 
-module.exports = (apiToken) => {
+module.exports = parameters => {
 
     const http = Highland.wrapCallback((location, callback) => {
         Request(location, (error, response) => {
@@ -18,7 +18,7 @@ module.exports = (apiToken) => {
         const location = 'https://api.opencorporates.com/' + apiVersion + '/companies'
               + '/' + entry.companyJuristiction.trim()
               + '/' + entry.companyNumber.trim()
-              + (apiToken ? '?api_token=' + apiToken : '')
+              + (parameters.apiToken ? '?api_token=' + parameters.apiToken : '')
         return {
             uri: location,
             query: {
