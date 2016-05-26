@@ -30,8 +30,6 @@ function parse(response) {
     const body = JSON.parse(response.body)
     return body.results.company.officers.map(officer => {
         return {
-            companyJuristiction: body.results.company.jurisdiction_code,
-            companyNumber: body.results.company.company_number,
             companyName: body.results.company.name,
             officerName: officer.officer.name,
             officerPosition: officer.officer.position,

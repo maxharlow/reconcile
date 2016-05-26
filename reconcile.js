@@ -21,13 +21,18 @@ function setup() {
     if (Commander.args.length === 0) Commander.help()
 }
 
+function combine(fn) {
+    return input => fn(input).then(output => Object.assign({}, input, output))
+}
+
 function run(command, input) {
     const filename = input === undefined || input === '-' ? '/dev/stdin' : input
     try {
         const reconciler = require('./reconcile-' + command)
+        const reconcile = item => Highland(combine(reconciler)(item))
         Highland(Highland.wrapCallback(FS.readFile)(filename))
             .through(CSVParser())
-            .flatMap(item => Highland(reconciler(item)))
+            .flatMap(reconcile)
             .flatten()
             .errors(e => console.error(e.message))
             .through(CSVWriter())
