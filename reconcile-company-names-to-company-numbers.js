@@ -7,7 +7,7 @@ module.exports = parameters => {
         Request(location, (error, response) => {
             const jurisdiction = location.query.companyJurisdiction ? ' (' + location.query.companyJurisdiction + ')' : ''
             const failure = error ? error
-                  : response.statusCode >= 400 ? new Error('Error ' + response.statusCode + ': ' + location.query.companyNumber + ' (' + jurisdiction + ')')
+                  : response.statusCode >= 400 ? new Error('Error ' + response.statusCode + ': ' + location.query.companyName + ' (' + jurisdiction + ')')
                   : null
             callback(failure, response)
         })
