@@ -28,11 +28,11 @@ function combine(fn) {
 function run(command, input) {
     const filename = input === undefined || input === '-' ? '/dev/stdin' : input
     try {
-        const reconciler = require('./reconcile-' + command)
-        const reconcile = item => Highland(combine(reconciler)(item))
+        const reconciler = require('./reconcile-' + command)()
+        const reconcilerCombined = item => Highland(combine(reconciler)(item))
         Highland(Highland.wrapCallback(FS.readFile)(filename))
             .through(CSVParser())
-            .flatMap(reconcile)
+            .flatMap(reconcilerCombined)
             .flatten()
             .errors(e => console.error(e.message))
             .through(CSVWriter())
