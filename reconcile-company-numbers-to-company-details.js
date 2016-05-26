@@ -6,8 +6,8 @@ module.exports = parameters => {
     const http = Highland.wrapCallback((location, callback) => {
         Request(location, (error, response) => {
             const failure = error ? error
-                  : response.statusCode === 404 ? new Error('Company not found: ' + location.query.companyNumber + ' (' + location.query.companyJuristiction + ')')
-                  : response.statusCode >=  400 ? new Error('Error ' + response.statusCode + ': ' + location.query.companyNumber + ' (' + location.query.companyJuristiction + ')')
+                  : response.statusCode === 404 ? new Error('Company not found: ' + location.query.companyNumber + ' (' + location.query.companyJurisdiction + ')')
+                  : response.statusCode >=  400 ? new Error('Error ' + response.statusCode + ': ' + location.query.companyNumber + ' (' + location.query.companyJurisdiction + ')')
                   : null
             callback(failure, response)
         })
@@ -16,14 +16,14 @@ module.exports = parameters => {
     function locate(entry) {
         const apiVersion = 'v0.4.5'
         const location = 'https://api.opencorporates.com/' + apiVersion + '/companies'
-              + '/' + entry.companyJuristiction.trim()
+              + '/' + entry.companyJurisdiction.trim()
               + '/' + entry.companyNumber.trim()
               + (parameters.apiToken ? '?api_token=' + parameters.apiToken : '')
         return {
             uri: location,
             query: {
                 companyNumber: entry.companyNumber,
-                companyJuristiction: entry.companyJuristiction
+                companyJurisdiction: entry.companyJurisdiction
             }
         }
     }
@@ -32,7 +32,7 @@ module.exports = parameters => {
         const body = JSON.parse(response.body)
         const company = body.results.company
         return {
-            companyJuristiction: company.jurisdiction_code,
+            companyJurisdiction: company.jurisdiction_code,
             companyName: company.name,
             companyIncorporationDate: company.incorporation_date,
             companyDissolutionDate: company.dissolution_date,
