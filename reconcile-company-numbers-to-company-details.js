@@ -48,12 +48,17 @@ module.exports = parameters => {
         }
     }
 
+    function toArray(item) {
+      return [item]
+    }
+
     function run(input) {
         return new Promise((resolve, reject) => {
             Highland([input])
                 .map(locate)
                 .flatMap(http)
                 .map(parse)
+                .map(toArray)
                 .errors(reject)
                 .each(resolve)
         })

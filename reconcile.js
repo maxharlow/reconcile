@@ -24,7 +24,7 @@ function setup() {
 }
 
 function combine(fn) {
-    return input => fn(input).then(output => Object.assign({}, input, output))
+    return input => fn(input).then(output => output.map(outputRow => Object.assign({}, input, outputRow)))
 }
 
 function run(command, input, parametersData) {

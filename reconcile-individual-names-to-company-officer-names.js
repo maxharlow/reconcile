@@ -57,4 +57,6 @@ module.exports = parameters => {
         })
     }
 
+    return run
+
 }
