@@ -39,12 +39,18 @@ module.exports = parameters => {
             throw new Error('Individual not found: ' + response.request.query.individualName + jurisdiction)
         }
         return body.results.officers.map(officer => {
-	        return {
-	            officerName: officer.officer.name,
-	            officerPosition: officer.officer.position,
-	            companyName: officer.officer.company.name,
-	            companyNumber: officer.officer.company.company_number,
-	        }
+            const fields = {
+                officerName: officer.officer.name,
+                officerPosition: officer.officer.position,
+                officerStartDate: officer.officer.start_date,
+                officerEndDate: officer.officer.end_date,
+                companyName: officer.officer.company.name,
+                companyNumber: officer.officer.company.company_number,
+                companyJurisdiction: officer.officer.company.jurisdiction_code
+            }
+            if (officer.officer.address) fields.officerAddress = officer.officer.address // only if API key sent
+            if (officer.officer.date_of_birth) fields.officerDateOfBirth = officer.officer.date_of_birth // only if API key sent
+            return fields
         })
     }
 
