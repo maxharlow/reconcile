@@ -16,15 +16,17 @@ module.exports = parameters => {
 
     function locate(entry) {
         const apiVersion = 'v0.4.5'
+        if (!entry.individualName) throw new Error('No individual name given!')
+        const jurisdiction = parameters.jurisdiction || entry.individualJurisdiction
         const location = 'https://api.opencorporates.com/' + apiVersion + '/officers/search'
               + '?q=' + entry.individualName.trim()
-              + (entry.individualJurisdiction ? '&jurisdiction_code=' + entry.individualJurisdiction.trim() : '')
+              + (jurisdiction ? '&jurisdiction_code=' + jurisdiction.trim() : '')
               + (parameters.apiToken ? '&api_token=' + parameters.apiToken : '')
         return {
             uri: location,
             query: {
                 individualName: entry.individualName,
-                individualJurisdiction: entry.individualJurisdiction
+                individualJurisdiction: jurisdiction
             }
         }
     }
