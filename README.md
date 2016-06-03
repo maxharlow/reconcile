@@ -1,7 +1,7 @@
 Reconcile
 =========
 
-Converts lists of one type of thing into lists of another using online services such as [OpenCorporates](https://opencorporates.com/).
+Add new columns to your spreadsheet based on looking up names or numbers.
 
 Requires [Node](http://nodejs.org/).
 
@@ -9,7 +9,7 @@ Requires [Node](http://nodejs.org/).
 Installing
 ----------
 
-    $ npm install reconcile
+    $ npm install -g reconcile
 
 
 Usage
@@ -19,37 +19,86 @@ Usage
 
 Where `<command>` is one of the following operations:
 
-### `company-names-to-company-numbers`
 
-Use OpenCorporates to look up a list of company names and find the most likely registration numbers for each.
+#### `company-names-to-company-numbers`
 
-Expects a CSV including a column named `companyName`.
+Use [OpenCorporates](https://opencorporates.com/) to look up a list of company names and find the most likely registration number for each.
 
-Produces a CSV which includes columns: `companyJuristiction`, `companyNumber`, and `companyName`.
+Parameters:
+    * `apiToken` (optional) An OpenCorporates API token. You are [limited to 500 requests per month](https://api.opencorporates.com/documentation/API-Reference#usage_limits) otherwise.
+    * `jurisdiction` (optional) If all companies have the same jurisdiction you can specify it here instead of in a column.
+    * `companyNameField` (optional) The name of the column which contains the company names. Defaults to `companyName`.
+    * `companyJurisdictionField` (optional) The name of the column which contains the company jurisdictions, if specified. Defaults to `companyJurisdiction`.
 
+Produces a CSV which adds:
+    * `companyJurisdiction`
+    * `companyNumber`
+    * `companyName`
 
-### `company-numbers-to-company-details`
-
-Use OpenCorporates to look up a list of company numbers and juristiction codes, and retrieve various details about the company.
-
-Expects a CSV including `companyNumber` and `companyJuristiction` columns.
-
-Produces a CSV which includes columns: `companyName`, `comapnyIncorporationDate`, `companyDissolutionDate`, `companyType`, `companyStatus`, `companyAddress`, `companyPreviousNames`, `companyAlternativeNames`, `companyAgentName`, `companyAgentAddress`.
-
-
-### `company-numbers-to-company-officer-names`
-
-Use OpenCorporates to look up a list of company numbers and retrieve the names of their directors.
-
-Expects a CSV including `companyNumber` and `companyJuristiction` columns.
-
-Produces a CSV which includes columns: `officerName`, `officerPosition`, `officerStartDate`, `officerEndDate`.
+Results do not include companies for which no match is found. Beware incorrect matches! Company names are terrible unique identifiers.
 
 
-### `individual-names-to-company-officer-names`
+#### `company-numbers-to-company-details`
 
-Use OpenCorporates to look up a list of individual names and find which companies they are officers of (typically either as directors or secretaries).
+Use [OpenCorporates](https://opencorporates.com/) to look up a list of company numbers and jurisdiction codes, and retrieve various details for each.
 
-Expects a CSV including `individualName` and `comapnyJuristiction` columns.
+Parameters:
+    * `apiToken` (optional) An OpenCorporates API token. You are [limited to 500 requests per month](https://api.opencorporates.com/documentation/API-Reference#usage_limits) otherwise.
+    * `jurisdiction` (optional) If all companies have the same jurisdiction you can specify it here instead of in a column.
+    * `companyNumberField` (optional) The name of the column which contains the company numbers. Defaults to `companyNumber`.
+    * `companyJurisdictionField` (optional) The name of the column which contains the company jurisdictions. Defaults to `companyJurisdiction`.
 
-Produces a CSV which includes columns: `officerName`, `officerPosition`, `companyName`, `companyNumber`.
+Produces a CSV which adds:
+    * `companyName`
+    * `companyIncorporationDate`
+    * `companyDissolutionDate`
+    * `companyType`
+    * `companyStatus`
+    * `companyAddress`
+    * `companyPreviousNames`
+    * `companyAlternativeNames`
+    * `companyAgentName`
+    * `companyAgentAddress`
+
+
+#### `company-numbers-to-company-officer-names`
+
+Use [OpenCorporates](https://opencorporates.com/) to look up a list of company numbers and jurisdiction codes, and retrieve the names of their directors.
+
+Parameters:
+    * `apiToken` (optional) An OpenCorporates API token. You are [limited to 500 requests per month](https://api.opencorporates.com/documentation/API-Reference#usage_limits) otherwise.
+    * `jurisdiction` (optional) If all companies have the same jurisdiction you can specify it here instead of in a column.
+    * `companyNumberField` (optional) The name of the column which contains the company numbers. Defaults to `companyNumber`.
+    * `companyJurisdictionField` (optional) The name of the column which contains the company jurisdictions, if specified. Defaults to `companyJurisdiction`.
+
+Produces a CSV which includes:
+    * `officerName`
+    * `officerPosition`
+    * `officerStartDate`
+    * `officerEndDate`
+    * `officerNationality`
+    * `officerOccupation`
+    * `officerAddress` (only if API token is sent)
+    * `officerDateOfBirth` (only if API token is sent)
+
+
+#### `individual-names-to-company-officer-names`
+
+Use [OpenCorporates](https://opencorporates.com/) to look up a list of individual names and find which companies they are officers of (typically either as directors or secretaries).
+
+Parameters:
+    * `apiToken` (optional) An OpenCorporates API token. You are [limited to 500 requests per month](https://api.opencorporates.com/documentation/API-Reference#usage_limits) otherwise.
+    * `jurisdiction` (optional) If all individuals have the same jurisdiction you can specify it here instead of in a column.
+    * `individualNameField` (optional) The name of the column which contains the individual names. Defaults to `individualName`.
+    * `individualJurisdictionField` (optional) The name of the column which contains the individual jurisdictions, if specified. Defaults to `individualJurisdiction`.
+
+Produces a CSV which includes:
+    * `officerName`
+    * `officerPosition`
+    * `officerNationality`
+    * `officerOccupation`
+    * `officerAddress` (only if API token is sent)
+    * `officerDateOfBirth` (only if API token is sent)
+    * `companyName`
+    * `companyNumber`
+    * `companyJurisdiction`
