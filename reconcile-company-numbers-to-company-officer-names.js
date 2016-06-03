@@ -42,9 +42,11 @@ module.exports = parameters => {
                 officerName: officer.officer.name,
                 officerPosition: officer.officer.position,
                 officerStartDate: officer.officer.start_date,
-                officerEndDate: officer.officer.end_date
+                officerEndDate: officer.officer.end_date,
+                officerNationality: officer.officer.nationality,
+                officerOccupation: officer.officer.occupation
             }
-            if (officer.officer.address) fields.officerAddress = officer.officer.address // only if API key sent
+            if (officer.officer.address) fields.officerAddress = officer.officer.address.replace(/\n/g,', ') // only if API key sent
             if (officer.officer.date_of_birth) fields.officerDateOfBirth = officer.officer.date_of_birth // only if API key sent
             return fields
         })
