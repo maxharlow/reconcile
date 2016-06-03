@@ -17,18 +17,19 @@ module.exports = parameters => {
 
     function locate(entry) {
         const apiVersion = 'v0.4.5'
-        if (!entry.companyName) throw new Error('No company name given!')
-        const jurisdiction = parameters.jurisdiction || entry.companyJurisdiction
+        const companyName = entry[parameters.companyNameField || 'companyName']
+        const companyJurisdiction = parameters.jurisdiction || entry[parameters.companyJurisdictionField || 'companyJurisdiction']
+        if (!companyName) throw new Error('No company name given!')
         const location = 'https://api.opencorporates.com/' + apiVersion + '/companies/search'
-              + '?q=' + encodeURIComponent(entry.companyName.trim())
+              + '?q=' + encodeURIComponent(companyName.trim())
               + '&normalise_company_name=true'
-              + (jurisdiction ? '&jurisdiction_code=' + jurisdiction.trim() : '')
+              + (companyJurisdiction ? '&jurisdiction_code=' + companyJurisdiction.trim() : '')
               + (parameters.apiToken ? '&api_token=' + parameters.apiToken : '')
         return {
             uri: location,
             query: {
-                companyName: entry.companyName,
-                companyJurisdiction: jurisdiction
+                companyName,
+                companyJurisdiction
             }
         }
     }
