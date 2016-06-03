@@ -18,18 +18,19 @@ module.exports = parameters => {
 
     function locate(entry) {
         const apiVersion = 'v0.4.5'
-        if (!entry.companyNumber) throw new Error('No company number given!')
-        const jurisdiction = parameters.jurisdiction || entry.companyJurisdiction
-        if (jurisdiction === undefined) throw new Error('No jurisdiction given: ' + entry.companyNumber)
+        const companyNumber = entry[parameters.companyNumberField || 'companyNumber']
+        const companyJurisdiction = parameters.jurisdiction || entry[parameters.companyJurisdictionField || 'companyJurisdiction']
+        if (!companyNumber) throw new Error('No company number given!')
+        if (!companyJurisdiction) throw new Error('No jurisdiction given: ' + companyNumber)
         const location = 'https://api.opencorporates.com/' + apiVersion + '/companies'
-              + '/' + jurisdiction.trim()
-              + '/' + entry.companyNumber.trim()
+              + '/' + companyJurisdiction.trim()
+              + '/' + companyNumber.trim()
               + (parameters.apiToken ? '?api_token=' + parameters.apiToken : '')
         return {
             uri: location,
             query: {
-                companyNumber: entry.companyNumber,
-                companyJurisdiction: jurisdiction
+                companyNumber,
+                companyJurisdiction
             }
         }
     }
@@ -46,8 +47,8 @@ module.exports = parameters => {
                 officerNationality: officer.officer.nationality,
                 officerOccupation: officer.officer.occupation
             }
-            if (officer.officer.address) fields.officerAddress = officer.officer.address.replace(/\n/g,', ') // only if API key sent
-            if (officer.officer.date_of_birth) fields.officerDateOfBirth = officer.officer.date_of_birth // only if API key sent
+            if (officer.officer.address) fields.officerAddress = officer.officer.address.replace(/\n/g,', ') // only if API token sent
+            if (officer.officer.date_of_birth) fields.officerDateOfBirth = officer.officer.date_of_birth // only if API token sent
             return fields
         })
     }
