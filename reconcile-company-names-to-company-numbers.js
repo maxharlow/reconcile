@@ -7,6 +7,7 @@ module.exports = parameters => {
         Request(location, (error, response) => {
             const failureSource = location.query.companyName + (location.query.companyJurisdiction ? ' (' + location.query.companyJurisdiction + ')' : '')
             const failure = error ? error
+                  : response.statusCode === 403 ? new Error('You have reached the rate limit.' + (parameters.apiToken ? '' : ' Try using an API token.'))
                   : response.statusCode === 401 ? new Error('API token is invalid: ' + parameters.apiToken)
                   : response.statusCode >=  400 ? new Error('Error ' + response.statusCode + ': ' + failureSource)
                   : null
