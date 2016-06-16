@@ -1,26 +1,25 @@
 const FS = require('fs')
 const Process = require('process')
-const Commander = require('commander')
+const Yargs = require('yargs')
 const Highland = require('highland')
 const CSVParser = require('csv-parser')
 const CSVWriter = require('csv-write-stream')
 
 function setup() {
-    const reconcilers = FS.readdirSync('.')
-          .filter(f => f.startsWith('reconcile-'))
-          .map(f => f.match(/reconcile-(.+).js/)[1])
-    Commander
-        .version(require('./package.json').version)
-        .arguments('<command> [filename]')
-        .option('-p, --parameters <parameters>', 'a Json object that will be passed to the reconciler')
-        .action((command, input) => run(command, input, Commander.parameters))
-    Commander.on('--help', () => {
-        console.log('  Command must be one of the following:')
-        console.log('')
-        reconcilers.forEach(reconciler => console.log('    * ' + reconciler))
-    })
-    Commander.parse(Process.argv)
-    if (Commander.args.length === 0) Commander.help()
+    const reconcilers = FS.readdirSync(__dirname)
+        .filter(f => f.startsWith('reconcile-'))
+        .map(f => f.match(/reconcile-(.+).js/)[1])
+    const interface = Yargs
+        .usage('Usage: reconcile <command> [filename]')
+        .wrap(null)
+        .demand(1, '')
+        .completion('completion', false, () => reconcilers)
+        .option('p', { alias: 'parameters', type: 'string', describe: 'Json configuration object to be passed to the reconciler' })
+        .help('?').alias('?', 'help')
+        .version().alias('v', 'version')
+    reconcilers.forEach(reconciler => interface.command(reconciler))
+    if (interface.argv['get-yargs-completions']) Process.exit(0)
+    else run(interface.argv._[0], interface.argv._[1], interface.argv.parameters)
 }
 
 function combine(fn) {
@@ -30,6 +29,7 @@ function combine(fn) {
 function run(command, input, parametersData) {
     const filename = input === undefined || input === '-' ? '/dev/stdin' : input
     try {
+        if (Process.stdin.isTTY === true && filename === '/dev/stdin') throw new Error('Error: no input')
         const parameters = parametersData ? JSON.parse(parametersData) : {}
         const reconciler = require('./reconcile-' + command)(parameters)
         const reconcilerCombined = item => Highland(combine(reconciler)(item))

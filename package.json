@@ -1,7 +1,7 @@
 {
     "name": "reconcile",
-    "description": "Converts lists of one type of thing into lists of another.",
-    "version": "1.1.0",
+    "description": "Add new columns to your spreadsheet based on looking up names or numbers.",
+    "version": "1.2.0",
     "author": "Max Harlow <maxharlow@gmail.com> (http://maxharlow.com/)",
     "license": "Apache-2.0",
     "preferGlobal": true,
@@ -10,7 +10,7 @@
         "url": "https://github.com/maxharlow/reconcile.git"
     },
     "dependencies": {
-        "commander": "2.9.x",
+        "yargs": "4.7.x",
         "highland": "2.8.x",
         "request": "2.72.x",
         "csv-parser": "1.9.x",
