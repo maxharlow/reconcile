@@ -27,13 +27,11 @@ function parse(input) {
     if (!input) return {}
     try {
         const file = FS.readFileSync(input, 'utf8')
-        const data = Yaml.load(file)
-        return data
+        return Yaml.load(file)
     }
     catch (e) { // it's not a file, try and parse it instead
         try {
-            const data = Yaml.load(input)
-            return data
+            return Yaml.load(input)
         }
         catch (e) {
             console.error(e.message)
