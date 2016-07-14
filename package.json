@@ -13,6 +13,7 @@
         "yargs": "4.7.x",
         "highland": "2.8.x",
         "request": "2.72.x",
+        "js-yaml": "3.6.x",
         "csv-parser": "1.9.x",
         "csv-write-stream": "2.0.x"
     },
