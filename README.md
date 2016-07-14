@@ -29,7 +29,7 @@ For example, if you had a file, `params.yaml`:
 
 You would then want to run something like:
 
-    $ reconcile company-numbers-to-company-officer-names input.csv -p params.yml > output.csv
+    $ reconcile company-numbers-to-company-officer-names input.csv -p params.yaml > output.csv
 
 (Note this also uses redirection (`>`) to send the output into a new CSV file.)
 
