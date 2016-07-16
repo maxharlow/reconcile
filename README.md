@@ -32,7 +32,7 @@ You would then want to run something like:
 
 (Note this also uses redirection (`>`) to send the output into a new CSV file.)
 
-Or alternatively, give the parameters inline:
+Alternatively, give the parameters inline:
 
     $ reconcile company-numbers-to-company-officer-names input.csv -p '{jurisdiction: gb, companyNumberField: RegisteredCompanyNumber}' > output.csv
 
