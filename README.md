@@ -51,8 +51,8 @@ Use [OpenCorporates](https://opencorporates.com/) to look up a list of company n
 Parameters:
 * `apiToken` (optional) An OpenCorporates API token. You are [limited to 500 requests per month](https://api.opencorporates.com/documentation/API-Reference#usage_limits) otherwise.
 * `jurisdiction` (optional) If all companies have the same jurisdiction you can specify it here instead of in a column.
-* `companyNameField` (optional) Column holding company names. Default is `"companyName"`.
-* `companyJurisdictionField` (optional) Column holding their jurisdiction, if given. Default is `"companyJurisdiction"`.
+* `companyNameField` (optional) Company name column. Default is `"companyName"`.
+* `companyJurisdictionField` (optional) Jurisdiction code column, if any. Default is `"companyJurisdiction"`.
 
 Produces a CSV which adds:
 
@@ -60,7 +60,7 @@ Produces a CSV which adds:
 * `companyNumber`
 * `companyName`
 
-Results do not include companies for which no match is found. Beware incorrect matches! Company names are terrible unique identifiers.
+Jurisdiction codes should be given in [ISO 3166-2 format] (https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes). Results do not include companies for which no match is found. Beware incorrect matches! Company names are terrible unique identifiers.
 
 <hr>
 
@@ -71,8 +71,8 @@ Use [OpenCorporates](https://opencorporates.com/) to look up a list of company n
 Parameters:
 * `apiToken` (optional) An OpenCorporates API token. You are [limited to 500 requests per month](https://api.opencorporates.com/documentation/API-Reference#usage_limits) otherwise.
 * `jurisdiction` (optional) If all companies have the same jurisdiction you can specify it here instead of in a column.
-* `companyNumberField` (optional) Column holding company numbers. Default is `"companyNumber"`.
-* `companyJurisdictionField` (optional) Column holding their jurisdiction. Default is `"companyJurisdiction"`.
+* `companyNumberField` (optional) Company number column. Default is `"companyNumber"`.
+* `companyJurisdictionField` (optional) Jurisdiction code column. Default is `"companyJurisdiction"`.
 
 Produces a CSV which adds:
 * `companyName`
@@ -88,6 +88,8 @@ Produces a CSV which adds:
 
 <hr>
 
+Jurisdiction codes should be given in [ISO 3166-2 format] (https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes).
+
 #### `company-numbers-to-company-officer-names`
 
 Use [OpenCorporates](https://opencorporates.com/) to look up a list of company numbers and jurisdiction codes, and retrieve the names of their directors.
@@ -95,8 +97,8 @@ Use [OpenCorporates](https://opencorporates.com/) to look up a list of company n
 Parameters:
 * `apiToken` (optional) An OpenCorporates API token. You are [limited to 500 requests per month](https://api.opencorporates.com/documentation/API-Reference#usage_limits) otherwise.
 * `jurisdiction` (optional) If all companies have the same jurisdiction you can specify it here instead of in a column.
-* `companyNumberField` (optional) Column holding company numbers. Default is `"companyNumber"`.
-* `companyJurisdictionField` (optional) Column holding their jurisdiction, if given. Default is `"companyJurisdiction"`.
+* `companyNumberField` (optional) Company number column. Default is `"companyNumber"`.
+* `companyJurisdictionField` (optional) Jurisdiction code column, if any. Default is `"companyJurisdiction"`.
 
 Produces a CSV which includes:
 * `officerName`
@@ -108,6 +110,8 @@ Produces a CSV which includes:
 * `officerAddress` (only if API token is sent)
 * `officerDateOfBirth` (only if API token is sent)
 
+Jurisdiction codes should be given in [ISO 3166-2 format] (https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes).
+
 <hr>
 
 #### `individual-names-to-company-officer-names`
@@ -117,8 +121,8 @@ Use [OpenCorporates](https://opencorporates.com/) to look up a list of individua
 Parameters:
 * `apiToken` (optional) An OpenCorporates API token. You are [limited to 500 requests per month](https://api.opencorporates.com/documentation/API-Reference#usage_limits) otherwise.
 * `jurisdiction` (optional) If all individuals have the same jurisdiction you can specify it here instead of in a column.
-* `individualNameField` (optional) Column holding individual names. Default is `"individualName"`.
-* `individualJurisdictionField` (optional) Column holding their jurisdiction, if given. Default is `"individualJurisdiction"`.
+* `individualNameField` (optional) Individual name column. Default is `"individualName"`.
+* `individualJurisdictionField` (optional) Jurisdiction code column, if any. Default is `"individualJurisdiction"`.
 
 Produces a CSV which includes:
 * `officerName`
@@ -130,3 +134,5 @@ Produces a CSV which includes:
 * `companyName`
 * `companyNumber`
 * `companyJurisdiction`
+
+Jurisdiction codes should be given in [ISO 3166-2 format] (https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes).
