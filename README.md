@@ -48,6 +48,8 @@ Double-press the tab key to autocomplete these names from the command line.
 
 Use [OpenCorporates](https://opencorporates.com/) to look up a list of company names and find the most likely registration number for each.
 
+<hr>
+
 Parameters:
 * `apiToken` (optional) An OpenCorporates API token. You are [limited to 500 requests per month](https://api.opencorporates.com/documentation/API-Reference#usage_limits) otherwise.
 * `jurisdiction` (optional) If all companies have the same jurisdiction you can specify it here instead of in a column.
@@ -86,9 +88,9 @@ Produces a CSV which adds:
 * `companyAgentName`
 * `companyAgentAddress`
 
-<hr>
-
 Jurisdiction codes should be given in [ISO 3166-2 format] (https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes).
+
+<hr>
 
 #### `company-numbers-to-company-officer-names`
 
