@@ -43,12 +43,11 @@ Commands
 
 Double-press the tab key to autocomplete these names from the command line.
 
+<hr>
 
 #### `company-names-to-company-numbers`
 
 Use [OpenCorporates](https://opencorporates.com/) to look up a list of company names and find the most likely registration number for each.
-
-<hr>
 
 Parameters:
 * `apiToken` (optional) An OpenCorporates API token. You are [limited to 500 requests per month](https://api.opencorporates.com/documentation/API-Reference#usage_limits) otherwise.
