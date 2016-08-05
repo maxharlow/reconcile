@@ -17,7 +17,7 @@ module.exports = parameters => {
     })
 
     function locate(entry) {
-        const apiVersion = 'v0.4.5'
+        const apiVersion = 'v0.4.6'
         const companyNumber = entry[parameters.companyNumberField || 'companyNumber']
         const companyJurisdiction = parameters.jurisdiction || entry[parameters.companyJurisdictionField || 'companyJurisdiction']
         if (!companyNumber) throw new Error('No company number given!')
@@ -48,6 +48,7 @@ module.exports = parameters => {
             companyAddress: company.registered_address_in_full.replace(/\n/g, ', '),
             companyPreviousNames: company.previous_names.map(name => name.company_name).join(', '),
             companyAlternativeNames: company.alternative_names.join(', '),
+            companyBeneficialOwners: company.ultimate_beneficial_owners.map(owner => owner.ultimate_beneficial_owner.name).join(', '),
             companyAgentName: company.agent_name,
             companyAgentAddress: company.agent_address
         }
