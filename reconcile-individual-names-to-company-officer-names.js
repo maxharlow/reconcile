@@ -16,7 +16,7 @@ module.exports = parameters => {
     })
 
     function locate(entry) {
-        const apiVersion = 'v0.4.5'
+        const apiVersion = 'v0.4.6'
         const individualName = entry[parameters.individualNameField || 'individualName']
         const individualJurisdiction = parameters.jurisdiction || entry[parameters.individualJurisdictionField || 'individualJurisdiction']
         if (!individualName) throw new Error('No individual name given!')

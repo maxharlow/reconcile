@@ -17,7 +17,7 @@ module.exports = parameters => {
     })
 
     function locate(entry) {
-        const apiVersion = 'v0.4.5'
+        const apiVersion = 'v0.4.6'
         const companyNumber = entry[parameters.companyNumberField || 'companyNumber']
         const companyJurisdiction = parameters.jurisdiction || entry[parameters.companyJurisdictionField || 'companyJurisdiction']
         if (!companyNumber) throw new Error('No company number given!')

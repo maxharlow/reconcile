@@ -83,6 +83,7 @@ Produces a CSV which adds:
 * `companyAddress`
 * `companyPreviousNames`
 * `companyAlternativeNames`
+* `companyBeneficialOwners`
 * `companyAgentName`
 * `companyAgentAddress`
 

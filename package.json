@@ -1,7 +1,7 @@
 {
     "name": "reconcile",
     "description": "Add new columns to your spreadsheet based on looking up names or numbers.",
-    "version": "1.2.0",
+    "version": "1.3.0",
     "author": "Max Harlow <maxharlow@gmail.com> (http://maxharlow.com/)",
     "license": "Apache-2.0",
     "preferGlobal": true,
