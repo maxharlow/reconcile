@@ -1,7 +1,7 @@
 Reconcile
 =========
 
-Add new columns to your spreadsheet based on looking up names or numbers.
+Add new columns to your spreadsheet based on lookups to online services.
 
 Requires [Node](http://nodejs.org/).
 
