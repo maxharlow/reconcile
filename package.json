@@ -10,9 +10,9 @@
         "url": "https://github.com/maxharlow/reconcile.git"
     },
     "dependencies": {
-        "yargs": "4.7.x",
-        "highland": "2.8.x",
-        "request": "2.72.x",
+        "yargs": "4.8.x",
+        "highland": "2.9.x",
+        "request": "2.74.x",
         "js-yaml": "3.6.x",
         "csv-parser": "1.9.x",
         "csv-write-stream": "2.0.x"
