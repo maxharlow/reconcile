@@ -60,7 +60,7 @@ Produces a CSV which adds:
 * `companyNumber`
 * `companyName`
 
-Jurisdiction codes should be given in [ISO 3166-2 format] (https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes). Results do not include companies for which no match is found. Beware incorrect matches! Company names are terrible unique identifiers.
+Jurisdiction codes should be given in [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes). Results do not include companies for which no match is found. Beware incorrect matches! Company names are terrible unique identifiers.
 
 <hr>
 
@@ -87,7 +87,7 @@ Produces a CSV which adds:
 * `companyAgentName`
 * `companyAgentAddress`
 
-Jurisdiction codes should be given in [ISO 3166-2 format] (https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes).
+Jurisdiction codes should be given in [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes).
 
 <hr>
 
@@ -111,7 +111,7 @@ Produces a CSV which includes:
 * `officerAddress` (only if API token is sent)
 * `officerDateOfBirth` (only if API token is sent)
 
-Jurisdiction codes should be given in [ISO 3166-2 format] (https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes).
+Jurisdiction codes should be given in [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes).
 
 <hr>
 
@@ -136,4 +136,4 @@ Produces a CSV which includes:
 * `companyNumber`
 * `companyJurisdiction`
 
-Jurisdiction codes should be given in [ISO 3166-2 format] (https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes).
+Jurisdiction codes should be given in [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes).
