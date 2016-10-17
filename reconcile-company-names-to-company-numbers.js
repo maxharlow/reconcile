@@ -20,14 +20,15 @@ module.exports = parameters => {
         const companyName = entry[parameters.companyNameField || 'companyName']
         const companyJurisdiction = parameters.jurisdiction || entry[parameters.companyJurisdictionField || 'companyJurisdiction']
         if (!companyName) throw new Error('No company name given!')
-        const location = 'https://api.opencorporates.com/' + apiVersion + '/companies/search'
-              + '?q=' + encodeURIComponent(companyName.trim())
-              + '&normalise_company_name=true'
-              + (companyJurisdiction ? '&jurisdiction_code=' + companyJurisdiction.trim() : '')
-              + (parameters.apiToken ? '&api_token=' + parameters.apiToken : '')
         return {
-            uri: location,
-            query: {
+            uri: 'https://api.opencorporates.com/' + apiVersion + '/companies/search',
+            qs: {
+                q: companyName.trim(),
+                normalise_company_name: 'true',
+                jurisdiction_code: companyJurisdiction ? companyJurisdiction.trim() : undefined,
+                api_token: parameters.apiToken
+            },
+            query: { // only used for later reference
                 companyName,
                 companyJurisdiction
             }
