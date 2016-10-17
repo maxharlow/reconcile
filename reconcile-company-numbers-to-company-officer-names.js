@@ -25,10 +25,12 @@ module.exports = parameters => {
         const location = 'https://api.opencorporates.com/' + apiVersion + '/companies'
               + '/' + companyJurisdiction.trim()
               + '/' + companyNumber.trim()
-              + (parameters.apiToken ? '?api_token=' + parameters.apiToken : '')
         return {
             uri: location,
-            query: {
+            qs: {
+                api_token: parameters.apiToken
+            },
+            query: { // only used for later reference
                 companyNumber,
                 companyJurisdiction
             }
