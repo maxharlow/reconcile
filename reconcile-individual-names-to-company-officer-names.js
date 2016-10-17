@@ -20,13 +20,14 @@ module.exports = parameters => {
         const individualName = entry[parameters.individualNameField || 'individualName']
         const individualJurisdiction = parameters.jurisdiction || entry[parameters.individualJurisdictionField || 'individualJurisdiction']
         if (!individualName) throw new Error('No individual name given!')
-        const location = 'https://api.opencorporates.com/' + apiVersion + '/officers/search'
-              + '?q=' + individualName.trim()
-              + (individualJurisdiction ? '&jurisdiction_code=' + individualJurisdiction.trim() : '')
-              + (parameters.apiToken ? '&api_token=' + parameters.apiToken : '')
         return {
-            uri: location,
-            query: {
+            uri: 'https://api.opencorporates.com/' + apiVersion + '/officers/search',
+            qs: {
+                q: individualName.trim(),
+                jurisdiction_code: individualJurisdiction ? individualJurisdiction.trim() : undefined,
+                api_token: parameters.apiToken
+            },
+            query: { // only used for later reference
                 individualName,
                 individualJurisdiction
             }
