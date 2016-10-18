@@ -55,7 +55,6 @@ Parameters:
 * `companyJurisdictionField` (optional) Jurisdiction code column, if any. Default is `"companyJurisdiction"`.
 
 Produces a CSV which adds:
-
 * `companyJurisdiction`
 * `companyNumber`
 * `companyName`
@@ -137,3 +136,33 @@ Produces a CSV which includes:
 * `companyJurisdiction`
 
 Jurisdiction codes should be given in [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes).
+
+<hr>
+
+#### `location-addresses-to-location-coordinates`
+
+Use [Google's Geocoding service](https://developers.google.com/maps/documentation/geocoding/intro) to look up a list of location addresses and find their coordinates.
+
+Parameters:
+* `apiKey` (optional) A Google Maps API key. You are [limited to 2,500 requests per day and 50 per second](https://developers.google.com/maps/documentation/geocoding/usage-limits) otherwise.
+* `locationAddressField` (optional) Location name column. Default is `"locationAddress"`.
+
+Produces a CSV which adds:
+* `locationLatitude`
+* `locationLongitude`
+* `locationAccuracy` From most to least accurate: `ROOFTOP`, `RANGE_INTERPOLATED`, `GEOMETRIC_CENTER`, `APPROXIMATE`.
+
+<hr>
+
+#### `location-coordinates-to-location-addresses`
+
+Use [Google's Reverse Geocoding service](https://developers.google.com/maps/documentation/geocoding/intro#ReverseGeocoding) to look up a list of coordinates and find their addresses. Latitude and longitude can be given either in their own columns, or in one column separated by a comma.
+
+Parameters:
+* `apiKey` (optional) A Google Maps API key. You are [limited to 2,500 requests per day and 50 per second](https://developers.google.com/maps/documentation/geocoding/usage-limits) otherwise.
+* `locationCoordinatesField` (optional) Location latitude and longitude column, separated by a comma. Default is `"locationCoordinates"`.
+* `locationLatitudeField` (optional) Location latitude column. Default is `"locationLatitude"`.
+* `locationLongitudeField` (optional) Location longitude column. Default is `"locationLongitude"`.
+
+Produces a CSV which adds:
+* `locationAddress`
