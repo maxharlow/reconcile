@@ -150,17 +150,17 @@ Parameters:
 Produces a CSV which adds:
 * `locationLatitude`
 * `locationLongitude`
-* `locationAccuracy` From most to least accurate: `ROOFTOP`, `RANGE_INTERPOLATED`, `GEOMETRIC_CENTER`, `APPROXIMATE`.
+* `locationAccuracy` From most to least: `ROOFTOP`, `RANGE_INTERPOLATED`, `GEOMETRIC_CENTER`, `APPROXIMATE`.
 
 <hr>
 
 #### `location-coordinates-to-location-addresses`
 
-Use [Google's Reverse Geocoding service](https://developers.google.com/maps/documentation/geocoding/intro#ReverseGeocoding) to look up a list of coordinates and find their addresses. Latitude and longitude can be given either in their own columns, or in one column separated by a comma.
+Use [Google's Reverse Geocoding service](https://developers.google.com/maps/documentation/geocoding/intro#ReverseGeocoding) to look up a list of coordinates and find their addresses. Latitude and longitude can be given either in their own columns, or in a single column separated by a comma.
 
 Parameters:
 * `apiKey` (optional) A Google Maps API key. You are [limited to 2,500 requests per day and 50 per second](https://developers.google.com/maps/documentation/geocoding/usage-limits) otherwise.
-* `locationCoordinatesField` (optional) Location latitude and longitude column, separated by a comma. Default is `"locationCoordinates"`.
+* `locationCoordinatesField` (optional) Joint latitude and longitude column. Default is `"locationCoordinates"`.
 * `locationLatitudeField` (optional) Location latitude column. Default is `"locationLatitude"`.
 * `locationLongitudeField` (optional) Location longitude column. Default is `"locationLongitude"`.
 
