@@ -145,7 +145,7 @@ Use [Google's Geocoding service](https://developers.google.com/maps/documentatio
 
 Parameters:
 * `apiKey` (optional) A Google Maps API key. You are [limited to 2,500 requests per day and 50 per second](https://developers.google.com/maps/documentation/geocoding/usage-limits) otherwise.
-* `locationAddressField` (optional) Location name column. Default is `"locationAddress"`.
+* `locationAddressField` (optional) Address column. Default is `"locationAddress"`.
 
 Produces a CSV which adds:
 * `locationLatitude`
@@ -161,8 +161,8 @@ Use [Google's Reverse Geocoding service](https://developers.google.com/maps/docu
 Parameters:
 * `apiKey` (optional) A Google Maps API key. You are [limited to 2,500 requests per day and 50 per second](https://developers.google.com/maps/documentation/geocoding/usage-limits) otherwise.
 * `locationCoordinatesField` (optional) Joint latitude and longitude column. Default is `"locationCoordinates"`.
-* `locationLatitudeField` (optional) Location latitude column. Default is `"locationLatitude"`.
-* `locationLongitudeField` (optional) Location longitude column. Default is `"locationLongitude"`.
+* `locationLatitudeField` (optional) Latitude column. Default is `"locationLatitude"`.
+* `locationLongitudeField` (optional) Longitude column. Default is `"locationLongitude"`.
 
 Produces a CSV which adds:
 * `locationAddress`
