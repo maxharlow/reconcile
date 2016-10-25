@@ -166,3 +166,16 @@ Parameters:
 
 Produces a CSV which adds:
 * `locationAddress`
+
+<hr>
+
+#### `land-registry-title-numbers-to-addresses`
+
+Look up [Land Registry](https://www.gov.uk/government/organisations/land-registry) title numbers, and find their addresses.
+
+Parameters:
+* `titleNumberField` (optional) Title number field. Default is `"titleNumber"`.
+
+Produces a CSV which adds:
+* `titleAddress`
+* `titleTenure` Leasehold or freehold.

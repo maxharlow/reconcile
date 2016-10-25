@@ -13,6 +13,7 @@
         "yargs": "4.8.x",
         "highland": "2.9.x",
         "request": "2.74.x",
+        "cheerio": "0.22.0",
         "js-yaml": "3.6.x",
         "csv-parser": "1.9.x",
         "csv-write-stream": "2.0.x"
