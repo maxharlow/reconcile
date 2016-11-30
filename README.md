@@ -171,7 +171,7 @@ Produces a CSV which adds:
 
 #### `land-registry-title-numbers-to-addresses`
 
-Look up [Land Registry](https://www.gov.uk/government/organisations/land-registry) title numbers, and find their addresses.
+Look up [Land Registry](https://www.gov.uk/government/organisations/land-registry) title numbers (such as the result of a [PN1 search](https://www.gov.uk/government/publications/proprieters-names-search-of-the-index-pn1)), and find their addresses.
 
 Parameters:
 * `titleNumberField` (optional) Title number field. Default is `"titleNumber"`.
