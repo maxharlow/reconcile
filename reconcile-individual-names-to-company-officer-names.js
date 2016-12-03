@@ -52,8 +52,8 @@ module.exports = parameters => {
                 companyNumber: officer.officer.company.company_number,
                 companyJurisdiction: officer.officer.company.jurisdiction_code
             }
-            if (officer.officer.address) fields.officerAddress = officer.officer.address.replace(/\n/g,', ') // only if API key sent
-            if (officer.officer.date_of_birth) fields.officerDateOfBirth = officer.officer.date_of_birth // only if API key sent
+            if (officer.officer.address !== undefined) fields.officerAddress = officer.officer.address.replace(/\n/g,', ') // only if API key sent
+            if (officer.officer.date_of_birth !== undefined) fields.officerDateOfBirth = officer.officer.date_of_birth // only if API key sent
             return fields
         })
     }
