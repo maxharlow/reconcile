@@ -49,8 +49,8 @@ module.exports = parameters => {
                 officerNationality: officer.officer.nationality,
                 officerOccupation: officer.officer.occupation
             }
-            if (officer.officer.address) fields.officerAddress = officer.officer.address.replace(/\n/g,', ') // only if API token sent
-            if (officer.officer.date_of_birth) fields.officerDateOfBirth = officer.officer.date_of_birth // only if API token sent
+            if (officer.officer.address !== undefined) fields.officerAddress = officer.officer.address.replace(/\n/g,', ') // only if API token sent
+            if (officer.officer.date_of_birth !== undefined) fields.officerDateOfBirth = officer.officer.date_of_birth // only if API token sent
             return fields
         })
     }
