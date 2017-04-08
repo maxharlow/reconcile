@@ -18,12 +18,14 @@ module.exports = parameters => {
     function locate(entry) {
         const apiVersion = 'v0.4.6'
         const individualName = entry[parameters.individualNameField || 'individualName']
+        const individualDateOfBirth = entry[parameters.individualDateOfBirthField || 'individualDateOfBirth']
         const individualJurisdiction = parameters.jurisdiction || entry[parameters.individualJurisdictionField || 'individualJurisdiction']
         if (!individualName) throw new Error('No individual name given!')
         return {
             uri: 'https://api.opencorporates.com/' + apiVersion + '/officers/search',
             qs: {
                 q: individualName.trim(),
+                date_of_birth: individualDateOfBirth ? individualDateOfBirth : undefined,
                 jurisdiction_code: individualJurisdiction ? individualJurisdiction.trim() : undefined,
                 api_token: parameters.apiToken
             },
