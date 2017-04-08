@@ -3,7 +3,7 @@ Reconcile
 
 Add new columns to your spreadsheet based on lookups to online services.
 
-Requires [Node](http://nodejs.org/).
+Requires [Node](https://nodejs.org/).
 
 
 Installing
@@ -122,6 +122,7 @@ Parameters:
 * `apiToken` (optional) An OpenCorporates API token. You are [limited to 500 requests per month](https://api.opencorporates.com/documentation/API-Reference#usage_limits) otherwise.
 * `jurisdiction` (optional) If all individuals have the same jurisdiction you can specify it here instead of in a column.
 * `individualNameField` (optional) Individual name column. Default is `"individualName"`.
+* `individualDateOfBirthField` (optional) Individual birth date column. Default is `"individualDateOfBirth"`.
 * `individualJurisdictionField` (optional) Jurisdiction code column, if any. Default is `"individualJurisdiction"`.
 
 Produces a CSV which includes:
@@ -135,7 +136,7 @@ Produces a CSV which includes:
 * `companyNumber`
 * `companyJurisdiction`
 
-Jurisdiction codes should be given in [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes).
+Dates of birth should be given in [ISO 8601 format](https://en.wikipedia.org/wiki/ISO_8601), or, for a date range, use two dates separated by a colon. Jurisdiction codes should be given in [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes).
 
 <hr>
 
