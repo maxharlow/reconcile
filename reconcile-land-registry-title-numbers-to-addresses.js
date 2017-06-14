@@ -6,7 +6,7 @@ module.exports = parameters => {
 
     const http = Highland.wrapCallback((location, callback) => {
         Request(location, (error, response) => {
-            const failureSource = location.form.titleNo
+            const failureSource = location.form ? location.form.titleNo : 'preliminary'
             const failure = error ? error
                   : response.statusCode >= 400 ? new Error('Error ' + response.statusCode + ': ' + failureSource)
                   : null
@@ -14,20 +14,30 @@ module.exports = parameters => {
         })
     })
 
-    function locate(entry) {
+    function form(entry) {
         const titleNumber = entry[parameters.titleNumberField || 'titleNumber']
         if (!titleNumber) throw new Error('No title number given!')
-        const location = 'https://eservices.landregistry.gov.uk/www/wps/portal/!ut/p/b1/hc7BCoJAEAbgZ-kJZnZn17ajFamkWVqmewkhico0QpJ8-rRbRTm3ge__Z0BDwkiglCMiCTHoIr0fD2l1LIs073Zt7IgrwZjgtiJjiI6cWcTWklBQC5I_wGJ9-S3EKHbhSV29RxW7zeS-PjUrvrhltTfdNp7r1F7lLvdRsBmbE79ieQRhVrQ5_VHtz0x0aOzPLVpxROMLvN9WvAd0v78A_hgTYWGXlwySlg1_9ahIwEXnrjgHdn0YDJ6Wz1R4/dl4/d5/L0lDU0lKSmdwcGlRb0tVUW9LVVEhL29Gb2dBRUlRaGpFQ1VJZ0FJQUl5RkFNaHdVaFM0SldsYTRvIS80RzNhRDJnanZ5aERVd3BNaFFqVW81Q2pHcHhBL1o3XzMyODQxMTQySDgzNjcwSTVGRzMxVDUzOFY0LzAvMzM3ODg1Njk0MDc5L3NwZl9BY3Rpb25OYW1lL3NwZl9BY3Rpb25MaXN0ZW5lci9zcGZfc3RydXRzQWN0aW9uLyEyZlFEU2VhcmNoLmRv'
         return {
-            uri: location,
-            method: 'POST',
-            form: {
-                titleNo: titleNumber,
-                enquiryType: 'detailed'
-            },
+            method: 'GET',
+            uri: 'https://eservices.landregistry.gov.uk/wps/portal/Property_Search',
+            headers: { 'User-Agent': '' },
             query: { // only used for later reference
                 titleNumber
             }
+        }
+    }
+
+    function locate(response) {
+        const document = Cheerio.load(response.body)
+        return {
+            method: 'POST',
+            uri: 'https://eservices.landregistry.gov.uk' + document('form').attr('action'),
+            headers: { 'User-Agent': '' },
+            form: {
+                titleNo: response.request.query.titleNumber,
+                enquiryType: 'detailed'
+            },
+            query: response.request.query
         }
     }
 
@@ -48,6 +58,8 @@ module.exports = parameters => {
     function run(input) {
         return new Promise((resolve, reject) => {
             Highland([input])
+                .map(form)
+                .flatMap(http)
                 .map(locate)
                 .flatMap(http)
                 .map(parse)
