@@ -85,6 +85,7 @@ Produces a CSV which adds:
 * `companyBeneficialOwners`
 * `companyAgentName`
 * `companyAgentAddress`
+* `companyActivities`
 
 Jurisdiction codes should be given in [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes).
 
