@@ -52,7 +52,8 @@ module.exports = parameters => {
             companyAlternativeNames: company.alternative_names.join(', '),
             companyBeneficialOwners: company.ultimate_beneficial_owners.map(owner => owner.ultimate_beneficial_owner.name).join(', '),
             companyAgentName: company.agent_name,
-            companyAgentAddress: company.agent_address
+            companyAgentAddress: company.agent_address,
+            companyActivities: company.industry_codes.map(code => code.industry_code.description).join(', ')
         }
     }
 
