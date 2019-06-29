@@ -1,2 +1,2 @@
-#!/usr/bin/env node
-require('./reconcile.js')
+#!/usr/bin/env node --http-parser=legacy
+require('./cli.js')

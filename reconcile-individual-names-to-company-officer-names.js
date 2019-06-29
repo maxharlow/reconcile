@@ -1,35 +1,30 @@
-const Highland = require('highland')
-const Request = require('request')
+function initialise(parameters, requestor) {
 
-module.exports = parameters => {
-
-    const http = Highland.wrapCallback((location, callback) => {
-        Request(location, (error, response) => {
-            const failureSource = location.query.individualName + (location.query.individualJurisdiction ? ' (' + location.query.individualJurisdiction + ')' : '')
-            const failure = error ? error
-                  : response.statusCode === 403 ? new Error('You have reached the rate limit.' + (parameters.apiToken ? '' : ' Try using an API token.'))
-                  : response.statusCode === 401 ? new Error('API token is invalid: ' + parameters.apiToken)
-                  : response.statusCode >=  400 ? new Error('Error ' + response.statusCode + ': ' + failureSource)
-                  : null
-            callback(failure, response)
-        })
+    const request = requestor.bind(null, (e, passthrough) => {
+        const individual = passthrough.individualName + (passthrough.individualJurisdiction ? ` (${passthrough.individualJurisdiction.toUpperCase()})` : '')
+        if (e.response.status === 403) throw new Error('The rate limit has been reached' + (e.config.params.api_token ? '' : '-- try using an API token'))
+        if (e.response.status === 401) throw new Error(`API token ${e.config.params.api_token} is invalid`)
+        if (e.response.status >= 400) throw new Error(`Received code ${e.response.status} for individual ${individual}`)
     })
 
     function locate(entry) {
-        const apiVersion = 'v0.4.6'
+        const apiVersion = 'v0.4.8'
         const individualName = entry[parameters.individualNameField || 'individualName']
         const individualDateOfBirth = entry[parameters.individualDateOfBirthField || 'individualDateOfBirth']
         const individualJurisdiction = parameters.jurisdiction || entry[parameters.individualJurisdictionField || 'individualJurisdiction']
-        if (!individualName) throw new Error('No individual name given!')
+        const maximumResults = parameters.maximumResults || 1
+        if (!individualName) throw new Error('No individual name found')
+        const url = `https://api.opencorporates.com/${apiVersion}/officers/search`
         return {
-            uri: 'https://api.opencorporates.com/' + apiVersion + '/officers/search',
-            qs: {
+            url,
+            params: {
                 q: individualName.trim(),
                 date_of_birth: individualDateOfBirth ? individualDateOfBirth : undefined,
                 jurisdiction_code: individualJurisdiction ? individualJurisdiction.trim() : undefined,
-                api_token: parameters.apiToken
+                api_token: parameters.apiToken,
+                per_page: maximumResults
             },
-            query: { // only used for later reference
+            passthrough: {
                 individualName,
                 individualJurisdiction
             }
@@ -37,12 +32,12 @@ module.exports = parameters => {
     }
 
     function parse(response) {
-        const body = JSON.parse(response.body)
-        if (body.results.officers.length === 0) {
-            const jurisdiction = response.request.query.individualJurisdiction ? ' (' + response.request.query.individualJurisdiction + ')' : ''
-            throw new Error('Individual not found: ' + response.request.query.individualName + jurisdiction)
+        if (response.data.results.officers.length === 0) {
+            const individual = passthrough.individualName + (passthrough.individualJurisdiction ? ` (${passthrough.individualJurisdiction.toUpperCase()})` : '')
+            throw new Error(`Could not find individual ${individual}`)
         }
-        return body.results.officers.map(officer => {
+        const officers = response.data.results.officers
+        return officers.map(officer => {
             const fields = {
                 officerName: officer.officer.name,
                 officerPosition: officer.officer.position,
@@ -60,18 +55,36 @@ module.exports = parameters => {
         })
     }
 
-    function run(input) {
-        return new Promise((resolve, reject) => {
-            Highland([input])
-                .map(locate)
-                .flatMap(http)
-                .flatMap(parse)
-                .collect()
-                .errors(reject)
-                .each(resolve)
-        })
+    async function run(input) {
+        const dataLocated = locate(input)
+        const dataLocatedRequested = await request(dataLocated)
+        const dataParsed = parse(dataLocatedRequested)
+        return dataParsed
     }
-
     return run
 
 }
+
+const details = {
+    parameters: [
+        { name: 'apiToken', description: 'An OpenCorporates API token. You are limited to 500 requests per month otherwise. [optional]' },
+        { name: 'jurisdiction', description: 'If all individuals have the same jurisdiction you can specify it here instead of in a column. Use ISO 3166-2 format. [optional]' },
+        { name: 'individualNameField', description: 'Individual name column. [optional, default: "individualName"]' },
+        { name: 'individualDateOfBirthField', description: 'Individual birth date column. It should use ISO 8601 format. For a range the two dates should be separated with a colon. [optional, default: "individualDateOfBirth"]' },
+        { name: 'individualJurisdictionField', description: 'Jurisdiction code column, if any. It should use ISO 3166-2 format. [optional, default: "individualJurisdiction"]' },
+        { name: 'maximumResults', description: 'Maximum number of results to include for each name. [optional, default: 1, maximum 30, or 100 with an API token]' }
+    ],
+    columns: [
+        { name: 'officerName' },
+        { name: 'officerPosition' },
+        { name: 'officerNationality' },
+        { name: 'officerOccupation' },
+        { name: 'officerAddress', description: 'Only if an API token is sent.' },
+        { name: 'officerDateOfBirth', description: 'Only if an API token is sent.' },
+        { name: 'companyName' },
+        { name: 'companyNumber' },
+        { name: 'companyJurisdiction' }
+    ]
+}
+
+module.exports = { initialise, details }
