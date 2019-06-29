@@ -1,6 +1,6 @@
 {
     "name": "reconcile",
-    "description": "Add new columns to your spreadsheet based on lookups to online services.",
+    "description": "Enrich your data, adding new columns based on lookups to online services.",
     "version": "1.6.0",
     "author": "Max Harlow <maxharlow@gmail.com> (http://maxharlow.com/)",
     "license": "Apache-2.0",
@@ -10,13 +10,16 @@
         "url": "https://github.com/maxharlow/reconcile.git"
     },
     "dependencies": {
-        "yargs": "4.8.x",
-        "highland": "2.9.x",
-        "request": "2.74.x",
-        "cheerio": "0.22.0",
-        "js-yaml": "3.6.x",
-        "csv-parser": "1.9.x",
-        "csv-write-stream": "2.0.x"
+        "axios": "0.18.x",
+        "axios-retry": "3.1.x",
+        "cheerio": "0.22.x",
+        "csv-parser": "2.3.x",
+        "fs-extra": "8.0.x",
+        "ix": "2.5.x",
+        "js-yaml": "3.13.x",
+        "papaparse": "5.0.x",
+        "progress": "2.0.x",
+        "yargs": "13.2.x"
     },
     "bin": {
         "reconcile": "./reconcile"

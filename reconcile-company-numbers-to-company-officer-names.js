@@ -1,36 +1,28 @@
-const Highland = require('highland')
-const Request = require('request')
+function initialise(parameters, requestor) {
 
-module.exports = parameters => {
-
-    const http = Highland.wrapCallback((location, callback) => {
-        Request(location, (error, response) => {
-            const failureSource = location.query.companyNumber + ' (' + location.query.companyJurisdiction + ')'
-            const failure = error ? error
-                  : response.statusCode === 403 ? new Error('You have reached the rate limit.' + (parameters.apiToken ? '' : ' Try using an API token.'))
-                  : response.statusCode === 401 ? new Error('API token is invalid: ' + parameters.apiToken)
-                  : response.statusCode === 404 ? new Error('Company not found: ' + failureSource)
-                  : response.statusCode >=  400 ? new Error('Error ' + response.statusCode + ': ' + failureSource)
-                  : null
-            callback(failure, response)
-        })
+    const request = requestor.bind(null, (e, passthrough) => {
+        const company = `${passthrough.companyNumber} (${passthrough.companyJurisdiction.toUpperCase()})`
+        if (e.response.status === 404) throw new Error(`Could not find company ${company}`)
+        if (e.response.status === 403) throw new Error('The rate limit has been reached' + (e.config.params.api_token ? '' : '-- try using an API token'))
+        if (e.response.status === 401) throw new Error(`API token ${e.config.params.api_token} is invalid`)
+        if (e.response.status >= 400) throw new Error(`Received code ${e.response.status} for company ${company}`)
     })
 
     function locate(entry) {
-        const apiVersion = 'v0.4.6'
+        const apiVersion = 'v0.4.8'
         const companyNumber = entry[parameters.companyNumberField || 'companyNumber']
         const companyJurisdiction = parameters.jurisdiction || entry[parameters.companyJurisdictionField || 'companyJurisdiction']
-        if (!companyNumber) throw new Error('No company number given!')
-        if (!companyJurisdiction) throw new Error('No jurisdiction given: ' + companyNumber)
-        const location = 'https://api.opencorporates.com/' + apiVersion + '/companies'
+        if (!companyNumber) throw new Error('No company number found')
+        if (!companyJurisdiction) throw new Error(`No jurisdiction found for company ${companyNumber}`)
+        const url = `https://api.opencorporates.com/${apiVersion}/companies`
               + '/' + companyJurisdiction.trim()
               + '/' + companyNumber.trim()
         return {
-            uri: location,
-            qs: {
+            url,
+            params: {
                 api_token: parameters.apiToken
             },
-            query: { // only used for later reference
+            passthrough: {
                 companyNumber,
                 companyJurisdiction
             }
@@ -38,10 +30,9 @@ module.exports = parameters => {
     }
 
     function parse(response) {
-        const body = JSON.parse(response.body)
-        return body.results.company.officers.map(officer => {
+        return response.data.results.company.officers.map(officer => {
             const fields = {
-                companyName: body.results.company.name,
+                companyName: response.data.results.company.name,
                 officerName: officer.officer.name,
                 officerPosition: officer.officer.position,
                 officerStartDate: officer.officer.start_date,
@@ -49,24 +40,39 @@ module.exports = parameters => {
                 officerNationality: officer.officer.nationality,
                 officerOccupation: officer.officer.occupation
             }
-            if (officer.officer.address !== undefined) fields.officerAddress = officer.officer.address.replace(/\n/g,', ') // only if API token sent
+            if (officer.officer.address !== undefined) fields.officerAddress = officer.officer.address.replace(/\n/g, ', ') // only if API token sent
             if (officer.officer.date_of_birth !== undefined) fields.officerDateOfBirth = officer.officer.date_of_birth // only if API token sent
             return fields
         })
     }
 
-    function run(input) {
-        return new Promise((resolve, reject) => {
-            Highland([input])
-                .map(locate)
-                .flatMap(http)
-                .flatMap(parse)
-                .collect()
-                .errors(reject)
-                .each(resolve)
-        })
+    async function run(input) {
+        const dataLocated = locate(input)
+        const dataLocatedRequested = await request(dataLocated)
+        const dataParsed = parse(dataLocatedRequested)
+        return dataParsed
     }
-
     return run
 
 }
+
+const details = {
+    parameters: [
+        { name: 'apiToken', description: 'An OpenCorporates API token. You are limited to 500 requests per month otherwise. [optional]' },
+        { name: 'jurisdiction', description: 'If all individuals have the same jurisdiction you can specify it here instead of in a column. Use ISO 3166-2 format. [optional]' },
+        { name: 'companyNumberField', description: 'Company number column. [optional, default: "companyNumber"]' },
+        { name: 'companyJurisdictionField', description: 'Jurisdiction code column, if any. It should use ISO 3166-2 format. [optional, default: "companyJurisdiction"]' }
+    ],
+    columns: [
+        { name: 'officerName' },
+        { name: 'officerPosition' },
+        { name: 'officerStartDate' },
+        { name: 'officerEndDate' },
+        { name: 'officerNationality' },
+        { name: 'officerOccupation' },
+        { name: 'officerAddress', description: 'Only if an API token is sent.' },
+        { name: 'officerDateOfBirth', description: 'Only if an API token is sent.' }
+    ]
+}
+
+module.exports = { initialise, details }

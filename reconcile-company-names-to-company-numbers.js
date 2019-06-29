@@ -1,34 +1,29 @@
-const Highland = require('highland')
-const Request = require('request')
+function initialise(parameters, requestor) {
 
-module.exports = parameters => {
-
-    const http = Highland.wrapCallback((location, callback) => {
-        Request(location, (error, response) => {
-            const failureSource = location.query.companyName + (location.query.companyJurisdiction ? ' (' + location.query.companyJurisdiction + ')' : '')
-            const failure = error ? error
-                  : response.statusCode === 403 ? new Error('You have reached the rate limit.' + (parameters.apiToken ? '' : ' Try using an API token.'))
-                  : response.statusCode === 401 ? new Error('API token is invalid: ' + parameters.apiToken)
-                  : response.statusCode >=  400 ? new Error('Error ' + response.statusCode + ': ' + failureSource)
-                  : null
-            callback(failure, response)
-        })
+    const request = requestor.bind(null, (e, passthrough) => {
+        const company = passthrough.companyName + (passthrough.companyJurisdiction ? ` (${passthrough.companyJurisdiction.toUpperCase()})` : '')
+        if (e.response.status === 403) throw new Error('The rate limit has been reached' + (e.config.params.api_token ? '' : '-- try using an API token'))
+        if (e.response.status === 401) throw new Error(`API token ${e.config.params.api_token} is invalid`)
+        if (e.response.status >= 400) throw new Error(`Received code ${e.response.status} for company ${company}`)
     })
 
     function locate(entry) {
-        const apiVersion = 'v0.4.6'
+        const apiVersion = 'v0.4.8'
         const companyName = entry[parameters.companyNameField || 'companyName']
         const companyJurisdiction = parameters.jurisdiction || entry[parameters.companyJurisdictionField || 'companyJurisdiction']
-        if (!companyName) throw new Error('No company name given!')
+        const maximumResults = parameters.maximumResults || 1
+        if (!companyName) throw new Error('No company name found')
+        const url = `https://api.opencorporates.com/${apiVersion}/companies/search`
         return {
-            uri: 'https://api.opencorporates.com/' + apiVersion + '/companies/search',
-            qs: {
+            url,
+            params: {
                 q: companyName.trim(),
                 normalise_company_name: 'true',
                 jurisdiction_code: companyJurisdiction ? companyJurisdiction.trim() : undefined,
-                api_token: parameters.apiToken
+                api_token: parameters.apiToken,
+                per_page: maximumResults
             },
-            query: { // only used for later reference
+            passthrough: {
                 companyName,
                 companyJurisdiction
             }
@@ -36,35 +31,43 @@ module.exports = parameters => {
     }
 
     function parse(response) {
-        const body = JSON.parse(response.body)
-        if (body.results.companies.length === 0) {
-            const jurisdiction = response.request.query.companyJurisdiction ? ' (' + response.request.query.companyJurisdiction + ')' : ''
-            throw new Error('Company not found: ' + response.request.query.companyName + jurisdiction)
+        if (response.data.results.companies.length === 0) {
+            const company = response.passthrough.companyName + (response.passthrough.companyJurisdiction ? ` (${response.passthrough.companyJurisdiction.toUpperCase()})` : '')
+            throw new Error(`Could not find company ${company}`)
         }
-        const company = body.results.companies[0].company
-        return {
-            companyJurisdiction: company.jurisdiction_code,
-            companyNumber: company.company_number,
-            companyName: company.name
-        }
-    }
-
-    function toArray(item) {
-      return [item]
-    }
-
-    function run(input) {
-        return new Promise((resolve, reject) => {
-            Highland([input])
-                .map(locate)
-                .flatMap(http)
-                .map(parse)
-                .map(toArray)
-                .errors(reject)
-                .each(resolve)
+        const companies = response.data.results.companies
+        return companies.map(company => {
+            return {
+                companyJurisdiction: company.company.jurisdiction_code,
+                companyNumber: company.company.company_number,
+                companyName: company.company.name
+            }
         })
     }
 
+    async function run(input) {
+        const dataLocated = locate(input)
+        const dataLocatedRequested = await request(dataLocated)
+        const dataParsed = parse(dataLocatedRequested)
+        return dataParsed
+    }
     return run
 
 }
+
+const details = {
+    parameters: [
+        { name: 'apiToken', description: 'An OpenCorporates API token. You are limited to 500 requests per month otherwise. [optional]' },
+        { name: 'jurisdiction', description: 'If all individuals have the same jurisdiction you can specify it here instead of in a column. Use ISO 3166-2 format. [optional]' },
+        { name: 'companyNameField', description: 'Company name column. [optional, default: "companyName"]' },
+        { name: 'companyJurisdictionField', description: 'Jurisdiction code column, if any. It should use ISO 3166-2 format. [optional, default: "companyJurisdiction"]' },
+        { name: 'maximumResults', description: 'Maximum number of results to include for each name. [optional, default: 1, maximum 30, or 100 with an API token]' }
+    ],
+    columns: [
+        { name: 'companyJurisdiction' },
+        { name: 'companyNumber' },
+        { name: 'companyName' }
+    ]
+}
+
+module.exports = { initialise, details }
