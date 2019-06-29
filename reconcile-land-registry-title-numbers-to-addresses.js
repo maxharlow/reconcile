@@ -31,7 +31,10 @@ function initialise(parameters, requestor) {
             data: Querystring.stringify({
                 titleNo: response.passthrough.titleNumber,
                 enquiryType: 'detailed'
-            })
+            }),
+            passthrough: {
+                titleNumber: response.passthrough.titleNumber
+            }
         }
     }
 
