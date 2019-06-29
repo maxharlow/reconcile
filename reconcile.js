@@ -8,7 +8,7 @@ const CSVParser = require('csv-parser')
 async function request(retries, cache, alert, handling, location) {
     const cacheDirectory = '.reconcile-cache'
     const url = typeof location === 'object' ? location.url : location
-    const hash = Crypto.createHash('sha1').update(url).digest('hex')
+    const hash = Crypto.createHash('sha1').update(JSON.stringify(location)).digest('hex')
     if (cache) {
         const isCached = await FSExtra.pathExists(`${cacheDirectory}/${hash}`)
         if (isCached) {
