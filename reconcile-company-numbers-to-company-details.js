@@ -54,6 +54,7 @@ function initialise(parameters, requestor) {
         const dataParsed = parse(dataLocatedRequested)
         return dataParsed
     }
+
     return run
 
 }
