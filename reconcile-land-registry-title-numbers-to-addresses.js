@@ -13,7 +13,6 @@ function initialise(parameters, requestor) {
         const url = 'https://eservices.landregistry.gov.uk/wps/portal/Property_Search'
         return {
             url,
-            headers: { 'User-Agent': '' },
             passthrough: {
                 titleNumber
             }
@@ -27,7 +26,6 @@ function initialise(parameters, requestor) {
         return {
             url,
             method: 'POST',
-            headers: { 'User-Agent': '' },
             data: Querystring.stringify({
                 titleNo: response.passthrough.titleNumber,
                 enquiryType: 'detailed'
