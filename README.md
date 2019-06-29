@@ -1,7 +1,7 @@
 Reconcile
 =========
 
-Add new columns to your spreadsheet based on lookups to online services.
+Enrich your data, adding new columns based on lookups to online services.
 
 Requires [Node](https://nodejs.org/).
 
@@ -36,6 +36,8 @@ Alternatively, give the parameters inline:
 
     $ reconcile company-numbers-to-company-officer-names input.csv -p '{jurisdiction: gb, companyNumberField: RegisteredCompanyNumber}' > output.csv
 
+HTTP requests are automatically retried if they fail, five times by default, but this can be adjusted with the `-r` flag. Requests can also be cached using the `-c` flag.
+
 
 Commands
 --------
@@ -46,20 +48,19 @@ Double-press the tab key to autocomplete these names from the command line.
 
 #### `company-names-to-company-numbers`
 
-Use [OpenCorporates](https://opencorporates.com/) to look up a list of company names and find the most likely registration number for each.
+Use [OpenCorporates](https://opencorporates.com/) to look up a list of company names and find the most likely registration number for each. Note results do not include companies for which no match is found. Beware incorrect matches! Company names are terrible unique identifiers.
 
 Parameters:
-* `apiToken` (optional) An OpenCorporates API token. You are [limited to 500 requests per month](https://api.opencorporates.com/documentation/API-Reference#usage_limits) otherwise.
-* `jurisdiction` (optional) If all companies have the same jurisdiction you can specify it here instead of in a column.
-* `companyNameField` (optional) Company name column. Default is `"companyName"`.
-* `companyJurisdictionField` (optional) Jurisdiction code column, if any. Default is `"companyJurisdiction"`.
+* `apiToken` An OpenCorporates API token. You are [limited to 500 requests per month](https://api.opencorporates.com/documentation/API-Reference#usage_limits) otherwise. Optional.
+* `jurisdiction` If all companies have the same jurisdiction you can specify it here instead of in a column. Optional.
+* `companyNameField` Company name column. Optional. Default is `"companyName"`.
+* `companyJurisdictionField` Jurisdiction code column, if any. It should use [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes). Optional. Default is `"companyJurisdiction"`.
+* `maximumResults` Maximum number of results to include for each name. Optional. Default is 1, maximum is 30, or 100 with an API token.
 
-Produces a CSV which adds:
+Produces a CSV including columns:
 * `companyJurisdiction`
 * `companyNumber`
 * `companyName`
-
-Jurisdiction codes should be given in [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes). Results do not include companies for which no match is found. Beware incorrect matches! Company names are terrible unique identifiers.
 
 <hr>
 
@@ -68,12 +69,12 @@ Jurisdiction codes should be given in [ISO 3166-2 format](https://en.wikipedia.o
 Use [OpenCorporates](https://opencorporates.com/) to look up a list of company numbers and jurisdiction codes, and retrieve various details for each.
 
 Parameters:
-* `apiToken` (optional) An OpenCorporates API token. You are [limited to 500 requests per month](https://api.opencorporates.com/documentation/API-Reference#usage_limits) otherwise.
-* `jurisdiction` (optional) If all companies have the same jurisdiction you can specify it here instead of in a column.
-* `companyNumberField` (optional) Company number column. Default is `"companyNumber"`.
-* `companyJurisdictionField` (optional) Jurisdiction code column. Default is `"companyJurisdiction"`.
+* `apiToken` An OpenCorporates API token. You are [limited to 500 requests per month](https://api.opencorporates.com/documentation/API-Reference#usage_limits) otherwise. Optional.
+* `jurisdiction` If all companies have the same jurisdiction you can specify it here instead of in a column. Optional.
+* `companyNumberField` Company number column. Optional. Default is `"companyNumber"`.
+* `companyJurisdictionField` Jurisdiction code column. It should use [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes). Optional. Default is `"companyJurisdiction"`.
 
-Produces a CSV which adds:
+Produces a CSV including columns:
 * `companyName`
 * `companyIncorporationDate`
 * `companyDissolutionDate`
@@ -87,8 +88,6 @@ Produces a CSV which adds:
 * `companyAgentAddress`
 * `companyActivities`
 
-Jurisdiction codes should be given in [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes).
-
 <hr>
 
 #### `company-numbers-to-company-officer-names`
@@ -96,22 +95,20 @@ Jurisdiction codes should be given in [ISO 3166-2 format](https://en.wikipedia.o
 Use [OpenCorporates](https://opencorporates.com/) to look up a list of company numbers and jurisdiction codes, and retrieve the names of their directors.
 
 Parameters:
-* `apiToken` (optional) An OpenCorporates API token. You are [limited to 500 requests per month](https://api.opencorporates.com/documentation/API-Reference#usage_limits) otherwise.
-* `jurisdiction` (optional) If all companies have the same jurisdiction you can specify it here instead of in a column.
-* `companyNumberField` (optional) Company number column. Default is `"companyNumber"`.
-* `companyJurisdictionField` (optional) Jurisdiction code column, if any. Default is `"companyJurisdiction"`.
+* `apiToken` An OpenCorporates API token. You are [limited to 500 requests per month](https://api.opencorporates.com/documentation/API-Reference#usage_limits) otherwise. Optional.
+* `jurisdiction` If all companies have the same jurisdiction you can specify it here instead of in a column. Optional.
+* `companyNumberField` Company number column. Optional. Default is `"companyNumber"`.
+* `companyJurisdictionField` Jurisdiction code column, if any. It should use [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes). Optional. Default is `"companyJurisdiction"`.
 
-Produces a CSV which includes:
+Produces a CSV including columns:
 * `officerName`
 * `officerPosition`
 * `officerStartDate`
 * `officerEndDate`
 * `officerNationality`
 * `officerOccupation`
-* `officerAddress` (only if API token is sent)
-* `officerDateOfBirth` (only if API token is sent)
-
-Jurisdiction codes should be given in [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes).
+* `officerAddress` (only if an API token is sent)
+* `officerDateOfBirth` (only if an API token is sent)
 
 <hr>
 
@@ -120,54 +117,23 @@ Jurisdiction codes should be given in [ISO 3166-2 format](https://en.wikipedia.o
 Use [OpenCorporates](https://opencorporates.com/) to look up a list of individual names and find which companies they are officers of (typically either as directors or secretaries).
 
 Parameters:
-* `apiToken` (optional) An OpenCorporates API token. You are [limited to 500 requests per month](https://api.opencorporates.com/documentation/API-Reference#usage_limits) otherwise.
-* `jurisdiction` (optional) If all individuals have the same jurisdiction you can specify it here instead of in a column.
-* `individualNameField` (optional) Individual name column. Default is `"individualName"`.
-* `individualDateOfBirthField` (optional) Individual birth date column. Default is `"individualDateOfBirth"`.
-* `individualJurisdictionField` (optional) Jurisdiction code column, if any. Default is `"individualJurisdiction"`.
+* `apiToken` An OpenCorporates API token. You are [limited to 500 requests per month](https://api.opencorporates.com/documentation/API-Reference#usage_limits) otherwise. Optional.
+* `jurisdiction` If all individuals have the same jurisdiction you can specify it here instead of in a column. Optional.
+* `individualNameField` Individual name column. Optional. Default is `"individualName"`.
+* `individualDateOfBirthField` Individual birth date column. It should use [ISO 8601 format](https://en.wikipedia.org/wiki/ISO_8601). For a range the two dates should be separated with a colon. Optional. Default is `"individualDateOfBirth"`.
+* `individualJurisdictionField` Jurisdiction code column, if any. It should use [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes). Optional. Default is `"individualJurisdiction"`.
+* `maximumResults` Maximum number of results to include for each name. Optional. Default is 1, maximum is 30, or 100 with an API token.
 
-Produces a CSV which includes:
+Produces a CSV including columns:
 * `officerName`
 * `officerPosition`
 * `officerNationality`
 * `officerOccupation`
-* `officerAddress` (only if API token is sent)
-* `officerDateOfBirth` (only if API token is sent)
+* `officerAddress` (only if an API token is sent)
+* `officerDateOfBirth` (only if an API token is sent)
 * `companyName`
 * `companyNumber`
 * `companyJurisdiction`
-
-Dates of birth should be given in [ISO 8601 format](https://en.wikipedia.org/wiki/ISO_8601), or, for a date range, use two dates separated by a colon. Jurisdiction codes should be given in [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes).
-
-<hr>
-
-#### `location-addresses-to-location-coordinates`
-
-Use [Google's Geocoding service](https://developers.google.com/maps/documentation/geocoding/intro) to look up a list of location addresses and find their coordinates.
-
-Parameters:
-* `apiKey` (optional) A Google Maps API key. You are [limited to 2,500 requests per day and 50 per second](https://developers.google.com/maps/documentation/geocoding/usage-limits) otherwise.
-* `locationAddressField` (optional) Address column. Default is `"locationAddress"`.
-
-Produces a CSV which adds:
-* `locationLatitude`
-* `locationLongitude`
-* `locationAccuracy` From most to least: `ROOFTOP`, `RANGE_INTERPOLATED`, `GEOMETRIC_CENTER`, `APPROXIMATE`.
-
-<hr>
-
-#### `location-coordinates-to-location-addresses`
-
-Use [Google's Reverse Geocoding service](https://developers.google.com/maps/documentation/geocoding/intro#ReverseGeocoding) to look up a list of coordinates and find their addresses. Latitude and longitude can be given either in their own columns, or in a single column separated by a comma.
-
-Parameters:
-* `apiKey` (optional) A Google Maps API key. You are [limited to 2,500 requests per day and 50 per second](https://developers.google.com/maps/documentation/geocoding/usage-limits) otherwise.
-* `locationCoordinatesField` (optional) Joint latitude and longitude column. Default is `"locationCoordinates"`.
-* `locationLatitudeField` (optional) Latitude column. Default is `"locationLatitude"`.
-* `locationLongitudeField` (optional) Longitude column. Default is `"locationLongitude"`.
-
-Produces a CSV which adds:
-* `locationAddress`
 
 <hr>
 
@@ -176,8 +142,8 @@ Produces a CSV which adds:
 Look up [Land Registry](https://www.gov.uk/government/organisations/land-registry) title numbers (such as the result of a [PN1 search](https://www.gov.uk/government/publications/proprieters-names-search-of-the-index-pn1)), and find their addresses.
 
 Parameters:
-* `titleNumberField` (optional) Title number field. Default is `"titleNumber"`.
+* `titleNumberField` Title number field. Optional. Default is `"titleNumber"`.
 
-Produces a CSV which adds:
+Produces a CSV including columns:
 * `titleAddress`
 * `titleTenure` Leasehold or freehold.

@@ -1,74 +1,71 @@
-const Highland = require('highland')
-const Request = require('request')
+const Querystring = require('querystring')
 const Cheerio = require('cheerio')
 
-module.exports = parameters => {
+function initialise(parameters, requestor) {
 
-    const http = Highland.wrapCallback((location, callback) => {
-        Request(location, (error, response) => {
-            const failureSource = location.form ? location.form.titleNo : 'preliminary'
-            const failure = error ? error
-                  : response.statusCode >= 400 ? new Error('Error ' + response.statusCode + ': ' + failureSource)
-                  : null
-            callback(failure, response)
-        })
+    const request = requestor.bind(null, (e, passthrough) => {
+        if (e.response.status >= 400 && passthrough.titleNumber) throw new Error(`Received code ${e.response.status} for title ${passthrough.titleNumber}`)
     })
 
     function form(entry) {
         const titleNumber = entry[parameters.titleNumberField || 'titleNumber']
-        if (!titleNumber) throw new Error('No title number given!')
+        if (!titleNumber) throw new Error('No title number found')
+        const url = 'https://eservices.landregistry.gov.uk/wps/portal/Property_Search'
         return {
-            method: 'GET',
-            uri: 'https://eservices.landregistry.gov.uk/wps/portal/Property_Search',
+            url,
             headers: { 'User-Agent': '' },
-            query: { // only used for later reference
+            passthrough: {
                 titleNumber
             }
         }
     }
 
     function locate(response) {
-        const document = Cheerio.load(response.body)
+        const document = Cheerio.load(response.data)
+        const action = document('form').attr('action')
+        const url = `https://eservices.landregistry.gov.uk${action}`
         return {
+            url,
             method: 'POST',
-            uri: 'https://eservices.landregistry.gov.uk' + document('form').attr('action'),
             headers: { 'User-Agent': '' },
-            form: {
-                titleNo: response.request.query.titleNumber,
+            data: Querystring.stringify({
+                titleNo: response.passthrough.titleNumber,
                 enquiryType: 'detailed'
-            },
-            query: response.request.query
+            })
         }
     }
 
     function parse(response) {
-        const document = Cheerio.load(response.body)
+        const document = Cheerio.load(response.data)
         const failure = document('.w80p').get().length === 0
-        if (failure) throw new Error('Title not found: ' + response.request.query.titleNumber)
+        if (failure) throw new Error(`Could not find title ${response.passthrough.titleNumber}`)
         return {
-            titleAddress: document('.w80p').eq(0).contents().get().filter(e => e.type === 'text').map(e => e.data.trim()).join(', '),
+            titleAddress: document('.w80p').eq(0).contents().get().filter(x => x.type === 'text').map(x => x.data.trim()).join(', '),
             titleTenure: document('.w80p').eq(1).text().trim()
         }
     }
 
-    function toArray(item) {
-      return [item]
-    }
-
-    function run(input) {
-        return new Promise((resolve, reject) => {
-            Highland([input])
-                .map(form)
-                .flatMap(http)
-                .map(locate)
-                .flatMap(http)
-                .map(parse)
-                .map(toArray)
-                .errors(reject)
-                .each(resolve)
-        })
+    async function run(input) {
+        const dataFormed = form(input)
+        const dataFormedRequested = await request(dataFormed)
+        const dataLocated = locate(dataFormedRequested)
+        const dataLocatedRequested = await request(dataLocated)
+        const dataParsed = parse(dataLocatedRequested)
+        return dataParsed
     }
 
     return run
 
 }
+
+const details = {
+    parameters: [
+        { name: 'titleNumberField', description: 'Title number field. [optional, default: "titleNumber"]' }
+    ],
+    columns: [
+        { name: 'titleAddress' },
+        { name: 'titleTenure', description: 'Leasehold or freehold.' }
+    ]
+}
+
+module.exports = { initialise, details }
