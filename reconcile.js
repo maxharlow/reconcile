@@ -3,54 +3,68 @@ const FSExtra = require('fs-extra')
 const Ix = require('ix')
 const Axios = require('axios')
 const AxiosRetry = require('axios-retry')
+const AxiosRateLimit = require('axios-rate-limit')
 const CSVParser = require('csv-parser')
 
-async function request(retries, cache, alert, handling, location) {
+function request(retries, cache, alert, limit, errors) {
     const cacheDirectory = '.reconcile-cache'
-    const url = typeof location === 'object' ? location.url : location
-    const hash = Crypto.createHash('sha1').update(JSON.stringify(location)).digest('hex')
-    if (cache) {
-        const isCached = await FSExtra.pathExists(`${cacheDirectory}/${hash}`)
-        if (isCached) {
-            const cacheData = await FSExtra.readFile(`${cacheDirectory}/${hash}`)
-            return {
-                url,
-                data: JSON.parse(cacheData),
-                passthrough: location.passthrough
-            }
-        }
-    }
     const timeout = 15 * 1000
+    const toErrorMessage = (e, passthrough) => {
+        const reconcilerError = e.response && errors(e, passthrough)
+        if (reconcilerError) return reconcilerError // look for reconciler-specific errors first
+        if (e.response) return `Received code ${e.response.status}: ${e.config.url}` // response recieved, but non-2xx
+        if (e.code === 'ECONNABORTED') return `Timed out after ${timeout}s: ${e.config.url}` // request timed out
+        if (e.code) return `Error ${e.code}: ${e.config.url}` // request failed, with error code
+        return e.message // request not made
+    }
     const instance = Axios.create({ timeout })
     AxiosRetry(instance, {
         retries,
         shouldResetTimeout: true,
         retryCondition: e => {
-            return !e.response || e.response.status >= 500 // no response or server error
+            return !e.response || e.response.status >= 500 || e.response.status === 429 // no response, server error, or hit rate limit
         },
         retryDelay: (number, e) => {
-            if (number === 1) alert(`Received code ${e.code}: ${e.config.url}`)
-            else alert(`  → Received code ${e.code} in retry attempt #${number - 1}: ${e.config.url}`)
+            const message = toErrorMessage(e, e.config.passthrough)
+            if (number === 1) alert(`${message} (retrying...)`)
+            else alert(`  → ${message} (retry attempt #${number - 1})`)
             return 5 * 1000
         }
     })
-    try {
-        const response = await instance(location)
+    AxiosRateLimit(instance, {
+        maxRequests: limit, // so limit is number of requests per second
+        perMilliseconds: 1000
+    })
+    return async location => {
+        const url = typeof location === 'object' ? location.url : location
+        const hash = Crypto.createHash('sha1').update(JSON.stringify(location)).digest('hex')
         if (cache) {
-            await FSExtra.ensureDir(cacheDirectory)
-            await FSExtra.writeJson(`${cacheDirectory}/${hash}`, response.data)
+            const isCached = await FSExtra.pathExists(`${cacheDirectory}/${hash}`)
+            if (isCached) {
+                const cacheData = await FSExtra.readFile(`${cacheDirectory}/${hash}`)
+                return {
+                    url,
+                    data: JSON.parse(cacheData),
+                    passthrough: location.passthrough
+                }
+            }
         }
-        return {
-            url,
-            data: response.data,
-            passthrough: location.passthrough
+        try {
+            const response = await instance(location)
+            if (cache) {
+                await FSExtra.ensureDir(cacheDirectory)
+                await FSExtra.writeJson(`${cacheDirectory}/${hash}`, response.data)
+            }
+            return {
+                url,
+                data: response.data,
+                passthrough: location.passthrough
+            }
         }
-    }
-    catch (e) {
-        if (e.response) handling(e, location.passthrough) // run reconciler-specific handling first
-        if (e.response) throw new Error(`Received code ${e.response.status}: ${e.config.url}`) // response recieved, but non-2xx
-        if (e.request) throw new Error(`Timed out after ${timeout}s: ${e.config.url}`) // request made, no response
-        throw e // a bad request perhaps
+        catch (e) {
+            const message = toErrorMessage(e, location.passthrough)
+            throw new Error(message)
+        }
     }
 }
 

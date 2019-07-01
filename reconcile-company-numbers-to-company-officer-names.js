@@ -1,11 +1,11 @@
 function initialise(parameters, requestor) {
 
-    const request = requestor.bind(null, (e, passthrough) => {
+    const request = requestor(Infinity, (e, passthrough) => {
         const company = `${passthrough.companyNumber} (${passthrough.companyJurisdiction.toUpperCase()})`
-        if (e.response.status === 404) throw new Error(`Could not find company ${company}`)
-        if (e.response.status === 403) throw new Error('The rate limit has been reached' + (e.config.params.api_token ? '' : '-- try using an API token'))
-        if (e.response.status === 401) throw new Error(`API token ${e.config.params.api_token} is invalid`)
-        if (e.response.status >= 400) throw new Error(`Received code ${e.response.status} for company ${company}`)
+        if (e.response.status === 404) return `Could not find company ${company}`
+        if (e.response.status === 403) return 'The rate limit has been reached' + (e.config.params.api_token ? '' : '-- try using an API token')
+        if (e.response.status === 401) return `API token ${e.config.params.api_token} is invalid`
+        if (e.response.status >= 400) return `Received code ${e.response.status} for company ${company}`
     })
 
     function locate(entry) {
