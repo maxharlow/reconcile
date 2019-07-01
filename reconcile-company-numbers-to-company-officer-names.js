@@ -30,7 +30,8 @@ function initialise(parameters, requestor) {
     }
 
     function parse(response) {
-        return response.data.results.company.officers.map(officer => {
+        const officers = response.data.results.company.officers
+        return officers.map(officer => {
             const fields = {
                 companyName: response.data.results.company.name,
                 officerName: officer.officer.name,
@@ -65,6 +66,7 @@ const details = {
         { name: 'companyJurisdictionField', description: 'Jurisdiction code column, if any. It should use ISO 3166-2 format. [optional, default: "companyJurisdiction"]' }
     ],
     columns: [
+        { name: 'companyName' },
         { name: 'officerName' },
         { name: 'officerPosition' },
         { name: 'officerStartDate' },

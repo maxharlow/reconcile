@@ -67,6 +67,7 @@ const details = {
         { name: 'companyJurisdictionField', description: 'Jurisdiction code column, if any. It should use ISO 3166-2 format. [optional, default: "companyJurisdiction"]' }
     ],
     columns: [
+        { name: 'companyJurisdiction' },
         { name: 'companyName' },
         { name: 'companyIncorporationDate' },
         { name: 'companyDissolutionDate' },
