@@ -75,6 +75,7 @@ Parameters:
 * `companyJurisdictionField` Jurisdiction code column. It should use [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes). Optional. Default is `"companyJurisdiction"`.
 
 Produces a CSV including columns:
+* `companyJurisdiction`
 * `companyName`
 * `companyIncorporationDate`
 * `companyDissolutionDate`
@@ -92,7 +93,7 @@ Produces a CSV including columns:
 
 #### `company-numbers-to-company-officer-names`
 
-Use [OpenCorporates](https://opencorporates.com/) to look up a list of company numbers and jurisdiction codes, and retrieve the names of their directors.
+Use [OpenCorporates](https://opencorporates.com/) to look up a list of company numbers and jurisdiction codes, and retrieve the names of their officers.
 
 Parameters:
 * `apiToken` An OpenCorporates API token. You are [limited to 500 requests per month](https://api.opencorporates.com/documentation/API-Reference#usage_limits) otherwise. Optional.
@@ -101,6 +102,7 @@ Parameters:
 * `companyJurisdictionField` Jurisdiction code column, if any. It should use [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes). Optional. Default is `"companyJurisdiction"`.
 
 Produces a CSV including columns:
+* `companyName`
 * `officerName`
 * `officerPosition`
 * `officerStartDate`
