@@ -8,12 +8,12 @@ const CSVParser = require('csv-parser')
 
 function request(retries, cache, alert, limit, messages) {
     const cacheDirectory = '.reconcile-cache'
-    const timeout = 15 * 1000
+    const timeout = 30 * 1000
     const toErrorMessage = e => {
         const reconcilerError = e.response && messages(e)
         if (reconcilerError) return reconcilerError // look for reconciler-specific errors first
         if (e.response) return `Received code ${e.response.status}: ${e.config.url}` // response recieved, but non-2xx
-        if (e.code === 'ECONNABORTED') return `Timed out after ${timeout}s: ${e.config.url}` // request timed out
+        if (e.code === 'ECONNABORTED') return `Timed out after ${timeout / 1000}ms: ${e.config.url}` // request timed out
         if (e.code) return `Error ${e.code}: ${e.config.url}` // request failed, with error code
         return e.message // request not made
     }
@@ -26,8 +26,9 @@ function request(retries, cache, alert, limit, messages) {
         },
         retryDelay: (number, e) => {
             const message = toErrorMessage(e)
-            if (number === 1) alert(`${message} (retrying...)`)
-            else alert(`  → ${message} (retry attempt #${number - 1})`)
+            const attempt = number > 0 && number <= retries && retries > 1 ? ` (retrying, attempt ${number}...)` : ''
+            if (number === 1) alert(`${message}${attempt}`)
+            else alert(`  → ${message}${attempt}`)
             return 5 * 1000
         }
     })
