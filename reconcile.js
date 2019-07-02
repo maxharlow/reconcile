@@ -6,11 +6,11 @@ const AxiosRetry = require('axios-retry')
 const AxiosRateLimit = require('axios-rate-limit')
 const CSVParser = require('csv-parser')
 
-function request(retries, cache, alert, limit, errors) {
+function request(retries, cache, alert, limit, messages) {
     const cacheDirectory = '.reconcile-cache'
     const timeout = 15 * 1000
-    const toErrorMessage = (e, passthrough) => {
-        const reconcilerError = e.response && errors(e, passthrough)
+    const toErrorMessage = e => {
+        const reconcilerError = e.response && messages(e)
         if (reconcilerError) return reconcilerError // look for reconciler-specific errors first
         if (e.response) return `Received code ${e.response.status}: ${e.config.url}` // response recieved, but non-2xx
         if (e.code === 'ECONNABORTED') return `Timed out after ${timeout}s: ${e.config.url}` // request timed out
@@ -25,7 +25,7 @@ function request(retries, cache, alert, limit, errors) {
             return !e.response || e.response.status >= 500 || e.response.status === 429 // no response, server error, or hit rate limit
         },
         retryDelay: (number, e) => {
-            const message = toErrorMessage(e, e.config.passthrough)
+            const message = toErrorMessage(e)
             if (number === 1) alert(`${message} (retrying...)`)
             else alert(`  → ${message} (retry attempt #${number - 1})`)
             return 5 * 1000
@@ -33,7 +33,7 @@ function request(retries, cache, alert, limit, errors) {
     })
     AxiosRateLimit(instance, {
         maxRequests: limit, // so limit is number of requests per second
-        perMilliseconds: 1000
+        perMilliseconds: 1 * 1000
     })
     return async location => {
         const url = typeof location === 'object' ? location.url : location
@@ -62,8 +62,7 @@ function request(retries, cache, alert, limit, errors) {
             }
         }
         catch (e) {
-            const message = toErrorMessage(e, location.passthrough)
-            throw new Error(message)
+            throw new Error(toErrorMessage(e))
         }
     }
 }
