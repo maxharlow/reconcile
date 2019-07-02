@@ -3,8 +3,8 @@ const Cheerio = require('cheerio')
 
 function initialise(parameters, requestor) {
 
-    const request = requestor(Infinity, (e, passthrough) => {
-        if (e.response.status >= 400 && passthrough.titleNumber) return `Received code ${e.response.status} for title ${passthrough.titleNumber}`
+    const request = requestor(Infinity, e => {
+        if (e.response.status >= 400 && e.config.passthrough.titleNumber) return `Received code ${e.response.status} for title ${e.config.passthrough.titleNumber}`
     })
 
     function form(entry) {
