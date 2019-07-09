@@ -36,10 +36,17 @@ function request(retries, cache, alert, limit, messages) {
         maxRequests: limit, // so limit is number of requests per second
         perMilliseconds: 1 * 1000
     })
+    let cacheChecked = false
     return async location => {
         const url = typeof location === 'object' ? location.url : location
         const hash = Crypto.createHash('sha1').update(JSON.stringify(location)).digest('hex')
         if (cache) {
+            if (!cacheChecked) {
+                const cacheExists = await FSExtra.pathExists(cacheDirectory)
+                if (cacheExists) alert('Cached data found!')
+                else alert('No existing cached data found')
+                cacheChecked = true
+            }
             const isCached = await FSExtra.pathExists(`${cacheDirectory}/${hash}`)
             if (isCached) {
                 const cacheData = await FSExtra.readFile(`${cacheDirectory}/${hash}`)
