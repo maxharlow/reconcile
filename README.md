@@ -114,6 +114,33 @@ Produces a CSV including columns:
 
 <hr>
 
+#### `company-numbers-to-uk-company-officer-names`
+
+Use UK [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of company numbers, and retrieve the names of their officers.
+
+Parameters:
+* `apiKey` A Companies House [API key](https://developer.companieshouse.gov.uk/developer/applications/register).
+* `companyNumberField` Company number column. Optional. Default is `"companyNumber"`.
+
+Produces a CSV including columns:
+* `officerName`
+* `officerRole`
+* `officerAppointedDate`
+* `officerResignedDate`
+* `officerNationality`
+* `officerOccupation`
+* `officerAddress`
+* `officerDateOfBirth`
+* `officerCountryOfResidence`
+* `officerFormerNames`
+* `officerIDType`
+* `officerIDLegalAuthority`
+* `officerIDLegalForm`
+* `officerIDRegisteredPlace`
+* `officerIDNumber`
+
+<hr>
+
 #### `individual-names-to-company-officer-names`
 
 Use [OpenCorporates](https://opencorporates.com/) to look up a list of individual names and find which companies they are officers of (typically either as directors or secretaries).
