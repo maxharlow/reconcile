@@ -82,6 +82,7 @@ async function setup() {
         .option('p', { alias: 'parameters', type: 'string', describe: 'Parameters to be passed to the reconciler, either in Json or Yaml' })
         .option('r', { alias: 'retries', type: 'number', nargs: 1, describe: 'Number of times a request should be retried', default: 5 })
         .option('c', { alias: 'cache', type: 'boolean', describe: 'Whether to cache HTTP requests', default: false })
+        .option('j', { alias: 'join', type: 'string', describe: 'Whether to include unmatched rows (outer) or not (inner)', choices: ['outer', 'inner'], default: 'inner' })
         .help('?').alias('?', 'help')
         .version().alias('v', 'version')
     reconcilers.forEach(command => {
@@ -101,13 +102,14 @@ async function setup() {
         const parameters = await parse(interface.argv.parameters)
         const retries = interface.argv.retries
         const cache = interface.argv.cache
+        const join = interface.argv.join
         if (!reconcilers.includes(command)) throw new Error(`${command}: reconciler not found`)
         if (filename === '-') throw new Error('reading from standard input not supported')
         const exists = await FSExtra.pathExists(filename)
         if (!exists) throw new Error(`${filename}: could not find file`)
         console.error('Starting up...')
         const total = await reconcile.length(filename)
-        reconcile.run(command, filename, parameters, retries, cache, alert)
+        reconcile.run(command, filename, parameters, retries, cache, join, alert)
             .tap(ticker('Working...', total))
             .flatMap(x => x) // flatten
             .flatMap(csv())
