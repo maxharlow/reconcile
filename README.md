@@ -66,6 +66,20 @@ Produces a CSV including columns:
 
 <hr>
 
+#### `company-names-to-company-ciks`
+
+Use the [US SEC Edgar CIK lookup](https://www.sec.gov/edgar/searchedgar/cik.htm) to take a list of company names and find the most likely CIK, or 'central index key', for each. Note results do not include companies for which no match is found. Beware incorrect matches! Company names are terrible unique identifiers.
+
+Parameters:
+* `companyNameField` Company name column. Optional. Default is `"companyName"`.
+* `maximumResults` Maximum number of results to include for each name. Optional. Default is 1, maximum is 100.
+
+Produces a CSV including columns:
+* `companyName`
+* `companyCIK`
+
+<hr>
+
 #### `company-numbers-to-company-details`
 
 Use [OpenCorporates](https://opencorporates.com/) to look up a list of company numbers and jurisdiction codes, and retrieve various details for each.
