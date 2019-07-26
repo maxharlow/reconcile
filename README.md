@@ -11,6 +11,8 @@ Installing
 
     $ npm install -g reconcile
 
+Alternatively, don't install it and just prepend the below commands with `npx`.
+
 
 Usage
 -----
@@ -36,7 +38,7 @@ Alternatively, give the parameters inline:
 
     $ reconcile company-numbers-to-company-officer-names input.csv -p '{jurisdiction: gb, companyNumberField: RegisteredCompanyNumber}' > output.csv
 
-HTTP requests are automatically retried if they fail, five times by default, but this can be adjusted with the `-r` flag. Requests can also be cached using the `-c` flag.
+HTTP requests are automatically retried if they fail, five times by default, but this can be adjusted with the `-r` flag. Requests can also be cached using the `-c` flag. If you'd like to include rows where the reconciler found no match or encountered an error set the join flag `-j` to `'outer'`.
 
 
 Commands
