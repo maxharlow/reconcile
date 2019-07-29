@@ -4,13 +4,13 @@ const Cheerio = require('cheerio')
 function initialise(parameters, requestor) {
 
     const request = requestor(Infinity, e => {
-        const company = e.config.passthrough.companyName
-        if (e.response.status >= 400) return `Received code ${e.response.status} for company ${company}`
+        const name = e.config.passthrough.name
+        if (e.response.status >= 400) return `Received code ${e.response.status} for name ${name}`
     })
 
     function locate(entry) {
-        const companyName = entry[parameters.companyNameField || 'companyName']
-        if (!companyName) throw new Error('No company name found')
+        const name = entry[parameters.nameField || 'name']
+        if (!name) throw new Error('No name found')
         return {
             url: 'https://www.sec.gov/cgi-bin/cik_lookup',
             method: 'POST',
@@ -18,27 +18,27 @@ function initialise(parameters, requestor) {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
             data: Querystring.stringify({
-                company: companyName.trim()
+                company: name.trim()
             }),
             passthrough: {
-                companyName
+                name
             }
         }
     }
 
     function parse(response) {
         const document = Cheerio.load(response.data)
-        const companies = document('table tr > td:nth-child(2) > pre:nth-child(5)').html()
-        if (companies === null) {
-            const company = response.passthrough.companyName
-            throw new Error(`Could not find company ${company}`)
+        const results = document('table tr > td:nth-child(2) > pre:nth-child(5)').html()
+        if (results === null) {
+            const name = response.passthrough.name
+            throw new Error(`Could not find name ${name}`)
         }
         const maximumResults = parameters.maximumResults || 1
-        return companies.split('\n').slice(0, maximumResults).map(company => {
-            const element = Cheerio(company)
+        return results.split('\n').slice(0, maximumResults).map(name => {
+            const element = Cheerio(name)
             return {
-                companyName: element.eq(1).text().trim(),
-                companyCIK: element.eq(0).text()
+                name: element.eq(1).text().trim(),
+                cik: element.eq(0).text()
             }
         })
     }
@@ -56,12 +56,12 @@ function initialise(parameters, requestor) {
 
 const details = {
     parameters: [
-        { name: 'companyNameField', description: 'Company name column. [optional, default: "companyName"]' },
+        { name: 'nameField', description: 'Name column. [optional, default: "name"]' },
         { name: 'maximumResults', description: 'Maximum number of results to include for each name. [optional, default: 1, maximum 100]' }
     ],
     columns: [
-        { name: 'companyName' },
-        { name: 'companyCIK' }
+        { name: 'name' },
+        { name: 'cik' }
     ]
 }
 
