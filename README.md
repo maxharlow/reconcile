@@ -50,7 +50,7 @@ Double-press the tab key to autocomplete these names from the command line.
 
 #### `company-names-to-company-numbers`
 
-Use [OpenCorporates](https://opencorporates.com/) to look up a list of company names and find the most likely registration number for each. Note results do not include companies for which no match is found. Beware incorrect matches! Company names are terrible unique identifiers.
+Use [OpenCorporates](https://opencorporates.com/) to look up a list of company names and find the most likely registration number for each. Beware incorrect matches! Company names are terrible unique identifiers.
 
 Parameters:
 * `apiToken` An OpenCorporates API token. You are [limited to 200 requests per month and 50 per day](https://api.opencorporates.com/documentation/API-Reference#usage-limits) otherwise. Optional.
@@ -63,20 +63,6 @@ Produces a CSV including columns:
 * `companyJurisdiction`
 * `companyNumber`
 * `companyName`
-
-<hr>
-
-#### `company-names-to-company-ciks`
-
-Use the [US SEC Edgar CIK lookup](https://www.sec.gov/edgar/searchedgar/cik.htm) to take a list of company names and find the most likely CIK, or 'central index key', for each. Note results do not include companies for which no match is found. Beware incorrect matches! Company names are terrible unique identifiers.
-
-Parameters:
-* `companyNameField` Company name column. Optional. Default is `"companyName"`.
-* `maximumResults` Maximum number of results to include for each name. Optional. Default is 1, maximum is 100.
-
-Produces a CSV including columns:
-* `companyName`
-* `companyCIK`
 
 <hr>
 
@@ -130,7 +116,7 @@ Produces a CSV including columns:
 
 <hr>
 
-#### `company-numbers-to-uk-company-officer-names`
+#### `uk-company-numbers-to-uk-company-officer-names`
 
 Use UK [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of company numbers, and retrieve the names of their officers.
 
@@ -179,6 +165,20 @@ Produces a CSV including columns:
 * `companyName`
 * `companyNumber`
 * `companyJurisdiction`
+
+<hr>
+
+#### `names-to-sec-ciks`
+
+Use the [US SEC Edgar CIK lookup](https://www.sec.gov/edgar/searchedgar/cik.htm) to take a list of names of companies, funds, or individuals and find the most likely CIK, or 'central index key', an identifier given by the SEC to those who have filed disclosures. Beware incorrect matches! Names are terrible unique identifiers.
+
+Parameters:
+* `nameField` Name column. Optional. Default is `"name"`.
+* `maximumResults` Maximum number of results to include for each name. Optional. Default is 1, maximum is 100.
+
+Produces a CSV including columns:
+* `name`
+* `cik`
 
 <hr>
 
