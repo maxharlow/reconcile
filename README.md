@@ -116,33 +116,6 @@ Produces a CSV including columns:
 
 <hr>
 
-#### `uk-company-numbers-to-uk-company-officer-names`
-
-Use UK [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of company numbers, and retrieve the names of their officers.
-
-Parameters:
-* `apiKey` A Companies House [API key](https://developer.companieshouse.gov.uk/developer/applications/register).
-* `companyNumberField` Company number column. Optional. Default is `"companyNumber"`.
-
-Produces a CSV including columns:
-* `officerName`
-* `officerRole`
-* `officerAppointedDate`
-* `officerResignedDate`
-* `officerNationality`
-* `officerOccupation`
-* `officerAddress`
-* `officerDateOfBirth`
-* `officerCountryOfResidence`
-* `officerFormerNames`
-* `officerIDType`
-* `officerIDLegalAuthority`
-* `officerIDLegalForm`
-* `officerIDRegisteredPlace`
-* `officerIDNumber`
-
-<hr>
-
 #### `individual-names-to-company-officer-names`
 
 Use [OpenCorporates](https://opencorporates.com/) to look up a list of individual names and find which companies they are officers of (typically either as directors or secretaries).
@@ -168,6 +141,19 @@ Produces a CSV including columns:
 
 <hr>
 
+#### `land-registry-title-numbers-to-addresses`
+
+Look up [Land Registry](https://www.gov.uk/government/organisations/land-registry) title numbers (such as the result of a [PN1 search](https://www.gov.uk/government/publications/proprieters-names-search-of-the-index-pn1)), and find their addresses.
+
+Parameters:
+* `titleNumberField` Title number field. Optional. Default is `"titleNumber"`.
+
+Produces a CSV including columns:
+* `titleAddress`
+* `titleTenure` Leasehold or freehold.
+
+<hr>
+
 #### `names-to-sec-ciks`
 
 Use the [US SEC Edgar CIK lookup](https://www.sec.gov/edgar/searchedgar/cik.htm) to take a list of names of companies, funds, or individuals and find the most likely CIK, or 'central index key', an identifier given by the SEC to those who have filed disclosures. Beware incorrect matches! Names are terrible unique identifiers.
@@ -182,13 +168,27 @@ Produces a CSV including columns:
 
 <hr>
 
-#### `land-registry-title-numbers-to-addresses`
+#### `uk-company-numbers-to-uk-company-officer-names`
 
-Look up [Land Registry](https://www.gov.uk/government/organisations/land-registry) title numbers (such as the result of a [PN1 search](https://www.gov.uk/government/publications/proprieters-names-search-of-the-index-pn1)), and find their addresses.
+Use UK [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of company numbers, and retrieve the names of their officers.
 
 Parameters:
-* `titleNumberField` Title number field. Optional. Default is `"titleNumber"`.
+* `apiKey` A Companies House [API key](https://developer.companieshouse.gov.uk/developer/applications/register).
+* `companyNumberField` Company number column. Optional. Default is `"companyNumber"`.
 
 Produces a CSV including columns:
-* `titleAddress`
-* `titleTenure` Leasehold or freehold.
+* `officerName`
+* `officerRole`
+* `officerAppointedDate`
+* `officerResignedDate`
+* `officerNationality`
+* `officerOccupation`
+* `officerAddress`
+* `officerDateOfBirth`
+* `officerCountryOfResidence`
+* `officerFormerNames`
+* `officerIDType`
+* `officerIDLegalAuthority`
+* `officerIDLegalForm`
+* `officerIDRegisteredPlace`
+* `officerIDNumber`
