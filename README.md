@@ -168,7 +168,7 @@ Produces a CSV including columns:
 
 <hr>
 
-#### `uk-company-numbers-to-uk-company-beneficial-owner-names`
+#### `uk-company-numbers-to-company-beneficial-owner-names`
 
 Use UK [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of company numbers, and retrieve the names of their beneficial owners.
 
@@ -201,7 +201,7 @@ Produces a CSV including columns:
 
 <hr>
 
-#### `uk-company-numbers-to-uk-company-officer-names`
+#### `uk-company-numbers-to-company-officer-names`
 
 Use UK [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of company numbers, and retrieve the names of their officers.
 
