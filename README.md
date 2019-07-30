@@ -168,6 +168,39 @@ Produces a CSV including columns:
 
 <hr>
 
+#### `uk-company-numbers-to-uk-company-beneficial-owner-names`
+
+Use UK [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of company numbers, and retrieve the names of their beneficial owners.
+
+Parameters:
+* `apiKey` A Companies House [API key](https://developer.companieshouse.gov.uk/developer/applications/register).
+* `companyNumberField` Company number column. Optional. Default is `"companyNumber"`.
+
+Produces a CSV including columns:
+* `beneficialOwnerName`
+* `beneficialOwnerKind`
+* `beneficialOwnerNaturesOfControl`
+* `beneficialOwnerName`
+* `beneficialOwnerTitle`
+* `beneficialOwnerFirstName`
+* `beneficialOwnerMiddleNames`
+* `beneficialOwnerLastName`
+* `beneficialOwnerKind`
+* `beneficialOwnerNaturesOfControl`
+* `beneficialOwnerNotifiedOn`
+* `beneficialOwnerCeasedOn`
+* `beneficialOwnerNationality`
+* `beneficialOwnerAddress`
+* `beneficialOwnerDateOfBirth`
+* `beneficialOwnerCountryOfResidence`
+* `beneficialOwnerIDLegalAuthority`
+* `beneficialOwnerIDLegalForm`
+* `beneficialOwnerIDRegisteredPlace`
+* `beneficialOwnerIDRegisteredCountry`
+* `beneficialOwnerIDNumber`
+
+<hr>
+
 #### `uk-company-numbers-to-uk-company-officer-names`
 
 Use UK [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of company numbers, and retrieve the names of their officers.
