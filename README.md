@@ -168,6 +168,25 @@ Produces a CSV including columns:
 
 <hr>
 
+#### `sec-ciks-to-sec-filings`
+
+Use the [US SEC Edgar company filings search](https://www.sec.gov/edgar/searchedgar/companysearch.html) to take a list of CIKs, or 'central index keys', an identifier given by the SEC to those who have filed disclosures, and retrieve all their filings.
+
+Parameters:
+* `cikField` CIK column. Optional. Default is `"cik"`.
+* `filingType` Type of filings to include, eg. 10-K. Optional. Default is all filings.
+* `includeAll` Set true to include all filed documents, instead of just the first. Optional. Default is first only.
+
+Produces a CSV including columns:
+* `filingDate`
+* `filingType`
+* `filingDetail`
+* `filingDocumentType`
+* `filingDocumentDescription`
+* `filingDocument`
+
+<hr>
+
 #### `uk-company-numbers-to-company-beneficial-owner-names`
 
 Use UK [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of company numbers, and retrieve the names of their beneficial owners.
