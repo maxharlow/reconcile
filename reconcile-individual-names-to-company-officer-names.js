@@ -2,7 +2,7 @@ function initialise(parameters, requestor) {
 
     const request = requestor(Infinity, e => {
         const individual = e.config.passthrough.individualName + (e.config.passthrough.individualJurisdiction ? ` (${e.config.passthrough.individualJurisdiction.toUpperCase()})` : '')
-        if (e.response.status === 403) return 'The rate limit has been reached' + (e.config.params.api_token ? '' : '-- try using an API token')
+        if (e.response.status === 403) return 'The rate limit has been reached' + (e.config.params.api_token ? '' : ' -- try using an API token')
         if (e.response.status === 401) return `API token ${e.config.params.api_token} is invalid`
         if (e.response.status >= 400) return `Received code ${e.response.status} for individual ${individual}`
     })
@@ -33,7 +33,7 @@ function initialise(parameters, requestor) {
 
     function parse(response) {
         if (response.data.results.officers.length === 0) {
-            const individual = passthrough.individualName + (passthrough.individualJurisdiction ? ` (${passthrough.individualJurisdiction.toUpperCase()})` : '')
+            const individual = response.passthrough.individualName + (response.passthrough.individualJurisdiction ? ` (${response.passthrough.individualJurisdiction.toUpperCase()})` : '')
             throw new Error(`Could not find individual ${individual}`)
         }
         const officers = response.data.results.officers
