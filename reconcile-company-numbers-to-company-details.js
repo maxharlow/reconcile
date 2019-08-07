@@ -38,7 +38,7 @@ function initialise(parameters, requestor) {
             companyDissolutionDate: company.dissolution_date,
             companyType: company.company_type,
             companyStatus: company.current_status,
-            companyAddress: company.registered_address_in_full.replace(/\n/g, ', '),
+            companyAddress: company.registered_address_in_full ? company.registered_address_in_full.replace(/\n/g, ', ') : null,
             companyPreviousNames: company.previous_names.map(name => name.company_name).join(', '),
             companyAlternativeNames: company.alternative_names.join(', '),
             companyBeneficialOwners: company.ultimate_beneficial_owners.map(owner => owner.ultimate_beneficial_owner.name).join(', '),
