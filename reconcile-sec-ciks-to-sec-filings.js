@@ -27,10 +27,16 @@ function initialise(parameters, requestor) {
 
     function details(response) {
         const document = Cheerio.load(response.data)
-        const results = document('.tableFile2 tr:not(:first-of-type)').get() // note this will only get the first 100 results!
-        if (results.length === 0) {
+        const table = document('.tableFile2').get()
+        if (table.length === 0) {
             const cik = response.passthrough.cik
             throw new Error(`Could not find CIK ${cik}`)
+        }
+        const results = document('.tableFile2 tr:not(:first-of-type)').get() // note this will only get the first 100 results!
+        if (results.length === 0) {
+            const filings = parameters.filingType ? `${parameters.filingType} filings` : 'filings'
+            const cik = response.passthrough.cik
+            throw new Error(`No ${filings} found for CIK ${cik}`)
         }
         return results.map(result => {
             const element = Cheerio.load(result)
