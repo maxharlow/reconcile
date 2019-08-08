@@ -71,7 +71,7 @@ function initialise(parameters, requestor) {
                 beneficialOwnerNotifiedOn: person.notified_on,
                 beneficialOwnerCeasedOn: person.ceased_on ? person.ceased_on : null,
                 beneficialOwnerNationality: person.nationality ? person.nationality : null,
-                beneficialOwnerAddress: [person.address.care_of, person.address.premises, person.address.address_line_1, person.address.address_line_2, person.address.locality, person.address.region, person.address.country, person.address.po_box, person.address.postal_code].filter(x => x).join(', '),
+                beneficialOwnerAddress: [person.address.care_of, person.address.premises, person.address.po_box, person.address.address_line_1, person.address.address_line_2, person.address.locality, person.address.region, person.address.postal_code, person.address.country].filter(x => x).join(', '),
                 beneficialOwnerDateOfBirth: person.date_of_birth ? [person.date_of_birth.year, person.date_of_birth.month, person.date_of_birth.day].filter(x => x).join('-') : null,
                 beneficialOwnerCountryOfResidence: person.country_of_residence ? person.country_of_residence : null,
                 beneficialOwnerIDLegalAuthority: person.identification && person.identification.legal_authority ? person.identification.legal_authority : null,
