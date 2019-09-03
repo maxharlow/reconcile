@@ -182,6 +182,55 @@ Produces a CSV including columns:
 
 <hr>
 
+#### `uk-company-names-to-company-numbers`
+
+Use UK [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of company names and find the most likely registration number for each. Beware incorrect matches! Company names are terrible unique identifiers.
+
+Parameters:
+* `apiKey` A Companies House [API key](https://developer.companieshouse.gov.uk/developer/applications/register).
+* `companyNameField` Company name column. Optional. Default is `"companyName"`.
+* `maximumResults` Maximum number of results to include for each name. Optional. Default is 1, maximum is 100.
+
+Produces a CSV including columns:
+* `companyNumber`
+* `companyName`
+
+<hr>
+
+#### `uk-company-numbers-to-company-details`
+
+Use UK [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of company numbers, and retrieve various details for each.
+
+Parameters:
+* `apiKey` A Companies House [API key](https://developer.companieshouse.gov.uk/developer/applications/register).
+* `companyNumberField` Company number column. Optional. Default is `"companyNumber"`.
+
+Produces a CSV including columns:
+* `companyName`
+* `companyUKJurisdiction`
+* `companyCreationDate`
+* `companyCessationDate`
+* `companyType`
+* `companySubtype`
+* `companyStatus`
+* `companyStatusDetail`
+* `companyAddress`
+* `companyAddressIsInDispute`
+* `companyAddressIsUndeliverable`
+* `companyPreviousNames`
+* `companySICs`
+* `companyCanFile`
+* `companyHasInsolvencyHistory`
+* `companyHasCharges`
+* `companyHasBeenLiquidated`
+* `companyAccountsOverdue`
+* `companyAnnualReturnOverdue`
+* `companyPartialDataAvailable`
+* `companyExternalRegistrationNumber`
+* `companyLastFullMembersListDate`
+
+<hr>
+
 #### `uk-company-numbers-to-company-beneficial-owner-names`
 
 Use UK [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of company numbers, and retrieve the names of their beneficial owners.
