@@ -136,6 +136,24 @@ Produces a CSV including columns:
 
 <hr>
 
+#### `individual-names-to-uk-company-officer-ids`
+
+Use UK [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of individual names and find the ID numbers for each. Many officers will have multiple IDs associated with them. This is limited to bringing back the first 10 pages of matches.
+
+Parameters:
+* `apiKey` A Companies House [API key](https://developer.companieshouse.gov.uk/developer/applications/register).
+* `individualNameField` Individual name column. Optional. Default is `"individualName"`.
+
+Produces a CSV including columns:
+* `officerID`
+* `officerName`
+* `officerBirthMonth`
+* `officerBirthYear`
+* `officerAppointments`
+* `officerAddress`
+
+<hr>
+
 #### `land-registry-title-numbers-to-addresses`
 
 Look up [Land Registry](https://www.gov.uk/government/organisations/land-registry) title numbers (such as the result of a [PN1 search](https://www.gov.uk/government/publications/proprieters-names-search-of-the-index-pn1)), and find their addresses.
@@ -288,3 +306,27 @@ Produces a CSV including columns:
 * `officerIDLegalForm`
 * `officerIDRegisteredPlace`
 * `officerIDNumber`
+
+<hr>
+
+#### `uk-officer-ids-to-company-appointments`
+
+Use UK [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of officer IDs, and retrieve all their appointments.
+
+Parameters:
+* `apiKey` A Companies House [API key](https://developer.companieshouse.gov.uk/developer/applications/register).
+* `officerIDField` Officer ID column. Optional. Default is `"officerID"`.
+
+Produces a CSV including columns:
+* `companyNumber`
+* `companyName`
+* `companyStatus`
+* `officerID`
+* `officerName`
+* `officerRole`
+* `officerAppointedDate`
+* `officerResignedDate`
+* `officerNationality`
+* `officerOccupation`
+* `officerAddress`
+* `officerCountryOfResidence`
