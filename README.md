@@ -300,6 +300,25 @@ Produces a CSV including columns:
 
 <hr>
 
+#### `email-addresses-to-linkedin-profiles`
+
+Use [LinkedIn](https://www.linkedin.com/) to take a list of email addresses, and retrieve their LinkedIn profile, as well as other details.
+
+Parameters:
+* `email` The email address for a registered LinkedIn account.
+* `password` The password for a registered LinkedIn account.
+* `emailAddressField` Email address column. Optional. Default is `"emailAddress"`.
+
+Produces a CSV including columns:
+* `individualName`
+* `individualLinkedinProfile`
+* `individualLocation`
+* `company`
+* `companyLinkedinProfile`
+* `companyRole`
+
+<hr>
+
 #### `names-to-sec-ciks`
 
 Use the [US SEC Edgar CIK lookup](https://www.sec.gov/edgar/searchedgar/cik.htm) to take a list of names of companies, funds, or individuals and find the most likely CIK, or 'central index key', an identifier given by the SEC to those who have filed disclosures. Beware incorrect matches! Names are terrible unique identifiers.
