@@ -422,3 +422,21 @@ Produces a CSV including columns:
 * `shipCompanyRole`
 * `shipCompanyName`
 * `shipCompanyDate`
+
+<hr>
+
+#### `ship-mmsi-numbers-to-ship-radio-station-details`
+
+Use the [International Telecommunication Union's database of ship-based radio stations (ITU Mars)] to take a list of ship MMSI numbers, and retrieve their details, including the owner.
+
+Parameters:
+* `shipMMSINumberField` Ship MMSI number field. Optional. Default is `"shipMMSINumber"`.
+
+Produces a CSV including columns:
+* `shipName`
+* `shipCallSign`
+* `shipIdentificationNumber`
+* `shipOwner`
+* `shipFormerName`
+* `shipTonnage`
+* `shipPersonCapacity`
