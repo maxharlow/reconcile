@@ -167,39 +167,6 @@ Produces a CSV including columns:
 
 <hr>
 
-#### `names-to-sec-ciks`
-
-Use the [US SEC Edgar CIK lookup](https://www.sec.gov/edgar/searchedgar/cik.htm) to take a list of names of companies, funds, or individuals and find the most likely CIK, or 'central index key', an identifier given by the SEC to those who have filed disclosures. Beware incorrect matches! Names are terrible unique identifiers.
-
-Parameters:
-* `nameField` Name column. Optional. Default is `"name"`.
-* `maximumResults` Maximum number of results to include for each name. Optional. Default is 1, maximum is 100.
-
-Produces a CSV including columns:
-* `name`
-* `cik`
-
-<hr>
-
-#### `sec-ciks-to-sec-filings`
-
-Use the [US SEC Edgar company filings search](https://www.sec.gov/edgar/searchedgar/companysearch.html) to take a list of CIKs, or 'central index keys', an identifier given by the SEC to those who have filed disclosures, and retrieve all their filings.
-
-Parameters:
-* `cikField` CIK column. Optional. Default is `"cik"`.
-* `filingType` Type of filings to include, eg. 10-K. Optional. Default is all filings.
-* `includeAll` Set true to include all filed documents, instead of just the first. Optional. Default is first only.
-
-Produces a CSV including columns:
-* `filingDate`
-* `filingType`
-* `filingDetail`
-* `filingDocumentType`
-* `filingDocumentDescription`
-* `filingDocument`
-
-<hr>
-
 #### `uk-company-names-to-company-numbers`
 
 Use UK [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of company names and find the most likely registration number for each. Beware incorrect matches! Company names are terrible unique identifiers.
@@ -330,3 +297,128 @@ Produces a CSV including columns:
 * `officerOccupation`
 * `officerAddress`
 * `officerCountryOfResidence`
+
+<hr>
+
+#### `names-to-sec-ciks`
+
+Use the [US SEC Edgar CIK lookup](https://www.sec.gov/edgar/searchedgar/cik.htm) to take a list of names of companies, funds, or individuals and find the most likely CIK, or 'central index key', an identifier given by the SEC to those who have filed disclosures. Beware incorrect matches! Names are terrible unique identifiers.
+
+Parameters:
+* `nameField` Name column. Optional. Default is `"name"`.
+* `maximumResults` Maximum number of results to include for each name. Optional. Default is 1, maximum is 100.
+
+Produces a CSV including columns:
+* `name`
+* `cik`
+
+<hr>
+
+#### `sec-ciks-to-sec-filings`
+
+Use the [US SEC Edgar company filings search](https://www.sec.gov/edgar/searchedgar/companysearch.html) to take a list of CIKs, or 'central index keys', an identifier given by the SEC to those who have filed disclosures, and retrieve all their filings.
+
+Parameters:
+* `cikField` CIK column. Optional. Default is `"cik"`.
+* `filingType` Type of filings to include, eg. 10-K. Optional. Default is all filings.
+* `includeAll` Set true to include all filed documents, instead of just the first. Optional. Default is first only.
+
+Produces a CSV including columns:
+* `filingDate`
+* `filingType`
+* `filingDetail`
+* `filingDocumentType`
+* `filingDocumentDescription`
+* `filingDocument`
+
+<hr>
+
+#### `ship-names-to-ship-imo-numbers`
+
+Use [Equasis](http://www.equasis.org/) to take a list of ship names, and retrive their IMO numbers. Note Equasis only allows around 500 lookups per day. If you exceed that two days in a row you get blocked for seven days.
+
+Parameters:
+* `email` The email address for a registered Equasis account.
+* `password` The password for a registered Equasis account.
+* `shipNameField` Ship name field. Optional. Default is `"shipName"`.
+
+Produces a CSV including columns:
+* `shipIMONumber`
+* `shipName`
+* `shipTonnage`
+* `shipType`
+* `shipBuildYear`
+* `shipFlag`
+
+<hr>
+
+#### `ship-names-to-ship-imo-numbers`
+
+Use [Equasis](http://www.equasis.org/) to take a list of ship names, and retrieve their IMO numbers. Note Equasis only allows around 500 lookups per day. If you exceed that two days in a row you get blocked for seven days.
+
+Parameters:
+* `email` The email address for a registered Equasis account.
+* `password` The password for a registered Equasis account.
+* `shipNameField` Ship name field. Optional. Default is `"shipName"`.
+
+Produces a CSV including columns:
+* `shipIMONumber`
+* `shipName`
+* `shipTonnage`
+* `shipType`
+* `shipBuildYear`
+* `shipFlag`
+
+<hr>
+
+#### `ship-imo-numbers-to-ship-details`
+
+Use [Equasis](http://www.equasis.org/) to take a list of ship IMO numbers, and retrieve all their connected companies, as well as other details. Note Equasis only allows around 500 lookups per day. If you exceed that two days in a row you get blocked for seven days.
+
+Parameters:
+* `email` The email address for a registered Equasis account.
+* `password` The password for a registered Equasis account.
+* `shipIMONumberField` Ship IMO number field. Optional. Default is `"shipIMONumber"`.
+
+Produces a CSV including columns:
+* `shipName`
+* `shipCallSign`
+* `shipMMSI`
+* `shipTonnage`
+* `shipDWT`
+* `shipType`
+* `shipBuildYear`
+* `shipFlag`
+* `shipStatus`
+* `shipFormerNames`
+* `shipFormerFlags`
+* `shipCompanyRole`
+* `shipCompanyName`
+* `shipCompanyDate`
+
+<hr>
+
+#### `ship-mmsi-numbers-to-ship-details`
+
+Use [Equasis](http://www.equasis.org/) to take a list of ship MMSI numbers, and retrieve all their connected companies, as well as other details. Note Equasis only allows around 500 lookups per day. If you exceed that two days in a row you get blocked for seven days.
+
+Parameters:
+* `email` The email address for a registered Equasis account.
+* `password` The password for a registered Equasis account.
+* `shipMMSINumberField` Ship MMSI number field. Optional. Default is `"shipMMSINumber"`.
+
+Produces a CSV including columns:
+* `shipName`
+* `shipCallSign`
+* `shipMMSI`
+* `shipTonnage`
+* `shipDWT`
+* `shipType`
+* `shipBuildYear`
+* `shipFlag`
+* `shipStatus`
+* `shipFormerNames`
+* `shipFormerFlags`
+* `shipCompanyRole`
+* `shipCompanyName`
+* `shipCompanyDate`
