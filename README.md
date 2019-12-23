@@ -446,7 +446,7 @@ Produces a CSV including columns:
 
 #### `ship-mmsi-numbers-to-ship-radio-station-details`
 
-Use the [International Telecommunication Union's database of ship-based radio stations (ITU Mars)] to take a list of ship MMSI numbers, and retrieve their details, including the owner.
+Use the [International Telecommunication Union's database of ship-based radio stations (ITU Mars)](https://www.itu.int/mmsapp/ShipStation/list) to take a list of ship MMSI numbers, and retrieve their details, including the owner.
 
 Parameters:
 * `shipMMSINumberField` Ship MMSI number field. Optional. Default is `"shipMMSINumber"`.
