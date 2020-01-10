@@ -1,7 +1,7 @@
 const Querystring = require('querystring')
 const Cheerio = require('cheerio')
 
-function initialise(parameters, requestor) {
+function initialise(parameters, requestor, die) {
 
     const request = requestor(Infinity, e => {
         const ship = e.config.passthrough.shipMMSINumber
