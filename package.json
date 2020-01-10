@@ -1,7 +1,7 @@
 {
     "name": "reconcile",
     "description": "Enrich your data, adding new columns based on lookups to online services.",
-    "version": "2.4.0",
+    "version": "2.5.0",
     "author": "Max Harlow <maxharlow@gmail.com> (http://maxharlow.com/)",
     "license": "Apache-2.0",
     "preferGlobal": true,
