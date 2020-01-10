@@ -1,11 +1,11 @@
 const Querystring = require('querystring')
 const Cheerio = require('cheerio')
 
-function initialise(parameters, requestor) {
+function initialise(parameters, requestor, die) {
 
     const request = requestor(10, e => {
         const name = e.config.passthrough.name
-        if (e.response.status === 429) return 'The rate limit has been reached'
+        if (e.response.status === 429) die('The rate limit has been reached')
         if (e.response.status >= 400) return `Received code ${e.response.status} for name ${name}`
     })
 
