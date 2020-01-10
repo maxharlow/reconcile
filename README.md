@@ -333,20 +333,6 @@ Produces a CSV including columns:
 
 ### Using SEC Edgar (US)
 
-#### `names-to-sec-ciks`
-
-Use the [SEC Edgar CIK lookup](https://www.sec.gov/edgar/searchedgar/cik.htm) to take a list of names of companies, funds, or individuals and find the most likely CIK, or 'central index key', an identifier given by the SEC to those who have filed disclosures. Beware incorrect matches! Names are terrible unique identifiers.
-
-Parameters:
-* `nameField` Name column. Optional. Default is `"name"`.
-* `maximumResults` Maximum number of results to include for each name. Optional. Default is 1, maximum is 100.
-
-Produces a CSV including columns:
-* `name`
-* `cik`
-
-<hr>
-
 #### `sec-ciks-to-sec-filings`
 
 Use the [SEC Edgar company filings search](https://www.sec.gov/edgar/searchedgar/companysearch.html) to take a list of CIKs, or 'central index keys', an identifier given by the SEC to those who have filed disclosures, and retrieve all their filings.
@@ -366,27 +352,22 @@ Produces a CSV including columns:
 
 <hr>
 
+#### `names-to-sec-ciks`
 
-### Using Equasis
-
-#### `ship-names-to-ship-imo-numbers`
-
-Use [Equasis](http://www.equasis.org/) to take a list of ship names, and retrieve their IMO numbers. Note Equasis only allows around 500 lookups per day. If you exceed that two days in a row you get blocked for seven days.
+Use the [SEC Edgar CIK lookup](https://www.sec.gov/edgar/searchedgar/cik.htm) to take a list of names of companies, funds, or individuals and find the most likely CIK, or 'central index key', an identifier given by the SEC to those who have filed disclosures. Beware incorrect matches! Names are terrible unique identifiers.
 
 Parameters:
-* `email` The email address for a registered Equasis account.
-* `password` The password for a registered Equasis account.
-* `shipNameField` Ship name field. Optional. Default is `"shipName"`.
+* `nameField` Name column. Optional. Default is `"name"`.
+* `maximumResults` Maximum number of results to include for each name. Optional. Default is 1, maximum is 100.
 
 Produces a CSV including columns:
-* `shipIMONumber`
-* `shipName`
-* `shipTonnage`
-* `shipType`
-* `shipBuildYear`
-* `shipFlag`
+* `name`
+* `cik`
 
 <hr>
+
+
+### Using Equasis
 
 #### `ship-imo-numbers-to-ship-details`
 
@@ -439,6 +420,25 @@ Produces a CSV including columns:
 * `shipCompanyRole`
 * `shipCompanyName`
 * `shipCompanyDate`
+
+<hr>
+
+#### `ship-names-to-ship-imo-numbers`
+
+Use [Equasis](http://www.equasis.org/) to take a list of ship names, and retrieve their IMO numbers. Note Equasis only allows around 500 lookups per day. If you exceed that two days in a row you get blocked for seven days.
+
+Parameters:
+* `email` The email address for a registered Equasis account.
+* `password` The password for a registered Equasis account.
+* `shipNameField` Ship name field. Optional. Default is `"shipName"`.
+
+Produces a CSV including columns:
+* `shipIMONumber`
+* `shipName`
+* `shipTonnage`
+* `shipType`
+* `shipBuildYear`
+* `shipFlag`
 
 <hr>
 
