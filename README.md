@@ -43,23 +43,7 @@ Double-press the tab key to autocomplete these names from the command line.
 
 <hr>
 
-#### `company-names-to-company-numbers`
-
-Use [OpenCorporates](https://opencorporates.com/) to look up a list of company names and find the most likely registration number for each. Beware incorrect matches! Company names are terrible unique identifiers.
-
-Parameters:
-* `apiToken` An OpenCorporates API token. You are [limited to 200 requests per month and 50 per day](https://api.opencorporates.com/documentation/API-Reference#usage-limits) otherwise. Optional.
-* `jurisdiction` If all companies have the same jurisdiction you can specify it here instead of in a column. Optional.
-* `companyNameField` Company name column. Optional. Default is `"companyName"`.
-* `companyJurisdictionField` Jurisdiction code column, if any. It should use [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes). Optional. Default is `"companyJurisdiction"`.
-* `maximumResults` Maximum number of results to include for each name. Optional. Default is 1, maximum is 30, or 100 with an API token.
-
-Produces a CSV including columns:
-* `companyJurisdiction`
-* `companyNumber`
-* `companyName`
-
-<hr>
+### Using OpenCorporates
 
 #### `company-numbers-to-company-details`
 
@@ -111,6 +95,24 @@ Produces a CSV including columns:
 
 <hr>
 
+#### `company-names-to-company-numbers`
+
+Use [OpenCorporates](https://opencorporates.com/) to look up a list of company names and find the most likely registration number for each. Beware incorrect matches! Company names are terrible unique identifiers.
+
+Parameters:
+* `apiToken` An OpenCorporates API token. You are [limited to 200 requests per month and 50 per day](https://api.opencorporates.com/documentation/API-Reference#usage-limits) otherwise. Optional.
+* `jurisdiction` If all companies have the same jurisdiction you can specify it here instead of in a column. Optional.
+* `companyNameField` Company name column. Optional. Default is `"companyName"`.
+* `companyJurisdictionField` Jurisdiction code column, if any. It should use [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes). Optional. Default is `"companyJurisdiction"`.
+* `maximumResults` Maximum number of results to include for each name. Optional. Default is 1, maximum is 30, or 100 with an API token.
+
+Produces a CSV including columns:
+* `companyJurisdiction`
+* `companyNumber`
+* `companyName`
+
+<hr>
+
 #### `individual-names-to-company-officer-names`
 
 Use [OpenCorporates](https://opencorporates.com/) to look up a list of individual names and find which companies they are officers of (typically either as directors or secretaries).
@@ -135,51 +137,31 @@ Produces a CSV including columns:
 
 <hr>
 
-#### `individual-names-to-uk-company-officer-ids`
+#### `names-to-company-beneficial-owner-names`
 
-Use UK [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of individual names and find the ID numbers for each. Many officers will have multiple IDs associated with them. This is limited to bringing back the first 10 pages of matches.
-
-Parameters:
-* `apiKey` A Companies House [API key](https://developer.companieshouse.gov.uk/developer/applications/register).
-* `individualNameField` Individual name column. Optional. Default is `"individualName"`.
-
-Produces a CSV including columns:
-* `officerID`
-* `officerName`
-* `officerBirthMonth`
-* `officerBirthYear`
-* `officerAppointments`
-* `officerAddress`
-
-<hr>
-
-#### `land-registry-title-numbers-to-addresses`
-
-Look up [Land Registry](https://www.gov.uk/government/organisations/land-registry) title numbers (such as the result of a [PN1 search](https://www.gov.uk/government/publications/proprieters-names-search-of-the-index-pn1)), and find their addresses.
+Use [OpenCorporates](https://opencorporates.com/) to look up a list of names of companies or individuals and find which companies they are the beneficial owner of.
 
 Parameters:
-* `titleNumberField` Title number field. Optional. Default is `"titleNumber"`.
+* `apiToken` An OpenCorporates API token. You are [limited to 200 requests per month and 50 per day](https://api.opencorporates.com/documentation/API-Reference#usage-limits) otherwise. Optional.
+* `nameField` Name column. Optional. Default is `"name"`.
 
 Produces a CSV including columns:
-* `titleAddress`
-* `titleTenure` Leasehold or freehold.
-
-<hr>
-
-#### `uk-company-names-to-company-numbers`
-
-Use UK [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of company names and find the most likely registration number for each. Beware incorrect matches! Company names are terrible unique identifiers.
-
-Parameters:
-* `apiKey` A Companies House [API key](https://developer.companieshouse.gov.uk/developer/applications/register).
-* `companyNameField` Company name column. Optional. Default is `"companyName"`.
-* `maximumResults` Maximum number of results to include for each name. Optional. Default is 1, maximum is 100.
-
-Produces a CSV including columns:
-* `companyNumber`
+* `ownerName`
+* `ownerCompanyNumber`
+* `ownerCompanyJurisdiction`
+* `ownerBirthDate`
+* `ownerNationality`
+* `ownerCountryOfResidence`
+* `ownerAddress`
+* `ownerControlMechanisms`
 * `companyName`
+* `companyNumber`
+* `companyJurisdiction`
 
 <hr>
+
+
+### Using UK Companies House
 
 #### `uk-company-numbers-to-company-details`
 
@@ -275,6 +257,39 @@ Produces a CSV including columns:
 
 <hr>
 
+#### `company-names-to-uk-company-numbers`
+
+Use UK [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of company names and find the most likely registration number for each. Beware incorrect matches! Company names are terrible unique identifiers.
+
+Parameters:
+* `apiKey` A Companies House [API key](https://developer.companieshouse.gov.uk/developer/applications/register).
+* `companyNameField` Company name column. Optional. Default is `"companyName"`.
+* `maximumResults` Maximum number of results to include for each name. Optional. Default is 1, maximum is 100.
+
+Produces a CSV including columns:
+* `companyNumber`
+* `companyName`
+
+<hr>
+
+#### `individual-names-to-uk-company-officer-ids`
+
+Use UK [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of individual names and find the ID numbers for each. Many officers will have multiple IDs associated with them. This is limited to bringing back the first 10 pages of matches.
+
+Parameters:
+* `apiKey` A Companies House [API key](https://developer.companieshouse.gov.uk/developer/applications/register).
+* `individualNameField` Individual name column. Optional. Default is `"individualName"`.
+
+Produces a CSV including columns:
+* `officerID`
+* `officerName`
+* `officerBirthMonth`
+* `officerBirthYear`
+* `officerAppointments`
+* `officerAddress`
+
+<hr>
+
 #### `uk-officer-ids-to-company-appointments`
 
 Use UK [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of officer IDs, and retrieve all their appointments.
@@ -299,28 +314,28 @@ Produces a CSV including columns:
 
 <hr>
 
-#### `email-addresses-to-linkedin-profiles`
 
-Use [LinkedIn](https://www.linkedin.com/) to take a list of email addresses, and retrieve their LinkedIn profile, as well as other details.
+### Using Land Registry (UK)
+
+#### `uk-land-title-numbers-to-addresses`
+
+Look up UK [Land Registry](https://www.gov.uk/government/organisations/land-registry) title numbers (such as the result of a [PN1 search](https://www.gov.uk/government/publications/proprieters-names-search-of-the-index-pn1)), and find their addresses.
 
 Parameters:
-* `email` The email address for a registered LinkedIn account.
-* `password` The password for a registered LinkedIn account.
-* `emailAddressField` Email address column. Optional. Default is `"emailAddress"`.
+* `titleNumberField` Title number field. Optional. Default is `"titleNumber"`.
 
 Produces a CSV including columns:
-* `individualName`
-* `individualLinkedinProfile`
-* `individualLocation`
-* `company`
-* `companyLinkedinProfile`
-* `companyRole`
+* `titleAddress`
+* `titleTenure` Leasehold or freehold.
 
 <hr>
 
+
+### Using SEC Edgar (US)
+
 #### `names-to-sec-ciks`
 
-Use the [US SEC Edgar CIK lookup](https://www.sec.gov/edgar/searchedgar/cik.htm) to take a list of names of companies, funds, or individuals and find the most likely CIK, or 'central index key', an identifier given by the SEC to those who have filed disclosures. Beware incorrect matches! Names are terrible unique identifiers.
+Use the [SEC Edgar CIK lookup](https://www.sec.gov/edgar/searchedgar/cik.htm) to take a list of names of companies, funds, or individuals and find the most likely CIK, or 'central index key', an identifier given by the SEC to those who have filed disclosures. Beware incorrect matches! Names are terrible unique identifiers.
 
 Parameters:
 * `nameField` Name column. Optional. Default is `"name"`.
@@ -334,7 +349,7 @@ Produces a CSV including columns:
 
 #### `sec-ciks-to-sec-filings`
 
-Use the [US SEC Edgar company filings search](https://www.sec.gov/edgar/searchedgar/companysearch.html) to take a list of CIKs, or 'central index keys', an identifier given by the SEC to those who have filed disclosures, and retrieve all their filings.
+Use the [SEC Edgar company filings search](https://www.sec.gov/edgar/searchedgar/companysearch.html) to take a list of CIKs, or 'central index keys', an identifier given by the SEC to those who have filed disclosures, and retrieve all their filings.
 
 Parameters:
 * `cikField` CIK column. Optional. Default is `"cik"`.
@@ -351,24 +366,8 @@ Produces a CSV including columns:
 
 <hr>
 
-#### `ship-names-to-ship-imo-numbers`
 
-Use [Equasis](http://www.equasis.org/) to take a list of ship names, and retrive their IMO numbers. Note Equasis only allows around 500 lookups per day. If you exceed that two days in a row you get blocked for seven days.
-
-Parameters:
-* `email` The email address for a registered Equasis account.
-* `password` The password for a registered Equasis account.
-* `shipNameField` Ship name field. Optional. Default is `"shipName"`.
-
-Produces a CSV including columns:
-* `shipIMONumber`
-* `shipName`
-* `shipTonnage`
-* `shipType`
-* `shipBuildYear`
-* `shipFlag`
-
-<hr>
+### Using Equasis
 
 #### `ship-names-to-ship-imo-numbers`
 
@@ -443,6 +442,9 @@ Produces a CSV including columns:
 
 <hr>
 
+
+### Using ITU Mars
+
 #### `ship-mmsi-numbers-to-ship-radio-station-details`
 
 Use the [International Telecommunication Union's database of ship-based radio stations (ITU Mars)](https://www.itu.int/mmsapp/ShipStation/list) to take a list of ship MMSI numbers, and retrieve their details, including the owner.
@@ -458,3 +460,25 @@ Produces a CSV including columns:
 * `shipFormerName`
 * `shipTonnage`
 * `shipPersonCapacity`
+
+<hr>
+
+
+### Using LinkedIn
+
+#### `email-addresses-to-linkedin-profiles`
+
+Use [LinkedIn](https://www.linkedin.com/) to take a list of email addresses, and retrieve their LinkedIn profile, as well as other details.
+
+Parameters:
+* `email` The email address for a registered LinkedIn account.
+* `password` The password for a registered LinkedIn account.
+* `emailAddressField` Email address column. Optional. Default is `"emailAddress"`.
+
+Produces a CSV including columns:
+* `individualName`
+* `individualLinkedinProfile`
+* `individualLocation`
+* `company`
+* `companyLinkedinProfile`
+* `companyRole`
