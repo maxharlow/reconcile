@@ -81,9 +81,13 @@ async function length(filename) {
 }
 
 function run(command, filename, parameters = {}, retries = 5, cache = false, join = 'inner', alert = () => {}) {
+    const die = message => {
+        alert(`Exiting early: ${message}`)
+        process.exit(1)
+    }
     const requestor = request.bind(null, retries, cache, alert)
     const reconciler = require('./reconcile-' + command)
-    const execute = reconciler.initialise(parameters, requestor)
+    const execute = reconciler.initialise(parameters, requestor, die)
     const blank = Object.fromEntries(reconciler.details.columns.map(column => [column.name]))
     const data = FSExtra.createReadStream(filename).pipe(CSVParser())
     return Ix.AsyncIterable.from(data).map(async (item, i) => {

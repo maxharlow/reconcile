@@ -1,9 +1,9 @@
-function initialise(parameters, requestor) {
+function initialise(parameters, requestor, die) {
 
     const request = requestor(Infinity, e => {
         const individual = e.config.passthrough.individualName + (e.config.passthrough.individualJurisdiction ? ` (${e.config.passthrough.individualJurisdiction.toUpperCase()})` : '')
-        if (e.response.status === 403) return 'The rate limit has been reached' + (e.config.params.api_token ? '' : ' -- try using an API token')
-        if (e.response.status === 401) return `Invalid API token ${e.config.params.api_token || ''}`
+        if (e.response.status === 403) die('The rate limit has been reached' + (e.config.params.api_token ? '' : ' -- try using an API token'))
+        if (e.response.status === 401) die(`Invalid API token ${e.config.params.api_token || ''}`)
         if (e.response.status >= 400) return `Received code ${e.response.status} for individual ${individual} [page ${e.config.passthrough.page}]`
     })
 

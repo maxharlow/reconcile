@@ -1,9 +1,9 @@
-function initialise(parameters, requestor) {
+function initialise(parameters, requestor, die) {
 
     const request = requestor(2, e => {
         const individual = e.config.passthrough.individualName
-        if (e.response.status === 429) return 'The rate limit has been reached'
-        if (e.response.status === 401) return `API key ${e.config.auth.username} is invalid`
+        if (e.response.status === 429) die('The rate limit has been reached')
+        if (e.response.status === 401) die(`API key ${e.config.auth.username} is invalid`)
         if (e.response.status >= 400) return `Received code ${e.response.status} for individual ${individual}`
     })
 

@@ -2,11 +2,11 @@ const Axios = require('axios')
 const Querystring = require('querystring')
 const Cheerio = require('cheerio')
 
-function initialise(parameters, requestor) {
+function initialise(parameters, requestor, die) {
 
     const request = requestor(Infinity, e => {
         const ship = e.config.passthrough.shipName
-        if (e.response.headers.connection === 'close') return 'The rate limit has been reached (Equasis allows about 500 per day)'
+        if (e.response.headers.connection === 'close') die('The rate limit has been reached (Equasis allows about 500 per day)')
         if (e.response.status >= 400) return `Received code ${e.response.status} for ship ${ship}`
     })
 
