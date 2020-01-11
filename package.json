@@ -11,16 +11,16 @@
     },
     "dependencies": {
         "axios": "0.18.x",
-        "axios-rate-limit": "1.0.x",
+        "axios-rate-limit": "1.2.x",
         "axios-retry": "3.1.x",
         "cheerio": "0.22.x",
         "csv-parser": "2.3.x",
-        "fs-extra": "8.0.x",
+        "fs-extra": "8.1.x",
         "ix": "2.5.x",
         "js-yaml": "3.13.x",
-        "papaparse": "5.0.x",
+        "papaparse": "5.1.x",
         "progress": "2.0.x",
-        "yargs": "13.2.x"
+        "yargs": "15.1.x"
     },
     "bin": {
         "reconcile": "./reconcile"
