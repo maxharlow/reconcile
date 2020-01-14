@@ -83,6 +83,7 @@ async function setup() {
         .option('r', { alias: 'retries', type: 'number', nargs: 1, describe: 'Number of times a request should be retried', default: 5 })
         .option('c', { alias: 'cache', type: 'boolean', describe: 'Whether to cache HTTP requests', default: false })
         .option('j', { alias: 'join', type: 'string', describe: 'Whether to include unmatched rows (outer) or not (inner)', choices: ['outer', 'inner'], default: 'inner' })
+        .option('V', { alias: 'verbose', type: 'boolean', describe: 'Print every request made', default: false })
         .help('?').alias('?', 'help')
         .version().alias('v', 'version')
     reconcilers.forEach(command => {
@@ -97,19 +98,22 @@ async function setup() {
     if (interface.argv['get-yargs-completions']) Process.exit(0)
     if (interface.argv._.length === 0) Yargs.showHelp().exit(0)
     try {
-        const command = interface.argv._[0]
-        const filename = interface.argv._[1]
-        const parameters = await parse(interface.argv.parameters)
-        const retries = interface.argv.retries
-        const cache = interface.argv.cache
-        const join = interface.argv.join
+        const {
+            _: [command, filename],
+            parameters,
+            retries,
+            cache,
+            join,
+            verbose
+        } = interface.argv
+        const parametersParsed = await parse(parameters)
         if (!reconcilers.includes(command)) throw new Error(`${command}: reconciler not found`)
         if (filename === '-') throw new Error('reading from standard input not supported')
         const exists = await FSExtra.pathExists(filename)
         if (!exists) throw new Error(`${filename}: could not find file`)
         console.error('Starting up...')
         const total = await reconcile.length(filename)
-        reconcile.run(command, filename, parameters, retries, cache, join, alert)
+        reconcile.run(command, filename, parametersParsed, retries, cache, join, verbose, alert)
             .tap(ticker('Working...', total))
             .flatMap(x => x) // flatten
             .flatMap(csv())
