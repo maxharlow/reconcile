@@ -1,4 +1,3 @@
-const Querystring = require('querystring')
 const Cheerio = require('cheerio')
 
 function initialise(parameters, requestor, die) {
@@ -26,10 +25,10 @@ function initialise(parameters, requestor, die) {
         return {
             url,
             method: 'POST',
-            data: Querystring.stringify({
+            qs: {
                 titleNo: response.passthrough.titleNumber,
                 enquiryType: 'detailed'
-            }),
+            },
             passthrough: {
                 titleNumber: response.passthrough.titleNumber
             }

@@ -1,4 +1,3 @@
-const Querystring = require('querystring')
 const Cheerio = require('cheerio')
 
 function initialise(parameters, requestor, die) {
@@ -18,9 +17,9 @@ function initialise(parameters, requestor, die) {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
-            data: Querystring.stringify({
+            qs: {
                 company: name.trim()
-            }),
+            },
             passthrough: {
                 name
             }
