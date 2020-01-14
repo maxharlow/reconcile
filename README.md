@@ -161,11 +161,11 @@ Produces a CSV including columns:
 <hr>
 
 
-### Using UK Companies House
+### Using Companies House (UK)
 
 #### `uk-company-numbers-to-company-details`
 
-Use UK [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of company numbers, and retrieve various details for each.
+Use [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of company numbers, and retrieve various details for each.
 
 Parameters:
 * `apiKey` A Companies House [API key](https://developer.companieshouse.gov.uk/developer/applications/register).
@@ -199,7 +199,7 @@ Produces a CSV including columns:
 
 #### `uk-company-numbers-to-company-beneficial-owner-names`
 
-Use UK [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of company numbers, and retrieve the names of their beneficial owners.
+Use [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of company numbers, and retrieve the names of their beneficial owners.
 
 Parameters:
 * `apiKey` A Companies House [API key](https://developer.companieshouse.gov.uk/developer/applications/register).
@@ -232,7 +232,7 @@ Produces a CSV including columns:
 
 #### `uk-company-numbers-to-company-officer-names`
 
-Use UK [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of company numbers, and retrieve the names of their officers.
+Use [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of company numbers, and retrieve the names of their officers.
 
 Parameters:
 * `apiKey` A Companies House [API key](https://developer.companieshouse.gov.uk/developer/applications/register).
@@ -259,7 +259,7 @@ Produces a CSV including columns:
 
 #### `company-names-to-uk-company-numbers`
 
-Use UK [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of company names and find the most likely registration number for each. Beware incorrect matches! Company names are terrible unique identifiers.
+Use [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of company names and find the most likely registration number for each. Beware incorrect matches! Company names are terrible unique identifiers.
 
 Parameters:
 * `apiKey` A Companies House [API key](https://developer.companieshouse.gov.uk/developer/applications/register).
@@ -274,7 +274,7 @@ Produces a CSV including columns:
 
 #### `individual-names-to-uk-company-officer-ids`
 
-Use UK [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of individual names and find the ID numbers for each. Many officers will have multiple IDs associated with them. This is limited to bringing back the first 10 pages of matches.
+Use [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of individual names and find the ID numbers for each. Many officers will have multiple IDs associated with them. This is limited to bringing back the first 10 pages of matches.
 
 Parameters:
 * `apiKey` A Companies House [API key](https://developer.companieshouse.gov.uk/developer/applications/register).
@@ -292,7 +292,7 @@ Produces a CSV including columns:
 
 #### `uk-officer-ids-to-company-appointments`
 
-Use UK [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of officer IDs, and retrieve all their appointments.
+Use [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of officer IDs, and retrieve all their appointments.
 
 Parameters:
 * `apiKey` A Companies House [API key](https://developer.companieshouse.gov.uk/developer/applications/register).
