@@ -4,6 +4,7 @@ const Ix = require('ix')
 const Axios = require('axios')
 const AxiosRetry = require('axios-retry')
 const AxiosRateLimit = require('axios-rate-limit')
+const Querystring = require('querystring')
 const CSVParser = require('csv-parser')
 
 function request(retries, cache, verbose, alert, limit, messages) {
@@ -38,8 +39,11 @@ function request(retries, cache, verbose, alert, limit, messages) {
     })
     let cacheChecked = false
     return async location => {
-        const url = typeof location === 'object' ? location.url : location
-        const method = location.method.toUpperCase() || 'GET'
+        const queryForm = Querystring.stringify(location.qs)
+        const query = Querystring.stringify(location.params)
+        const url = typeof location === 'object' ? location.url + (query || queryForm) : location
+        const method = location.method || 'GET'
+        if (location.qs) location.data = queryForm
         const hash = Crypto.createHash('sha1').update(JSON.stringify(location)).digest('hex')
         if (cache) {
             if (!cacheChecked) {

@@ -1,4 +1,3 @@
-const Querystring = require('querystring')
 const Cheerio = require('cheerio')
 
 function initialise(parameters, requestor, die) {
@@ -14,10 +13,10 @@ function initialise(parameters, requestor, die) {
         return {
             url: 'https://www.itu.int/mmsapp/ShipStation/list',
             method: 'POST',
-            data: Querystring.stringify({
+            qs: {
                 'Search.MaritimeMobileServiceIdentity': shipMMSINumber,
                 viewCommand: 'Search'
-            }),
+            },
             passthrough: {
                 shipMMSINumber
             }
@@ -29,9 +28,9 @@ function initialise(parameters, requestor, die) {
         return {
             url: 'https://www.itu.int/mmsapp/ShipStation/list',
             method: 'POST',
-            data: Querystring.stringify({
+            qs: {
                 onview: document('[title="View Ship Station"]').attr('value')
-            }),
+            },
             passthrough: {
                 shipMMSINumber: response.passthrough.shipMMSINumber
             }
