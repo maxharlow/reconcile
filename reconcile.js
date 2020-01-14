@@ -6,7 +6,7 @@ const AxiosRetry = require('axios-retry')
 const AxiosRateLimit = require('axios-rate-limit')
 const CSVParser = require('csv-parser')
 
-function request(retries, cache, alert, limit, messages) {
+function request(retries, cache, verbose, alert, limit, messages) {
     const cacheDirectory = '.reconcile-cache'
     const timeout = 30 * 1000
     const toErrorMessage = e => {
@@ -39,6 +39,7 @@ function request(retries, cache, alert, limit, messages) {
     let cacheChecked = false
     return async location => {
         const url = typeof location === 'object' ? location.url : location
+        const method = location.method.toUpperCase() || 'GET'
         const hash = Crypto.createHash('sha1').update(JSON.stringify(location)).digest('hex')
         if (cache) {
             if (!cacheChecked) {
@@ -49,6 +50,7 @@ function request(retries, cache, alert, limit, messages) {
             }
             const isCached = await FSExtra.pathExists(`${cacheDirectory}/${hash}`)
             if (isCached) {
+                if (verbose) alert(`Cached: ${method} ${url}`)
                 const cacheData = await FSExtra.readFile(`${cacheDirectory}/${hash}`)
                 return {
                     url,
@@ -58,6 +60,7 @@ function request(retries, cache, alert, limit, messages) {
             }
         }
         try {
+            if (verbose) alert(`Requesting: ${method} ${url}`)
             const response = await instance(location)
             if (cache) {
                 await FSExtra.ensureDir(cacheDirectory)
@@ -80,12 +83,12 @@ async function length(filename) {
     return Ix.AsyncIterable.from(data).count()
 }
 
-function run(command, filename, parameters = {}, retries = 5, cache = false, join = 'inner', alert = () => {}) {
+function run(command, filename, parameters = {}, retries = 5, cache = false, join = 'inner', verbose = false, alert = () => {}) {
     const die = message => {
         alert(`Exiting early: ${message}`)
         process.exit(1)
     }
-    const requestor = request.bind(null, retries, cache, alert)
+    const requestor = request.bind(null, retries, cache, verbose, alert)
     const reconciler = require('./reconcile-' + command)
     const execute = reconciler.initialise(parameters, requestor, die)
     const blank = Object.fromEntries(reconciler.details.columns.map(column => [column.name]))
