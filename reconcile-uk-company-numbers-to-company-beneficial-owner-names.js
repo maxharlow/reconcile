@@ -74,11 +74,11 @@ function initialise(parameters, requestor, die) {
                 beneficialOwnerAddress: [person.address.care_of, person.address.premises, person.address.po_box, person.address.address_line_1, person.address.address_line_2, person.address.locality, person.address.region, person.address.postal_code, person.address.country].filter(x => x).join(', '),
                 beneficialOwnerDateOfBirth: person.date_of_birth ? [person.date_of_birth.year, person.date_of_birth.month, person.date_of_birth.day].filter(x => x).join('-') : null,
                 beneficialOwnerCountryOfResidence: person.country_of_residence ? person.country_of_residence : null,
-                beneficialOwnerIDLegalAuthority: person.identification && person.identification.legal_authority ? person.identification.legal_authority : null,
-                beneficialOwnerIDLegalForm: person.identification && person.identification.legal_form ? person.identification.legal_form : null,
-                beneficialOwnerIDRegisteredPlace: person.identification && person.identification.place_registered ? person.identification.place_registered : null,
-                beneficialOwnerIDRegisteredCountry: person.identification && person.identification.country_registered ? person.identification.country_registered : null,
-                beneficialOwnerIDNumber: person.identification && person.identification.registration_number ? person.identification.registration_number : null
+                beneficialOwnerIdentificationLegalAuthority: person.identification && person.identification.legal_authority ? person.identification.legal_authority : null,
+                beneficialOwnerIdentificationLegalForm: person.identification && person.identification.legal_form ? person.identification.legal_form : null,
+                beneficialOwnerIdentificationRegisteredPlace: person.identification && person.identification.place_registered ? person.identification.place_registered : null,
+                beneficialOwnerIdentificationRegisteredCountry: person.identification && person.identification.country_registered ? person.identification.country_registered : null,
+                beneficialOwnerIdentificationNumber: person.identification && person.identification.registration_number ? person.identification.registration_number : null
             }
             return fields
         })
@@ -118,11 +118,11 @@ const details = {
         { name: 'beneficialOwnerAddress' },
         { name: 'beneficialOwnerDateOfBirth' },
         { name: 'beneficialOwnerCountryOfResidence' },
-        { name: 'beneficialOwnerIDLegalAuthority' },
-        { name: 'beneficialOwnerIDLegalForm' },
-        { name: 'beneficialOwnerIDRegisteredPlace' },
-        { name: 'beneficialOwnerIDRegisteredCountry' },
-        { name: 'beneficialOwnerIDNumber' }
+        { name: 'beneficialOwnerIdentificationLegalAuthority' },
+        { name: 'beneficialOwnerIdentificationLegalForm' },
+        { name: 'beneficialOwnerIdentificationRegisteredPlace' },
+        { name: 'beneficialOwnerIdentificationRegisteredCountry' },
+        { name: 'beneficialOwnerIdentificationNumber' }
     ]
 }
 

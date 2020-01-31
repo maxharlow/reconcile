@@ -222,11 +222,11 @@ Produces a CSV including columns:
 * `beneficialOwnerAddress`
 * `beneficialOwnerDateOfBirth`
 * `beneficialOwnerCountryOfResidence`
-* `beneficialOwnerIDLegalAuthority`
-* `beneficialOwnerIDLegalForm`
-* `beneficialOwnerIDRegisteredPlace`
-* `beneficialOwnerIDRegisteredCountry`
-* `beneficialOwnerIDNumber`
+* `beneficialOwnerIdentificationLegalAuthority`
+* `beneficialOwnerIdentificationLegalForm`
+* `beneficialOwnerIdentificationRegisteredPlace`
+* `beneficialOwnerIdentificationRegisteredCountry`
+* `beneficialOwnerIdentificationNumber`
 
 <hr>
 
@@ -249,11 +249,11 @@ Produces a CSV including columns:
 * `officerDateOfBirth`
 * `officerCountryOfResidence`
 * `officerFormerNames`
-* `officerIDType`
-* `officerIDLegalAuthority`
-* `officerIDLegalForm`
-* `officerIDRegisteredPlace`
-* `officerIDNumber`
+* `officerIdentificationType`
+* `officerIdentificationLegalAuthority`
+* `officerIdentificationLegalForm`
+* `officerIdentificationRegisteredPlace`
+* `officerIdentificationNumber`
 
 <hr>
 
