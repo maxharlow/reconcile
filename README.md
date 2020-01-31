@@ -239,6 +239,7 @@ Parameters:
 * `companyNumberField` Company number column. Optional. Default is `"companyNumber"`.
 
 Produces a CSV including columns:
+* `officerID`
 * `officerName`
 * `officerRole`
 * `officerAppointedDate`

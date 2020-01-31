@@ -60,6 +60,7 @@ function initialise(parameters, requestor, die) {
         const officers = response.data.items
         return officers.map(officer => {
             const fields = {
+                officerID: officer.links.officer.appointments.split('/')[2],
                 officerName: officer.name,
                 officerRole: officer.officer_role,
                 officerAppointedDate: officer.appointed_on,
@@ -98,6 +99,7 @@ const details = {
         { name: 'companyNumberField', description: 'Company number column. [optional, default: "companyNumber"]' }
     ],
     columns: [
+        { name: 'officerID' },
         { name: 'officerName' },
         { name: 'officerRole' },
         { name: 'officerAppointedDate' },
