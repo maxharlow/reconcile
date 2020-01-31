@@ -70,11 +70,11 @@ function initialise(parameters, requestor, die) {
                 officerDateOfBirth: officer.date_of_birth ? [officer.date_of_birth.year, officer.date_of_birth.month, officer.date_of_birth.day].filter(x => x).join('-') : null,
                 officerCountryOfResidence: officer.country_of_residence,
                 officerFormerNames: officer.former_names ? officer.former_names.map(name => [name.surname, name.forenames].filter(name => !['NONE', 'NONE NONE', 'N/A', 'N/A N/A', undefined].includes(name)).join(', ')).filter(x => x.length).join('; ') : null,
-                officerIDType: officer.identification && officer.identification.identification_type ? officer.identification.identification_type : null,
-                officerIDLegalAuthority: officer.identification && officer.identification.legal_authority ? officer.identification.legal_authority : null,
-                officerIDLegalForm: officer.identification && officer.identification.legal_form ? officer.identification.legal_form : null,
-                officerIDRegisteredPlace: officer.identification && officer.identification.place_registered ? officer.identification.place_registered : null,
-                officerIDNumber: officer.identification && officer.identification.registration_number ? officer.identification.registration_number : null
+                officerIdentificationType: officer.identification && officer.identification.identification_type ? officer.identification.identification_type : null,
+                officerIdentificationLegalAuthority: officer.identification && officer.identification.legal_authority ? officer.identification.legal_authority : null,
+                officerIdentificationLegalForm: officer.identification && officer.identification.legal_form ? officer.identification.legal_form : null,
+                officerIdentificationRegisteredPlace: officer.identification && officer.identification.place_registered ? officer.identification.place_registered : null,
+                officerIdentificationNumber: officer.identification && officer.identification.registration_number ? officer.identification.registration_number : null
             }
             return fields
         })
@@ -108,11 +108,11 @@ const details = {
         { name: 'officerDateOfBirth' },
         { name: 'officerCountryOfResidence' },
         { name: 'officerFormerNames' },
-        { name: 'officerIDType' },
-        { name: 'officerIDLegalAuthority' },
-        { name: 'officerIDLegalForm' },
-        { name: 'officerIDRegisteredPlace' },
-        { name: 'officerIDNumber' }
+        { name: 'officerIdentificationType' },
+        { name: 'officerIdentificationLegalAuthority' },
+        { name: 'officerIdentificationLegalForm' },
+        { name: 'officerIdentificationRegisteredPlace' },
+        { name: 'officerIdentificationNumber' }
     ]
 }
 
