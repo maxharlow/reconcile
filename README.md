@@ -230,9 +230,9 @@ Produces a CSV including columns:
 
 <hr>
 
-#### `uk-company-numbers-to-company-officer-names`
+#### `uk-company-numbers-to-uk-company-officer-ids`
 
-Use [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of company numbers, and retrieve the names of their officers.
+Use [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of company numbers, and retrieve the IDs and names of their officers.
 
 Parameters:
 * `apiKey` A Companies House [API key](https://developer.companieshouse.gov.uk/developer/applications/register).
@@ -291,9 +291,9 @@ Produces a CSV including columns:
 
 <hr>
 
-#### `uk-officer-ids-to-company-appointments`
+#### `uk-company-officer-ids-to-company-numbers`
 
-Use [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of officer IDs, and retrieve all their appointments.
+Use [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of officer IDs, and retrieve the company numbers for their appointments.
 
 Parameters:
 * `apiKey` A Companies House [API key](https://developer.companieshouse.gov.uk/developer/applications/register).
