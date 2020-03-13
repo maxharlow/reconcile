@@ -258,6 +258,43 @@ Produces a CSV including columns:
 
 <hr>
 
+#### `uk-company-numbers-to-charges`
+
+Use [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of company numbers, and retrieve the charges for each.
+
+Parameters:
+* `apiKey` A Companies House [API key](https://developer.companieshouse.gov.uk/developer/applications/register).
+* `companyNumberField` Company number column. Optional. Default is `"companyNumber"`.
+
+Produces a CSV including columns:
+* `chargeCode`
+* `chargeNumber`
+* `chargeStatus`
+* `chargePersonsEntitled`
+* `chargeAcquiredDate`
+* `chargeCreatedDate`
+* `chargeDeliveredDate`
+* `chargeResolvedDate`
+* `chargeSatisfiedDate`
+* `chargeCoveringInstrumentDate`
+* `chargeTransactions`
+* `chargeParticulars`
+* `chargeContainsFixedCharge`
+* `chargeContainsFloatingCharge`
+* `chargeContainsNegativePledge`
+* `chargeFloatingChargeCoversAll`
+* `chargeChargorActingAsBareTrustee`
+* `chargeHasScottishAlterationsToOrder`
+* `chargeHasScottishAlterationsToProhibitions`
+* `chargeHasScottishAlterationsRestrictingProvisions`
+* `chargeAssetsCeasedReleased`
+* `chargeClassificationType`
+* `chargeClassificationDescription`
+* `chargeSecuredType`
+* `chargeSecuredDescription`
+
+<hr>
+
 #### `company-names-to-uk-company-numbers`
 
 Use [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of company names and find the most likely registration number for each. Beware incorrect matches! Company names are terrible unique identifiers.
