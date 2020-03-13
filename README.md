@@ -216,8 +216,8 @@ Produces a CSV including columns:
 * `beneficialOwnerLastName`
 * `beneficialOwnerKind`
 * `beneficialOwnerNaturesOfControl`
-* `beneficialOwnerNotifiedOn`
-* `beneficialOwnerCeasedOn`
+* `beneficialOwnerNotifiedDate`
+* `beneficialOwnerCeasedDate`
 * `beneficialOwnerNationality`
 * `beneficialOwnerAddress`
 * `beneficialOwnerDateOfBirth`
