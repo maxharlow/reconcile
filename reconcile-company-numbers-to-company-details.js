@@ -41,7 +41,7 @@ function initialise(parameters, requestor, die) {
             companyAddress: company.registered_address_in_full ? company.registered_address_in_full.replace(/\n/g, ', ') : null,
             companyPreviousNames: company.previous_names.map(name => name.company_name).join('; '),
             companyAlternativeNames: company.alternative_names.join('; '),
-            companyBeneficialOwners: company.ultimate_beneficial_owners.map(owner => owner.ultimate_beneficial_owner.name).join(', '),
+            companyBeneficialOwners: company.ultimate_beneficial_owners.map(owner => owner.ultimate_beneficial_owner.name).join('; '),
             companyAgentName: company.agent_name,
             companyAgentAddress: company.agent_address,
             companyIndustry: company.industry_codes.map(code => `${code.industry_code.description} [${code.industry_code.code}] (${code.industry_code.code_scheme_name})`).join('; ')
