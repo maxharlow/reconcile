@@ -11,11 +11,8 @@ function initialise(parameters, requestor, die) {
     function locate(entry) {
         const companyNumber = entry[parameters.companyNumberField || 'companyNumber']
         if (!companyNumber) throw new Error('No company number found')
-        const url = `https://api.companieshouse.gov.uk/company`
-            + '/' + companyNumber.trim()
-            + '/officers'
         return {
-            url,
+            url: `https://api.companieshouse.gov.uk/company/${companyNumber.padStart(8, '0')}/officers`,
             auth: {
                 username: parameters.apiKey,
                 password: ''

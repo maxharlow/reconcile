@@ -40,9 +40,8 @@ function initialise(parameters, requestor, die) {
         }
         return results.map(result => {
             const element = Cheerio.load(result)
-            const url = 'https://www.sec.gov' + element('td:nth-of-type(2) a').attr('href')
             return {
-                url,
+                url: 'https://www.sec.gov' + element('td:nth-of-type(2) a').attr('href'),
                 passthrough: {
                     filingDate: element('td:nth-of-type(4)').text(),
                     filingType: element('td:nth-of-type(1)').text(),

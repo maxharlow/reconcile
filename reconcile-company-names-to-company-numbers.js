@@ -13,13 +13,12 @@ function initialise(parameters, requestor, die) {
         const companyJurisdiction = parameters.jurisdiction || entry[parameters.companyJurisdictionField || 'companyJurisdiction']
         const maximumResults = parameters.maximumResults || 1
         if (!companyName) throw new Error('No company name found')
-        const url = `https://api.opencorporates.com/${apiVersion}/companies/search`
         return {
-            url,
+            url: `https://api.opencorporates.com/${apiVersion}/companies/search`,
             params: {
-                q: companyName.trim(),
+                q: companyName,
                 normalise_company_name: 'true',
-                jurisdiction_code: companyJurisdiction ? companyJurisdiction.trim() : undefined,
+                jurisdiction_code: companyJurisdiction,
                 api_token: parameters.apiToken,
                 per_page: maximumResults
             },

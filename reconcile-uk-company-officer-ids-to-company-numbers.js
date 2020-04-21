@@ -11,11 +11,8 @@ function initialise(parameters, requestor, die) {
     function locate(entry) {
         const officerID = entry[parameters.officerIDField || 'officerID']
         if (!officerID) throw new Error('No officer ID found')
-        const url = 'https://api.companieshouse.gov.uk/officers/'
-            + officerID.trim()
-            + '/appointments'
         return {
-            url,
+            url: `https://api.companieshouse.gov.uk/officers/${officerID}/appointments`,
             auth: {
                 username: parameters.apiKey,
                 password: ''
