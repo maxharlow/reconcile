@@ -10,15 +10,14 @@ function initialise(parameters, requestor, die) {
     function locate(entry) {
         const individualName = entry[parameters.individualNameField || 'individualName']
         if (!individualName) throw new Error('No individual name found')
-        const url = 'https://api.companieshouse.gov.uk/search/officers'
         return {
-            url,
+            url: 'https://api.companieshouse.gov.uk/search/officers',
             auth: {
                 username: parameters.apiKey,
                 password: ''
             },
             params: {
-                q: individualName,
+                q: individualName.trim(),
                 items_per_page: 100
             },
             passthrough: {

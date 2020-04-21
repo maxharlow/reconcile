@@ -13,9 +13,8 @@ function initialise(parameters, requestor, die) {
         const individualDateOfBirth = entry[parameters.individualDateOfBirthField || 'individualDateOfBirth']
         const individualJurisdiction = parameters.jurisdiction || entry[parameters.individualJurisdictionField || 'individualJurisdiction']
         if (!individualName) throw new Error('No individual name found')
-        const url = `https://api.opencorporates.com/${apiVersion}/officers/search`
         return {
-            url,
+            url: `https://api.opencorporates.com/${apiVersion}/officers/search`,
             params: {
                 q: individualName.trim(),
                 date_of_birth: individualDateOfBirth,

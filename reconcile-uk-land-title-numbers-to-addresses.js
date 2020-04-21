@@ -9,9 +9,8 @@ function initialise(parameters, requestor, die) {
     function form(entry) {
         const titleNumber = entry[parameters.titleNumberField || 'titleNumber']
         if (!titleNumber) throw new Error('No title number found')
-        const url = 'https://eservices.landregistry.gov.uk/wps/portal/Property_Search'
         return {
-            url,
+            url: 'https://eservices.landregistry.gov.uk/wps/portal/Property_Search',
             passthrough: {
                 titleNumber
             }
@@ -21,9 +20,8 @@ function initialise(parameters, requestor, die) {
     function locate(response) {
         const document = Cheerio.load(response.data)
         const action = document('form').attr('action')
-        const url = `https://eservices.landregistry.gov.uk${action}`
         return {
-            url,
+            url: `https://eservices.landregistry.gov.uk${action}`,
             method: 'POST',
             qs: {
                 titleNo: response.passthrough.titleNumber,
