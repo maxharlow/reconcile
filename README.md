@@ -498,25 +498,3 @@ Produces a CSV including columns:
 * `shipFormerName`
 * `shipTonnage`
 * `shipPersonCapacity`
-
-<hr>
-
-
-### Using LinkedIn
-
-#### `email-addresses-to-linkedin-profiles`
-
-Use [LinkedIn](https://www.linkedin.com/) to take a list of email addresses, and retrieve their LinkedIn profile, as well as other details.
-
-Parameters:
-* `email` The email address for a registered LinkedIn account.
-* `password` The password for a registered LinkedIn account.
-* `emailAddressField` Email address column. Optional. Default is `"emailAddress"`.
-
-Produces a CSV including columns:
-* `individualName`
-* `individualLinkedinProfile`
-* `individualLocation`
-* `company`
-* `companyLinkedinProfile`
-* `companyRole`
