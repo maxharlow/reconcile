@@ -40,8 +40,9 @@ function request(retries, cache, verbose, alert, limit, messages) {
     let cacheChecked = false
     return async location => {
         const queryForm = Querystring.stringify(location.qs)
-        const query = Querystring.stringify(location.params)
-        const url = typeof location === 'object' ? location.url + (query || queryForm) : location
+        const queryString = Querystring.stringify(location.params)
+        const query = queryForm || queryString ? '?' + (queryForm || queryString) : ''
+        const url = typeof location === 'object' ? location.url + query : location
         const method = location.method || 'GET'
         if (location.qs) location.data = queryForm
         const hash = Crypto.createHash('sha1').update(JSON.stringify(location)).digest('hex')
@@ -115,7 +116,7 @@ function run(command, filename, parameters = {}, retries = 5, cache = false, joi
             })
         }
         catch (e) {
-            alert(e.message)
+            alert(verbose ? e.stack : e.message)
             if (join === 'outer') {
                 return [{ ...item, ...blank }]
             }
