@@ -258,6 +258,35 @@ Produces a CSV including columns:
 
 <hr>
 
+#### `uk-company-numbers-to-insolvency-cases`
+
+Use [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of company numbers, and retrieve the insolvency cases for each.
+
+Parameters:
+* `apiKey` A Companies House [API key](https://developer.companieshouse.gov.uk/developer/applications/register).
+* `companyNumberField` Company number column. Optional. Default is `"companyNumber"`.
+
+Produces a CSV including columns:
+* `companyInsolvencyStatus`
+* `companyInsolvencyCaseNumber`
+* `companyInsolvencyCaseType`
+* `companyInsolvencyCaseWoundUpDate`
+* `companyInsolvencyCasePetitionedDate`
+* `companyInsolvencyCaseConcludedWindingUpDate`
+* `companyInsolvencyCaseDueToBeDissolvedDate`
+* `companyInsolvencyCaseDissolvedDate`
+* `companyInsolvencyCaseAdministrationStartedDate`
+* `companyInsolvencyCaseAdministrationEndedDate`
+* `companyInsolvencyCaseAdministrationDischargedDate`
+* `companyInsolvencyCaseVoluntaryArrangementStartedDate`
+* `companyInsolvencyCaseVoluntaryArrangementEndedDate`
+* `companyInsolvencyCaseMoratoriumStartedDate`
+* `companyInsolvencyCaseInstrumentedDate`
+* `companyInsolvencyCasePractitioners`
+* `companyInsolvencyCaseNotes`
+
+<hr>
+
 #### `uk-company-numbers-to-charges`
 
 Use [Companies House](https://beta.companieshouse.gov.uk/) to look up a list of company numbers, and retrieve the charges for each.
