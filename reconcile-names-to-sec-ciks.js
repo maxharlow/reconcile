@@ -18,7 +18,7 @@ function initialise(parameters, requestor, die) {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
             qs: {
-                company: name.trim()
+                company: name
             },
             passthrough: {
                 name

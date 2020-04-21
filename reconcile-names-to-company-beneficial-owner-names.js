@@ -11,11 +11,10 @@ function initialise(parameters, requestor, die) {
         const apiVersion = 'v0.4.8'
         const name = entry[parameters.nameField || 'name']
         if (!name) throw new Error('No name found')
-        const url = `https://api.opencorporates.com/${apiVersion}/statements/control_statements/search`
         return {
-            url,
+            url: `https://api.opencorporates.com/${apiVersion}/statements/control_statements/search`,
             params: {
-                controlling_entities_name: name.trim(),
+                controlling_entities_name: name,
                 api_token: parameters.apiToken,
                 per_page: 100
             },
