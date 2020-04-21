@@ -83,6 +83,7 @@ async function setup() {
         .option('r', { alias: 'retries', type: 'number', nargs: 1, describe: 'Number of times a request should be retried', default: 5 })
         .option('c', { alias: 'cache', type: 'boolean', describe: 'Whether to cache HTTP requests', default: false })
         .option('j', { alias: 'join', type: 'string', describe: 'Whether to include unmatched rows (outer) or not (inner)', choices: ['outer', 'inner'], default: 'inner' })
+    // .option('o', { alias: 'output', type: 'array', describe: 'A space-separated list of fields that should be outputted', default: ['i*', 'x*'] })
         .option('V', { alias: 'verbose', type: 'boolean', describe: 'Print every request made', default: false })
         .help('?').alias('?', 'help')
         .version().alias('v', 'version')
