@@ -12,7 +12,7 @@ function initialise(parameters, requestor, die) {
         const companyNumber = entry[parameters.companyNumberField || 'companyNumber']
         if (!companyNumber) throw new Error('No company number found')
         return {
-            url: `https://api.companieshouse.gov.uk/company/${companyNumber.padStart(8, '0')}/charges`,
+            url: `https://api.companieshouse.gov.uk/company/${companyNumber.padStart(8, '0').toUpperCase()}/charges`,
             auth: {
                 username: parameters.apiKey,
                 password: ''
