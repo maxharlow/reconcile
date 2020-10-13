@@ -386,7 +386,7 @@ Produces a CSV including columns:
 
 #### `uk-land-title-numbers-to-addresses`
 
-Look up UK [Land Registry](https://www.gov.uk/government/organisations/land-registry) title numbers (such as the result of a [PN1 search](https://www.gov.uk/government/publications/proprieters-names-search-of-the-index-pn1)), and find their addresses.
+Use [Land Registry detailed enquiries](https://eservices.landregistry.gov.uk/eservices/FindAProperty/view/DetailedEnquiryInit.do) to look up title numbers (such as the result of a [PN1 search](https://www.gov.uk/government/publications/proprieters-names-search-of-the-index-pn1)), and find their addresses.
 
 Parameters:
 * `titleNumberField` Title number field. Optional. Default is `"titleNumber"`.
@@ -508,7 +508,6 @@ Produces a CSV including columns:
 * `shipFlag`
 
 <hr>
-
 
 ### Using ITU Mars
 
