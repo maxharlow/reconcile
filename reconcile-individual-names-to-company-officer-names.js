@@ -2,8 +2,8 @@ function initialise(parameters, requestor, die) {
 
     const request = requestor(Infinity, e => {
         const individual = e.config.passthrough.individualName + (e.config.passthrough.individualJurisdiction ? ` (${e.config.passthrough.individualJurisdiction.toUpperCase()})` : '')
-        if (e.response.status === 403) die('The rate limit has been reached' + (e.config.params.api_token ? '' : ' -- try using an API token'))
-        if (e.response.status === 401) die(`Invalid API token ${e.config.params.api_token || ''}`)
+        if (e.response.status === 403) die('The rate limit has been reached')
+        if (e.response.status === 401) die(`Invalid API token ${e.config.params.api_token}`)
         if (e.response.status >= 400) return `Received code ${e.response.status} for individual ${individual} [page ${e.config.passthrough.page}]`
     })
 
@@ -99,7 +99,7 @@ function initialise(parameters, requestor, die) {
 
 const details = {
     parameters: [
-        { name: 'apiToken', description: 'An OpenCorporates API token. You are limited to 500 requests per month otherwise. [optional]' },
+        { name: 'apiToken', description: 'An OpenCorporates API token.' },
         { name: 'jurisdiction', description: 'If all individuals have the same jurisdiction you can specify it here instead of in a column. Use ISO 3166-2 format. [optional]' },
         { name: 'individualNameField', description: 'Individual name column. [optional, default: "individualName"]' },
         { name: 'individualDateOfBirthField', description: 'Individual birth date column. It should use ISO 8601 format. For a range the two dates should be separated with a colon. [optional, default: "individualDateOfBirth"]' },
@@ -110,8 +110,8 @@ const details = {
         { name: 'officerPosition' },
         { name: 'officerNationality' },
         { name: 'officerOccupation' },
-        { name: 'officerAddress', description: 'Only if an API token is sent.' },
-        { name: 'officerDateOfBirth', description: 'Only if an API token is sent.' },
+        { name: 'officerAddress' },
+        { name: 'officerDateOfBirth' },
         { name: 'companyName' },
         { name: 'companyNumber' },
         { name: 'companyJurisdiction' }

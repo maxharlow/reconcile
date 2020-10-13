@@ -100,7 +100,7 @@ Produces a CSV including columns:
 Use [OpenCorporates](https://opencorporates.com/) to look up a list of company names and find the most likely registration number for each. Beware incorrect matches! Company names are terrible unique identifiers.
 
 Parameters:
-* `apiToken` An OpenCorporates API token. You are [limited to 200 requests per month and 50 per day](https://api.opencorporates.com/documentation/API-Reference#usage-limits) otherwise. Optional.
+* `apiToken` An OpenCorporates API token.
 * `jurisdiction` If all companies have the same jurisdiction you can specify it here instead of in a column. Optional.
 * `companyNameField` Company name column. Optional. Default is `"companyName"`.
 * `companyJurisdictionField` Jurisdiction code column, if any. It should use [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes). Optional. Default is `"companyJurisdiction"`.
@@ -118,7 +118,7 @@ Produces a CSV including columns:
 Use [OpenCorporates](https://opencorporates.com/) to look up a list of individual names and find which companies they are officers of (typically either as directors or secretaries).
 
 Parameters:
-* `apiToken` An OpenCorporates API token. You are [limited to 200 requests per month and 50 per day](https://api.opencorporates.com/documentation/API-Reference#usage-limits) otherwise. Optional.
+* `apiToken` An OpenCorporates API token.
 * `jurisdiction` If all individuals have the same jurisdiction you can specify it here instead of in a column. Optional.
 * `individualNameField` Individual name column. Optional. Default is `"individualName"`.
 * `individualDateOfBirthField` Individual birth date column. It should use [ISO 8601 format](https://en.wikipedia.org/wiki/ISO_8601). For a range the two dates should be separated with a colon. Optional. Default is `"individualDateOfBirth"`.
@@ -142,7 +142,7 @@ Produces a CSV including columns:
 Use [OpenCorporates](https://opencorporates.com/) to look up a list of names of companies or individuals and find which companies they are the beneficial owner of.
 
 Parameters:
-* `apiToken` An OpenCorporates API token. You are [limited to 200 requests per month and 50 per day](https://api.opencorporates.com/documentation/API-Reference#usage-limits) otherwise. Optional.
+* `apiToken` An OpenCorporates API token.
 * `nameField` Name column. Optional. Default is `"name"`.
 
 Produces a CSV including columns:
