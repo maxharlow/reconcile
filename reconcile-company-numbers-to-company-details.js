@@ -17,7 +17,7 @@ function initialise(parameters, requestor, die) {
         return {
             url: `https://api.opencorporates.com/${apiVersion}/companies/${companyJurisdiction}/${companyNumber}`,
             params: {
-                api_token: parameters.apiToken
+                ...(parameters.apiToken ? { api_token: parameters.apiToken } : {})
             },
             passthrough: {
                 companyNumber,
@@ -59,7 +59,7 @@ function initialise(parameters, requestor, die) {
 const details = {
     parameters: [
         { name: 'apiToken', description: 'An OpenCorporates API token. You are limited to 500 requests per month otherwise. [optional]' },
-        { name: 'jurisdiction', description: 'If all individuals have the same jurisdiction you can specify it here instead of in a column. Use ISO 3166-2 format. [optional]' },
+        { name: 'jurisdiction', description: 'If all companies have the same jurisdiction you can specify it here instead of in a column. Use ISO 3166-2 format. [optional]' },
         { name: 'companyNumberField', description: 'Company number column. [optional, default: "companyNumber"]' },
         { name: 'companyJurisdictionField', description: 'Jurisdiction code column, if any. It should use ISO 3166-2 format. [optional, default: "companyJurisdiction"]' }
     ],
