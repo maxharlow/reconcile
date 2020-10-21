@@ -8,6 +8,7 @@ function initialise(parameters, requestor, die) {
     })
 
     function locate(entry) {
+        if (!parameters.apiToken) die('No API token found')
         const apiVersion = 'v0.4.8'
         const individualName = entry[parameters.individualNameField || 'individualName']
         const individualDateOfBirth = entry[parameters.individualDateOfBirthField || 'individualDateOfBirth']
