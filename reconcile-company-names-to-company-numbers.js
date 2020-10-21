@@ -8,6 +8,7 @@ function initialise(parameters, requestor, die) {
     })
 
     function locate(entry) {
+        if (!parameters.apiToken) die('No API token found')
         const apiVersion = 'v0.4.8'
         const companyName = entry[parameters.companyNameField || 'companyName']
         const companyJurisdiction = parameters.jurisdiction || entry[parameters.companyJurisdictionField || 'companyJurisdiction']

@@ -8,6 +8,7 @@ function initialise(parameters, requestor, die) {
     })
 
     function locate(entry) {
+        if (!parameters.apiToken) die('No API token found')
         const apiVersion = 'v0.4.8'
         const name = entry[parameters.nameField || 'name']
         if (!name) throw new Error('No name found')
