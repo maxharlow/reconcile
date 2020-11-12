@@ -2,7 +2,7 @@ const Readline = require('readline')
 const FSExtra = require('fs-extra')
 const Yargs = require('yargs')
 const Process = require('process')
-const Yaml = require('js-yaml')
+const Yaml = require('yaml')
 const Progress = require('progress')
 const PapaParse = require('papaparse')
 const reconcile = require('./reconcile.js')
@@ -11,11 +11,11 @@ async function parse(parameters) {
     if (!parameters) return {}
     try {
         const file = await FSExtra.readFile(parameters, 'utf8')
-        return Yaml.load(file)
+        return Yaml.parse(file)
     }
     catch (e) { // it's not a file, try and parse it instead
         try {
-            return Yaml.load(parameters.replace(/, ?/g, '\n').replace(/: ?/g, ': '))
+            return Yaml.parse(parameters.replace(/, ?/g, '\n').replace(/: ?/g, ': '))
         }
         catch (e) {
             throw new Error('could not parse parameters')
