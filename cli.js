@@ -1,11 +1,12 @@
-const Readline = require('readline')
-const FSExtra = require('fs-extra')
-const Yargs = require('yargs')
-const Process = require('process')
-const Yaml = require('yaml')
-const Progress = require('progress')
-const PapaParse = require('papaparse')
-const reconcile = require('./reconcile.js')
+import Path from 'path'
+import Readline from 'readline'
+import FSExtra from 'fs-extra'
+import Yargs from 'yargs'
+import Process from 'process'
+import Yaml from 'yaml'
+import Progress from 'progress'
+import PapaParse from 'papaparse'
+import reconcile from './reconcile.js'
 
 async function parse(parameters) {
     if (!parameters) return {}
@@ -71,11 +72,11 @@ function display(details) {
 }
 
 async function setup() {
-    const listing = await FSExtra.readdir(__dirname)
+    const listing = await FSExtra.readdir(Path.resolve())
     const reconcilers = listing
         .filter(file => file.startsWith('reconcile-'))
         .map(file => file.match(/reconcile-(.+).js/)[1])
-    const interface = Yargs
+    const instructions = Yargs(Process.argv)
         .usage('Usage: reconcile <command> <filename>')
         .wrap(null)
         .completion('completion', false, () => reconcilers)
@@ -83,30 +84,29 @@ async function setup() {
         .option('r', { alias: 'retries', type: 'number', nargs: 1, describe: 'Number of times a request should be retried', default: 5 })
         .option('c', { alias: 'cache', type: 'boolean', describe: 'Whether to cache HTTP requests', default: false })
         .option('j', { alias: 'join', type: 'string', describe: 'Whether to include unmatched rows (outer) or not (inner)', choices: ['outer', 'inner'], default: 'inner' })
-    // .option('o', { alias: 'output', type: 'array', describe: 'A space-separated list of fields that should be outputted', default: ['i*', 'x*'] })
         .option('V', { alias: 'verbose', type: 'boolean', describe: 'Print every request made', default: false })
         .help('?').alias('?', 'help')
         .version().alias('v', 'version')
-    reconcilers.forEach(command => {
-        const reconciler = require('./reconcile-' + command)
+    await Promise.all(reconcilers.map(async command => {
+        const reconciler = await import(`./reconcile-${command}.js`)
         const commandArgs = args => args
             .usage(`Usage: reconcile ${command} <filename>`)
             .demand(1, '')
             .positional('filename', { type: 'string', describe: 'The input file to process' })
             .epilog(display(reconciler.details))
-        interface.command(command, '', commandArgs)
-    })
-    if (interface.argv['get-yargs-completions']) Process.exit(0)
-    if (interface.argv._.length === 0) Yargs.showHelp().exit(0)
+        instructions.command(command, '', commandArgs)
+    }))
+    if (instructions.argv['get-yargs-completions']) Process.exit(0)
+    if (instructions.argv._.length === 2) instructions.showHelp().exit(0)
     try {
         const {
-            _: [command, filename],
+            _: [,, command, filename],
             parameters,
             retries,
             cache,
             join,
             verbose
-        } = interface.argv
+        } = instructions.argv
         const parametersParsed = await parse(parameters)
         if (!reconcilers.includes(command)) throw new Error(`${command}: reconciler not found`)
         if (filename === '-') throw new Error('reading from standard input not supported')
@@ -114,11 +114,13 @@ async function setup() {
         if (!exists) throw new Error(`${filename}: could not find file`)
         console.error('Starting up...')
         const total = await reconcile.length(filename)
-        await reconcile.run(command, filename, parametersParsed, retries, cache, join, verbose, alert)
+        const reconciliation = await reconcile.run(command, filename, parametersParsed, retries, cache, join, verbose, alert)
+        await reconciliation
             .tap(ticker('Working...', total))
-            .flatMap(x => x) // flatten
+            .flatten()
             .flatMap(csv())
             .each(write)
+            .whenEnd()
         console.error('Done!')
     }
     catch (e) {
