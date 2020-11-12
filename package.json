@@ -4,6 +4,7 @@
     "version": "2.5.0",
     "author": "Max Harlow <contact@maxharlow.com> (https://maxharlow.com/)",
     "license": "Apache-2.0",
+    "type": "module",
     "preferGlobal": true,
     "repository": {
         "type": "git",
@@ -23,7 +24,7 @@
         "yargs": "16.1.x"
     },
     "bin": {
-        "reconcile": "./reconcile"
+        "reconcile": "./bin.js"
     },
     "scripts": {
         "postinstall": "(reconcile completion > /etc/bash_completion.d/reconcile || reconcile completion > /usr/local/etc/bash_completion.d/reconcile || true) 2> /dev/null",
