@@ -1,6 +1,6 @@
 const Crypto = require('crypto')
 const FSExtra = require('fs-extra')
-const Ix = require('ix')
+const Scramjet = require('scramjet')
 const Axios = require('axios')
 const AxiosRetry = require('axios-retry')
 const AxiosRateLimit = require('axios-rate-limit')
@@ -85,7 +85,7 @@ function request(retries, cache, verbose, alert, limit, messages) {
 
 async function length(filename) {
     const data = FSExtra.createReadStream(filename).pipe(CSVParser())
-    return Ix.AsyncIterable.from(data).count()
+    return Scramjet.DataStream.from(data).reduce(a => a + 1, 0)
 }
 
 function run(command, filename, parameters = {}, retries = 5, cache = false, join = 'inner', verbose = false, alert = () => {}) {
@@ -97,9 +97,9 @@ function run(command, filename, parameters = {}, retries = 5, cache = false, joi
     const reconciler = require('./reconcile-' + command)
     const execute = reconciler.initialise(parameters, requestor, die)
     const blank = Object.fromEntries(reconciler.details.columns.map(column => [column.name]))
-    const data = FSExtra.createReadStream(filename).pipe(CSVParser())
-    return Ix.AsyncIterable.from(data).map(async (item, i) => {
-        if (i === 0) {
+    const source = () => Scramjet.StringStream.from(FSExtra.createReadStream(filename)).CSVParse({ header: true })
+    return source().map(async item => {
+        if (i === 0) { // check for keys in the reconciler output that already exist in the input
             const keysReconciler = reconciler.details.columns.map(column => column.name)
             const keysItem = Object.keys(item)
             const overlap = keysReconciler.filter(key => keysItem.includes(key))

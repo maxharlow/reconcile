@@ -114,12 +114,12 @@ async function setup() {
         if (!exists) throw new Error(`${filename}: could not find file`)
         console.error('Starting up...')
         const total = await reconcile.length(filename)
-        reconcile.run(command, filename, parametersParsed, retries, cache, join, verbose, alert)
+        await reconcile.run(command, filename, parametersParsed, retries, cache, join, verbose, alert)
             .tap(ticker('Working...', total))
             .flatMap(x => x) // flatten
             .flatMap(csv())
-            .forEach(write)
-            .finally(() => console.error('Done!'))
+            .each(write)
+        console.error('Done!')
     }
     catch (e) {
         console.error(e.message)
