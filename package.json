@@ -16,10 +16,10 @@
         "cheerio": "0.22.x",
         "csv-parser": "2.3.x",
         "fs-extra": "8.1.x",
-        "ix": "2.5.x",
         "js-yaml": "3.13.x",
         "papaparse": "5.1.x",
         "progress": "2.0.x",
+        "scramjet": "4.35.x",
         "yargs": "15.1.x"
     },
     "bin": {
