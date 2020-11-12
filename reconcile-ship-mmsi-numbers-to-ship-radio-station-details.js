@@ -1,4 +1,4 @@
-const Cheerio = require('cheerio')
+import Cheerio from 'cheerio'
 
 function initialise(parameters, requestor, die) {
 
@@ -78,4 +78,4 @@ const details = {
     ]
 }
 
-module.exports = { initialise, details }
+export default { initialise, details }

@@ -97,4 +97,4 @@ const details = {
     ]
 }
 
-module.exports = { initialise, details }
+export default { initialise, details }

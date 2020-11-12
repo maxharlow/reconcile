@@ -1,6 +1,6 @@
-const Axios = require('axios')
-const Querystring = require('querystring')
-const Cheerio = require('cheerio')
+import Axios from 'axios'
+import Querystring from 'querystring'
+import Cheerio from 'cheerio'
 
 function initialise(parameters, requestor, die) {
 
@@ -123,4 +123,4 @@ const details = {
     ]
 }
 
-module.exports = { initialise, details }
+export default { initialise, details }

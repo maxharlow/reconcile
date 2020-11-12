@@ -1,11 +1,11 @@
-const Crypto = require('crypto')
-const FSExtra = require('fs-extra')
-const Scramjet = require('scramjet')
-const Axios = require('axios')
-const AxiosRetry = require('axios-retry')
-const AxiosRateLimit = require('axios-rate-limit')
-const Querystring = require('querystring')
-const CSVParser = require('csv-parser')
+import Crypto from 'crypto'
+import FSExtra from 'fs-extra'
+import Scramjet from 'scramjet'
+import Axios from 'axios'
+import AxiosRetry from 'axios-retry'
+import AxiosRateLimit from 'axios-rate-limit'
+import Querystring from 'querystring'
+import CSVParser from 'csv-parser'
 
 function request(retries, cache, verbose, alert, limit, messages) {
     const cacheDirectory = '.reconcile-cache'
@@ -88,13 +88,13 @@ async function length(filename) {
     return Scramjet.DataStream.from(data).reduce(a => a + 1, 0)
 }
 
-function run(command, filename, parameters = {}, retries = 5, cache = false, join = 'inner', verbose = false, alert = () => {}) {
+async function run(command, filename, parameters = {}, retries = 5, cache = false, join = 'inner', verbose = false, alert = () => {}) {
     const die = message => {
         alert(`Exiting early: ${message}`)
         process.exit(1)
     }
     const requestor = request.bind(null, retries, cache, verbose, alert)
-    const reconciler = require('./reconcile-' + command)
+    const { default: reconciler } = await import(`./reconcile-${command}.js`)
     const execute = reconciler.initialise(parameters, requestor, die)
     const blank = Object.fromEntries(reconciler.details.columns.map(column => [column.name]))
     const source = () => Scramjet.StringStream.from(FSExtra.createReadStream(filename)).CSVParse({ header: true })
@@ -125,4 +125,4 @@ function run(command, filename, parameters = {}, retries = 5, cache = false, joi
     })
 }
 
-module.exports = { run, length }
+export default { run, length }
