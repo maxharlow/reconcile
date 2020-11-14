@@ -108,7 +108,7 @@ async function run(command, filename, parameters = {}, retries = 5, cache = fals
     })
     const columnMap = Object.fromEntries(columnMapEntries)
     const blank = Object.fromEntries(Object.values(columnMap).map(key => [key]))
-    return source().map(async item => {
+    return source().setOptions({ maxParallel: 1 }).map(async item => {
         try {
             const executed = await execute(item)
             const results = Array.isArray(executed) ? executed : [executed]
