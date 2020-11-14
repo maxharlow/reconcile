@@ -113,10 +113,11 @@ async function setup() {
         const exists = await FSExtra.pathExists(filename)
         if (!exists) throw new Error(`${filename}: could not find file`)
         console.error('Starting up...')
-        const total = await reconcile.length(filename)
-        const reconciliation = await reconcile.run(command, filename, parametersParsed, retries, cache, join, verbose, alert)
-        await reconciliation
-            .tap(ticker('Working...', total))
+        const reconcillation = await reconcile(command, filename, parametersParsed, retries, cache, join, verbose, alert)
+        const total = await reconcillation.length()
+        const processing = await reconcillation.run()
+        await processing
+            .each(ticker('Working...', total))
             .flatten()
             .flatMap(csv())
             .each(write)
