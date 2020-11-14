@@ -5,7 +5,6 @@ import Axios from 'axios'
 import AxiosRetry from 'axios-retry'
 import AxiosRateLimit from 'axios-rate-limit'
 import Querystring from 'querystring'
-import CSVParser from 'csv-parser'
 
 function request(retries, cache, verbose, alert, limit, messages) {
     const cacheDirectory = '.reconcile-cache'
@@ -84,8 +83,7 @@ function request(retries, cache, verbose, alert, limit, messages) {
 }
 
 async function length(filename) {
-    const data = FSExtra.createReadStream(filename).pipe(CSVParser())
-    return Scramjet.DataStream.from(data).reduce(a => a + 1, 0)
+    return Scramjet.StringStream.from(FSExtra.createReadStream(filename)).CSVParse({ header: true }).reduce(a => a + 1, 0)
 }
 
 async function run(command, filename, parameters = {}, retries = 5, cache = false, join = 'inner', verbose = false, alert = () => {}) {
