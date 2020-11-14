@@ -3,8 +3,6 @@ Reconcile
 
 Enrich your data, adding new columns based on lookups to online services.
 
-Requires [Node](https://nodejs.org/).
-
 
 Installing
 ----------
