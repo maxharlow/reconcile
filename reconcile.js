@@ -82,17 +82,17 @@ function request(retries, cache, verbose, alert, limit, messages) {
     }
 }
 
-async function length(filename) {
-    return Scramjet.StringStream.from(FSExtra.createReadStream(filename)).CSVParse({ header: true }).reduce(a => a + 1, 0)
-}
-
-async function run(command, filename, parameters = {}, retries = 5, cache = false, join = 'inner', verbose = false, alert = () => {}) {
+async function load(command, filename, parameters = {}, retries = 5, cache = false, join = 'inner', verbose = false, alert = () => {}) {
     const die = message => {
         alert(`Exiting early: ${message}`)
         process.exit(1)
     }
     const requestor = request.bind(null, retries, cache, verbose, alert)
     const { default: reconciler } = await import(`./reconcile-${command}.js`)
+    Object.keys(parameters).forEach(parameter => {
+        if (!reconciler.details.parameters.find(p => p.name === parameter)) alert(`Ignoring unexpected parameter '${parameter}'`)
+    })
+    const batch = reconciler.details.batch || 1
     const execute = reconciler.initialise(parameters, requestor, die)
     const source = () => Scramjet.StringStream.from(FSExtra.createReadStream(filename)).CSVParse({ header: true })
     const columnsReconciler = reconciler.details.columns.map(column => column.name)
@@ -108,26 +108,33 @@ async function run(command, filename, parameters = {}, retries = 5, cache = fals
     })
     const columnMap = Object.fromEntries(columnMapEntries)
     const blank = Object.fromEntries(Object.values(columnMap).map(key => [key]))
-    return source().setOptions({ maxParallel: 1 }).map(async item => {
+    const length = async () => {
+        const entries = await Scramjet.StringStream.from(FSExtra.createReadStream(filename)).CSVParse({ header: true }).reduce(a => a + 1, 0)
+        return Math.ceil(entries / batch)
+    }
+    const run = async () => source().batch(batch).setOptions({ maxParallel: 1 }).map(async items => {
         try {
-            const executed = await execute(item)
-            const results = Array.isArray(executed) ? executed : [executed]
-            if (join === 'outer' && results.length === 0) {
-                return [{ ...item, ...blank }]
-            }
-            return results.map(result => {
-                const resultRemapped = Object.fromEntries(Object.entries(result).map(([column, value]) => [columnMap[column], value]))
-                return { ...item, ...resultRemapped }
+            const executed = await execute(batch === 1 ? items[0] : items)
+            return items.flatMap((item, i) => {
+                const results = batch > 1 ? executed[i] // expect an array of arrays
+                      : Array.isArray(executed) ? executed // reconciler produces multiple results
+                      : [executed] // reconciler produces a single result
+                if (join === 'outer' && results.length === 0) return [{ ...item, ...blank }]
+                return results.map(result => {
+                    const resultRemapped = Object.fromEntries(Object.entries(result).map(([column, value]) => [columnMap[column], value]))
+                    return { ...item, ...resultRemapped }
+                })
             })
         }
         catch (e) {
             alert(verbose ? e.stack : e.message)
             if (join === 'outer') {
-                return [{ ...item, ...blank }]
+                return items.map(item => ({ ...item, ...blank }))
             }
             else return []
         }
     })
+    return { run, length }
 }
 
-export default { run, length }
+export default load
