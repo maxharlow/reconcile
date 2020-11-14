@@ -17,7 +17,6 @@
         "cheerio": "0.22.x",
         "form-data": "3.0.x",
         "fs-extra": "9.0.x",
-        "papaparse": "5.3.x",
         "progress": "2.0.x",
         "scramjet": "4.35.x",
         "yaml": "1.10.x",
