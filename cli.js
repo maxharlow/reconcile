@@ -1,4 +1,3 @@
-import Path from 'path'
 import Readline from 'readline'
 import FSExtra from 'fs-extra'
 import Yargs from 'yargs'
@@ -72,10 +71,9 @@ function display(details) {
 }
 
 async function setup() {
-    const listing = await FSExtra.readdir(Path.resolve())
+    const listing = await FSExtra.readdir('reconcilers')
     const reconcilers = listing
-        .filter(file => file.startsWith('reconcile-'))
-        .map(file => file.match(/reconcile-(.+).js/)[1])
+        .map(file => file.match(/(.+).js/)[1])
     const instructions = Yargs(Process.argv)
         .usage('Usage: reconcile <command> <filename>')
         .wrap(null)
@@ -88,7 +86,7 @@ async function setup() {
         .help('?').alias('?', 'help')
         .version().alias('v', 'version')
     await Promise.all(reconcilers.map(async command => {
-        const reconciler = await import(`./reconcile-${command}.js`)
+        const reconciler = await import(`./reconcilers/${command}.js`)
         const commandArgs = args => args
             .usage(`Usage: reconcile ${command} <filename>`)
             .demand(1, '')
