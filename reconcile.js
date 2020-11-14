@@ -94,15 +94,21 @@ async function run(command, filename, parameters = {}, retries = 5, cache = fals
     const requestor = request.bind(null, retries, cache, verbose, alert)
     const { default: reconciler } = await import(`./reconcile-${command}.js`)
     const execute = reconciler.initialise(parameters, requestor, die)
-    const blank = Object.fromEntries(reconciler.details.columns.map(column => [column.name]))
     const source = () => Scramjet.StringStream.from(FSExtra.createReadStream(filename)).CSVParse({ header: true })
-    return source().map(async item => {
-        if (i === 0) { // check for keys in the reconciler output that already exist in the input
-            const keysReconciler = reconciler.details.columns.map(column => column.name)
-            const keysItem = Object.keys(item)
-            const overlap = keysReconciler.filter(key => keysItem.includes(key))
-            overlap.forEach(key => alert(`Column ${key} in the source will be overwritten with data from the reconciler`))
+    const columnsReconciler = reconciler.details.columns.map(column => column.name)
+    const columnsSource = Object.keys((await source().slice(0, 1).toArray())[0])
+    const columnMapEntries = columnsReconciler.map(column => {
+        const columnUnique = (i = '') => {
+            const attempt = `${column}${i}`
+            if (columnsSource.find(name => name === attempt)) return columnUnique(Number(i) + 1)
+            if (i) alert(`Column '${column}' from the reconciler has been renamed '${attempt}' so it does not overwrite the source`)
+            return attempt
         }
+        return [column, columnUnique()]
+    })
+    const columnMap = Object.fromEntries(columnMapEntries)
+    const blank = Object.fromEntries(Object.values(columnMap).map(key => [key]))
+    return source().map(async item => {
         try {
             const executed = await execute(item)
             const results = Array.isArray(executed) ? executed : [executed]
@@ -110,7 +116,8 @@ async function run(command, filename, parameters = {}, retries = 5, cache = fals
                 return [{ ...item, ...blank }]
             }
             return results.map(result => {
-                return { ...item, ...result }
+                const resultRemapped = Object.fromEntries(Object.entries(result).map(([column, value]) => [columnMap[column], value]))
+                return { ...item, ...resultRemapped }
             })
         }
         catch (e) {

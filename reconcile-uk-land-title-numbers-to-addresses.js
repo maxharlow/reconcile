@@ -7,7 +7,7 @@ function initialise(parameters, requestor, die) {
     })
 
     function form(entry) {
-        const titleNumber = entry[parameters.titleNumberField || 'titleNumber']
+        const titleNumber = entry[parameters.titleNumberField]
         if (!titleNumber) throw new Error('No title number found')
         return {
             url: 'https://eservices.landregistry.gov.uk/wps/portal/Property_Search',
@@ -58,7 +58,7 @@ function initialise(parameters, requestor, die) {
 
 const details = {
     parameters: [
-        { name: 'titleNumberField', description: 'Title number field. [optional, default: "titleNumber"]' }
+        { name: 'titleNumberField', description: 'Title number field.' }
     ],
     columns: [
         { name: 'titleAddress' },

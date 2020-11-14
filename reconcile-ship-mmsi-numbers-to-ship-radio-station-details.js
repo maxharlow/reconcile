@@ -7,8 +7,8 @@ function initialise(parameters, requestor, die) {
         if (e.response.status >= 400) return `Received code ${e.response.status} for ship ${ship}`
     })
 
-    function locate(entry, key) {
-        const shipMMSINumber = entry[parameters.shipMMSINumberField || 'shipMMSINumber']
+    function locate(entry) {
+        const shipMMSINumber = entry[parameters.shipMMSINumberField]
         if (!shipMMSINumber) throw new Error('No ship MMSI number found')
         return {
             url: 'https://www.itu.int/mmsapp/ShipStation/list',
@@ -65,7 +65,7 @@ function initialise(parameters, requestor, die) {
 
 const details = {
     parameters: [
-        { name: 'shipMMSINumberField', description: 'Ship MMSI number field. [optional, default: "shipMMSINumber"]' }
+        { name: 'shipMMSINumberField', description: 'Ship MMSI number field.' }
     ],
     columns: [
         { name: 'shipName' },

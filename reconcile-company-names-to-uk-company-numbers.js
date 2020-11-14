@@ -9,7 +9,7 @@ function initialise(parameters, requestor, die) {
     })
 
     function locate(entry) {
-        const companyName = entry[parameters.companyNameField || 'companyName']
+        const companyName = entry[parameters.companyNameField]
         if (!companyName) throw new Error('No company name found')
         return {
             url: 'https://api.companieshouse.gov.uk/search/companies',
@@ -53,7 +53,7 @@ function initialise(parameters, requestor, die) {
 const details = {
     parameters: [
         { name: 'apiKey', description: 'A Companies House API key.' },
-        { name: 'companyNameField', description: 'Company name column. [optional, default: "companyName"]' },
+        { name: 'companyNameField', description: 'Company name column.' },
         { name: 'maximumResults', description: 'Maximum number of results to include for each name. [optional, default: 1, maximum 100]' }
     ],
     columns: [

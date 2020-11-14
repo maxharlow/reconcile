@@ -31,7 +31,7 @@ function initialise(parameters, requestor, die) {
     }
 
     function locate(entry, key) {
-        const shipIMONumber = entry[parameters.shipIMONumberField || 'shipIMONumber']
+        const shipIMONumber = entry[parameters.shipIMONumberField]
         if (!shipIMONumber) throw new Error('No ship IMO number found')
         return {
             url: 'http://www.equasis.org/EquasisWeb/restricted/ShipHistory',
@@ -103,7 +103,7 @@ const details = {
     parameters: [
         { name: 'email', description: 'The email address for a registered Equasis account.' },
         { name: 'password', description: 'The password for a registered Equasis account' },
-        { name: 'shipIMONumberField', description: 'Ship IMO number (or ship name) field. [optional, default: "shipIMONumber"]' }
+        { name: 'shipIMONumberField', description: 'Ship IMO number (or ship name) field.' }
     ],
     columns: [
         { name: 'shipName' },

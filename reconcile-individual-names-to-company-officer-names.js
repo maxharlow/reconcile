@@ -10,16 +10,16 @@ function initialise(parameters, requestor, die) {
     function locate(entry) {
         if (!parameters.apiToken) die('No API token found')
         const apiVersion = 'v0.4.8'
-        const individualName = entry[parameters.individualNameField || 'individualName']
-        const individualDateOfBirth = entry[parameters.individualDateOfBirthField || 'individualDateOfBirth']
-        const individualJurisdiction = parameters.jurisdiction || entry[parameters.individualJurisdictionField || 'individualJurisdiction']
+        const individualName = entry[parameters.individualNameField]
+        const individualDateOfBirth = entry[parameters.individualDateOfBirthField]
+        const individualJurisdiction = parameters.jurisdiction || entry[parameters.individualJurisdictionField]
         if (!individualName) throw new Error('No individual name found')
         return {
             url: `https://api.opencorporates.com/${apiVersion}/officers/search`,
             params: {
                 q: individualName.trim(),
-                date_of_birth: individualDateOfBirth,
-                jurisdiction_code: individualJurisdiction ? individualJurisdiction.trim() : undefined,
+                ...(individualDateOfBirth ? { date_of_birth: individualDateOfBirth } : {}),
+                ...(individualJurisdiction ? { jurisdiction_code: individualJurisdiction.trim() } : {}),
                 api_token: parameters.apiToken,
                 per_page: 100
             },
@@ -69,20 +69,19 @@ function initialise(parameters, requestor, die) {
         }
         const officers = response.data.results.officers
         return officers.map(officer => {
-            const fields = {
+            return {
                 officerName: officer.officer.name,
                 officerPosition: officer.officer.position,
                 officerStartDate: officer.officer.start_date,
                 officerEndDate: officer.officer.end_date,
                 officerNationality: officer.officer.nationality,
                 officerOccupation: officer.officer.occupation,
+                officerAddress: officer.officer.address ? officer.officer.address.replace(/\n/g,', ') : null,
+                officerDateOfBirth: officer.officer.date_of_birth,
                 companyName: officer.officer.company.name,
                 companyNumber: officer.officer.company.company_number,
                 companyJurisdiction: officer.officer.company.jurisdiction_code
             }
-            if (officer.officer.address !== undefined) fields.officerAddress = officer.officer.address.replace(/\n/g,', ') // only if API key sent
-            if (officer.officer.date_of_birth !== undefined) fields.officerDateOfBirth = officer.officer.date_of_birth // only if API key sent
-            return fields
         })
     }
 
@@ -102,9 +101,9 @@ const details = {
     parameters: [
         { name: 'apiToken', description: 'An OpenCorporates API token.' },
         { name: 'jurisdiction', description: 'If all individuals have the same jurisdiction you can specify it here instead of in a column. Use ISO 3166-2 format. [optional]' },
-        { name: 'individualNameField', description: 'Individual name column. [optional, default: "individualName"]' },
-        { name: 'individualDateOfBirthField', description: 'Individual birth date column. It should use ISO 8601 format. For a range the two dates should be separated with a colon. [optional, default: "individualDateOfBirth"]' },
-        { name: 'individualJurisdictionField', description: 'Jurisdiction code column, if any. It should use ISO 3166-2 format. [optional, default: "individualJurisdiction"]' }
+        { name: 'individualNameField', description: 'Individual name column.' },
+        { name: 'individualDateOfBirthField', description: 'Individual birth date column. It should use ISO 8601 format. For a range the two dates should be separated with a colon. [optional]' },
+        { name: 'individualJurisdictionField', description: 'Jurisdiction code column, if any. It should use ISO 3166-2 format. [optional]' }
     ],
     columns: [
         { name: 'officerName' },
