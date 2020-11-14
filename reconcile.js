@@ -88,7 +88,7 @@ async function load(command, filename, parameters = {}, retries = 5, cache = fal
         process.exit(1)
     }
     const requestor = request.bind(null, retries, cache, verbose, alert)
-    const { default: reconciler } = await import(`./reconcile-${command}.js`)
+    const { default: reconciler } = await import(`./reconcilers/${command}.js`)
     Object.keys(parameters).forEach(parameter => {
         if (!reconciler.details.parameters.find(p => p.name === parameter)) alert(`Ignoring unexpected parameter '${parameter}'`)
     })
