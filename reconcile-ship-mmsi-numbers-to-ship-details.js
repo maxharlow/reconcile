@@ -31,7 +31,7 @@ function initialise(parameters, requestor, die) {
     }
 
     function locate(entry, key) {
-        const shipMMSINumber = entry[parameters.shipMMSINumberField || 'shipMMSINumber']
+        const shipMMSINumber = entry[parameters.shipMMSINumberField]
         if (!shipMMSINumber) throw new Error('No ship MMSI number found')
         return {
             url: 'http://www.equasis.org/EquasisWeb/restricted/ShipHistory',
@@ -104,7 +104,7 @@ const details = {
     parameters: [
         { name: 'email', description: 'The email address for a registered Equasis account.' },
         { name: 'password', description: 'The password for a registered Equasis account' },
-        { name: 'shipMMSINumberField', description: 'Ship MMSI number field. [optional, default: "shipMMSINumber"]' }
+        { name: 'shipMMSINumberField', description: 'Ship MMSI number field.' }
     ],
     columns: [
         { name: 'shipName' },

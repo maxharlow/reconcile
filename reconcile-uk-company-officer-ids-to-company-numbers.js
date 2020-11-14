@@ -9,7 +9,7 @@ function initialise(parameters, requestor, die) {
     })
 
     function locate(entry) {
-        const officerID = entry[parameters.officerIDField || 'officerID']
+        const officerID = entry[parameters.officerIDField]
         if (!officerID) throw new Error('No officer ID found')
         return {
             url: `https://api.companieshouse.gov.uk/officers/${officerID}/appointments`,
@@ -89,7 +89,7 @@ function initialise(parameters, requestor, die) {
 const details = {
     parameters: [
         { name: 'apiKey', description: 'A Companies House API key.' },
-        { name: 'officerIDField', description: 'Officer ID column. [optional, default: "officerID"]' }
+        { name: 'officerIDField', description: 'Officer ID column.' }
     ],
     columns: [
         { name: 'companyNumber' },

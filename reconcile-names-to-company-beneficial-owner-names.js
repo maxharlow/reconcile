@@ -10,7 +10,7 @@ function initialise(parameters, requestor, die) {
     function locate(entry) {
         if (!parameters.apiToken) die('No API token found')
         const apiVersion = 'v0.4.8'
-        const name = entry[parameters.nameField || 'name']
+        const name = entry[parameters.nameField]
         if (!name) throw new Error('No name found')
         return {
             url: `https://api.opencorporates.com/${apiVersion}/statements/control_statements/search`,
@@ -92,7 +92,7 @@ function initialise(parameters, requestor, die) {
 const details = {
     parameters: [
         { name: 'apiToken', description: 'An OpenCorporates API token.' },
-        { name: 'nameField', description: 'Name column. [optional, default: "name"]' }
+        { name: 'nameField', description: 'Name column.' }
     ],
     columns: [
         { name: 'beneficialOwnerName' },

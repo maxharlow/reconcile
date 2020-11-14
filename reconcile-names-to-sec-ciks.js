@@ -9,7 +9,7 @@ function initialise(parameters, requestor, die) {
     })
 
     function locate(entry) {
-        const name = entry[parameters.nameField || 'name']
+        const name = entry[parameters.nameField]
         if (!name) throw new Error('No name found')
         return {
             url: 'https://www.sec.gov/cgi-bin/cik_lookup',
@@ -56,7 +56,7 @@ function initialise(parameters, requestor, die) {
 
 const details = {
     parameters: [
-        { name: 'nameField', description: 'Name column. [optional, default: "name"]' },
+        { name: 'nameField', description: 'Name column.' },
         { name: 'maximumResults', description: 'Maximum number of results to include for each name. [optional, default: 1, maximum 100]' }
     ],
     columns: [

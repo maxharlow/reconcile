@@ -10,8 +10,8 @@ function initialise(parameters, requestor, die) {
 
     function locate(entry) {
         const apiVersion = 'v0.4.8'
-        const companyNumber = entry[parameters.companyNumberField || 'companyNumber']
-        const companyJurisdiction = parameters.jurisdiction || entry[parameters.companyJurisdictionField || 'companyJurisdiction']
+        const companyNumber = entry[parameters.companyNumberField]
+        const companyJurisdiction = parameters.jurisdiction || entry[parameters.companyJurisdictionField]
         if (!companyNumber) throw new Error('No company number found')
         if (!companyJurisdiction) throw new Error(`No jurisdiction found for company ${companyNumber}`)
         return {
@@ -29,18 +29,17 @@ function initialise(parameters, requestor, die) {
     function parse(response) {
         const officers = response.data.results.company.officers
         return officers.map(officer => {
-            const fields = {
+            return {
                 companyName: response.data.results.company.name,
                 officerName: officer.officer.name,
                 officerPosition: officer.officer.position,
                 officerStartDate: officer.officer.start_date,
                 officerEndDate: officer.officer.end_date,
                 officerNationality: officer.officer.nationality,
-                officerOccupation: officer.officer.occupation
+                officerOccupation: officer.officer.occupation,
+                officerAddress: officer.officer.address ? officer.officer.address.replace(/\n/g, ', ') : null, // only if API token sent
+                officerDateOfBirth: officer.officer.date_of_birth // only if API token sent
             }
-            if (officer.officer.address !== undefined) fields.officerAddress = officer.officer.address.replace(/\n/g, ', ') // only if API token sent
-            if (officer.officer.date_of_birth !== undefined) fields.officerDateOfBirth = officer.officer.date_of_birth // only if API token sent
-            return fields
         })
     }
 
@@ -58,9 +57,9 @@ function initialise(parameters, requestor, die) {
 const details = {
     parameters: [
         { name: 'apiToken', description: 'An OpenCorporates API token. You are limited to 500 requests per month otherwise. [optional]' },
-        { name: 'jurisdiction', description: 'If all companies have the same jurisdiction you can specify it here instead of in a column. Use ISO 3166-2 format. [optional]' },
-        { name: 'companyNumberField', description: 'Company number column. [optional, default: "companyNumber"]' },
-        { name: 'companyJurisdictionField', description: 'Jurisdiction code column, if any. It should use ISO 3166-2 format. [optional, default: "companyJurisdiction"]' }
+        { name: 'jurisdiction', description: 'If all companies have the same jurisdiction you can specify it here instead of in a column. Use ISO 3166-2 format. Required unless companyJurisdictionField is specified.' },
+        { name: 'companyNumberField', description: 'Company number column.' },
+        { name: 'companyJurisdictionField', description: 'Jurisdiction code column, if any. It should use ISO 3166-2 format. Required unless jurisdiction is specified.' }
     ],
     columns: [
         { name: 'companyName' },

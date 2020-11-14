@@ -10,8 +10,8 @@ function initialise(parameters, requestor, die) {
     function locate(entry) {
         if (!parameters.apiToken) die('No API token found')
         const apiVersion = 'v0.4.8'
-        const companyName = entry[parameters.companyNameField || 'companyName']
-        const companyJurisdiction = parameters.jurisdiction || entry[parameters.companyJurisdictionField || 'companyJurisdiction']
+        const companyName = entry[parameters.companyNameField]
+        const companyJurisdiction = parameters.jurisdiction || entry[parameters.companyJurisdictionField]
         const maximumResults = parameters.maximumResults || 1
         if (!companyName) throw new Error('No company name found')
         return {
@@ -59,9 +59,9 @@ function initialise(parameters, requestor, die) {
 const details = {
     parameters: [
         { name: 'apiToken', description: 'An OpenCorporates API token.' },
-        { name: 'jurisdiction', description: 'If all companies have the same jurisdiction you can specify it here instead of in a column. Use ISO 3166-2 format. [optional]' },
-        { name: 'companyNameField', description: 'Company name column. [optional, default: "companyName"]' },
-        { name: 'companyJurisdictionField', description: 'Jurisdiction code column, if any. It should use ISO 3166-2 format. [optional, default: "companyJurisdiction"]' },
+        { name: 'jurisdiction', description: 'If all companies have the same jurisdiction you can specify it here instead of in a column. Use ISO 3166-2 format. Required unless companyJurisdictionField is specified.' },
+        { name: 'companyNameField', description: 'Company name column.' },
+        { name: 'companyJurisdictionField', description: 'Jurisdiction code column, if any. It should use ISO 3166-2 format. Required unless jurisdiction is specified.' },
         { name: 'maximumResults', description: 'Maximum number of results to include for each name. [optional, default: 1, maximum 30, or 100 with an API token]' }
     ],
     columns: [
