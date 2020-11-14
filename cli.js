@@ -6,7 +6,6 @@ import Yargs from 'yargs'
 import Process from 'process'
 import Yaml from 'yaml'
 import Progress from 'progress'
-import PapaParse from 'papaparse'
 import reconcile from './reconcile.js'
 
 async function parse(parameters) {
@@ -39,19 +38,6 @@ function ticker(text, total) {
         incomplete: ' '
     })
     return () => progress.tick()
-}
-
-function csv() {
-    let headerWritten = false
-    return function* (record) {
-        if (!headerWritten) {
-            const header = PapaParse.unparse([Object.keys(record)])
-            yield header + '\n'
-            headerWritten = true
-        }
-        const entry = PapaParse.unparse([Object.values(record)])
-        yield entry + '\n'
-    }
 }
 
 function write(line) {
@@ -119,7 +105,7 @@ async function setup() {
         await processing
             .each(ticker('Working...', total))
             .flatten()
-            .flatMap(csv())
+            .CSVStringify()
             .each(write)
             .whenEnd()
         console.error('Done!')
