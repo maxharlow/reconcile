@@ -9,7 +9,7 @@ function initialise(parameters, requestor, die) {
     })
 
     function locate(entry) {
-        const cik = entry[parameters.cikField || 'cik']
+        const cik = entry[parameters.cikField]
         if (!cik) throw new Error('No CIK found')
         return {
             url: 'https://www.sec.gov/cgi-bin/browse-edgar',
@@ -88,7 +88,7 @@ function initialise(parameters, requestor, die) {
 
 const details = {
     parameters: [
-        { name: 'cikField', description: 'CIK or ticker column. [optional, default: "cik"]' },
+        { name: 'cikField', description: 'CIK or ticker column.' },
         { name: 'filingType', description: 'Type of filings to include, eg. 10-K [optional, default is all filings]' },
         { name: 'includeAll', description: 'Set true to include all filed documents, instead of just the first [optional, default is first only]' }
     ],
