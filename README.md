@@ -119,7 +119,7 @@ Use [OpenCorporates](https://opencorporates.com/) to look up a list of individua
 Parameters:
 * `apiToken` An OpenCorporates API token.
 * `jurisdiction` If all individuals have the same jurisdiction you can specify it here instead of in a column. Optional.
-p* `individualNameField` Individual name column.
+* `individualNameField` Individual name column.
 * `individualDateOfBirthField` Individual birth date column. It should use [ISO 8601 format](https://en.wikipedia.org/wiki/ISO_8601). For a range the two dates should be separated with a colon. Optional.
 * `individualJurisdictionField` Jurisdiction code column, if any. It should use [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes). Optional.
 
