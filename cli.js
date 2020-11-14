@@ -1,3 +1,5 @@
+import Path from 'path'
+import URL from 'url'
 import Readline from 'readline'
 import FSExtra from 'fs-extra'
 import Yargs from 'yargs'
@@ -71,7 +73,7 @@ function display(details) {
 }
 
 async function setup() {
-    const listing = await FSExtra.readdir('reconcilers')
+    const listing = await FSExtra.readdir(Path.resolve(Path.dirname(URL.fileURLToPath(import.meta.url)), 'reconcilers'))
     const reconcilers = listing
         .map(file => file.match(/(.+).js/)[1])
     const instructions = Yargs(Process.argv)
