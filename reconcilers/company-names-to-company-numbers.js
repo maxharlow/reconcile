@@ -3,7 +3,6 @@ import FormData from 'form-data'
 function initialise(parameters, requestor, die) {
 
     const request = requestor(Infinity, e => {
-        if (e.response.status === 403) die('The rate limit has been reached')
         if (e.response.status >= 400) return `Received code ${e.response.status}`
     })
 
