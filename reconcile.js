@@ -117,8 +117,8 @@ async function load(command, filename, parameters = {}, retries = 5, cache = fal
             const executed = await execute(batch === 1 ? items[0] : items)
             return items.flatMap((item, i) => {
                 const results = batch > 1 ? executed[i] // expect an array of arrays
-                      : Array.isArray(executed) ? executed // reconciler produces multiple results
-                      : [executed] // reconciler produces a single result
+                    : Array.isArray(executed) ? executed // reconciler produces multiple results
+                    : [executed] // reconciler produces a single result
                 if (join === 'outer' && results.length === 0) return [{ ...item, ...blank }]
                 return results.map(result => {
                     const resultRemapped = Object.fromEntries(Object.entries(result).map(([column, value]) => [columnMap[column], value]))
