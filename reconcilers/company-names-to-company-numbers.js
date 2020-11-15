@@ -23,10 +23,7 @@ function initialise(parameters, requestor, die) {
         return {
             url: 'https://opencorporates.com/reconcile',
             method: 'POST',
-            headers: {
-                ...form.getHeaders(),
-                'content-disposition': 'form-data'
-            },
+            headers: form.getHeaders(),
             data: form,
             passthrough: {
                 entries
