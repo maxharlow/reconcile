@@ -9,7 +9,7 @@ import Querystring from 'querystring'
 
 function request(retries, cache, verbose, alert, limit, messages) {
     const cacheDirectory = '.reconcile-cache'
-    const timeout = 30 * 1000
+    const timeout = 45 * 1000
     const toLocationName = location => {
         const method = location.method.toUpperCase() || 'GET'
         const url = typeof location === 'string' ? location : location.url
