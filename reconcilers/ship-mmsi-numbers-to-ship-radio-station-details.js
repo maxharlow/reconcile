@@ -13,7 +13,7 @@ function initialise(parameters, requestor, die) {
         return {
             url: 'https://www.itu.int/mmsapp/ShipStation/list',
             method: 'POST',
-            qs: {
+            dataQuery: {
                 'Search.MaritimeMobileServiceIdentity': shipMMSINumber,
                 viewCommand: 'Search'
             },
@@ -28,7 +28,7 @@ function initialise(parameters, requestor, die) {
         return {
             url: 'https://www.itu.int/mmsapp/ShipStation/list',
             method: 'POST',
-            qs: {
+            dataQuery: {
                 onview: document('[title="View Ship Station"]').attr('value')
             },
             passthrough: {

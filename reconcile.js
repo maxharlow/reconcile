@@ -4,17 +4,29 @@ import Scramjet from 'scramjet'
 import Axios from 'axios'
 import AxiosRetry from 'axios-retry'
 import AxiosRateLimit from 'axios-rate-limit'
+import FormData from 'form-data'
 import Querystring from 'querystring'
 
 function request(retries, cache, verbose, alert, limit, messages) {
     const cacheDirectory = '.reconcile-cache'
     const timeout = 30 * 1000
+    const toLocationName = location => {
+        const method = location.method.toUpperCase() || 'GET'
+        const url = typeof location === 'string' ? location : location.url
+        const stringifyObject = object => Object.entries(object).map(([key, value]) => `${key}=${JSON.stringify(value)}`).join(' ')
+        return `${method} ${url}`
+            + (location.params ? '?' + Querystring.stringify(location.params) : '')
+            + (location.dataQuery ? ' ' + Querystring.stringify(location.dataQuery) : '')
+            + (location.dataForm ? ' <' + stringifyObject(location.dataForm) + '>' : '')
+            + (location.data && !location.dataQuery && !location.dataForm ? ' [' + stringifyObject(location.data) + ']' : '')
+    }
     const toErrorMessage = e => {
         const reconcilerError = e.response && messages(e)
         if (reconcilerError) return reconcilerError // look for reconciler-specific errors first
-        if (e.response) return `Received code ${e.response.status}: ${e.config.url}` // response recieved, but non-2xx
-        if (e.code === 'ECONNABORTED') return `Timed out after ${timeout / 1000}ms: ${e.config.url}` // request timed out
-        if (e.code) return `Error ${e.code}: ${e.config.url}` // request failed, with error code
+        const locationName = toLocationName(e.config)
+        if (e.response) return `Received code ${e.response.status}: ${locationName}` // response recieved, but non-2xx
+        if (e.code === 'ECONNABORTED') return `Timed out after ${timeout / 1000}ms: ${locationName}` // request timed out
+        if (e.code) return `Error ${e.code}: ${locationName}` // request failed, with error code
         return e.message // request not made
     }
     const instance = Axios.create({ timeout })
@@ -38,13 +50,17 @@ function request(retries, cache, verbose, alert, limit, messages) {
     })
     let cacheChecked = false
     return async location => {
-        const queryForm = Querystring.stringify(location.qs)
-        const queryString = Querystring.stringify(location.params)
-        const query = queryForm || queryString ? '?' + (queryForm || queryString) : ''
-        const url = typeof location === 'object' ? location.url + query : location
-        const method = location.method || 'GET'
-        if (location.qs) location.data = queryForm
         const hash = Crypto.createHash('sha1').update(JSON.stringify(location)).digest('hex')
+        if (location.dataQuery) {
+            location.data = Querystring.stringify(location.dataQuery)
+        }
+        if (location.dataForm) {
+            const form = new FormData()
+            location.headers = form.getHeaders()
+            Object.entries(location.dataForm).forEach(([key, value]) => form.append(key, JSON.stringify(value)))
+            location.data = form
+        }
+        const locationName = toLocationName(location)
         if (cache) {
             if (!cacheChecked) {
                 const cacheExists = await FSExtra.pathExists(cacheDirectory)
@@ -54,24 +70,22 @@ function request(retries, cache, verbose, alert, limit, messages) {
             }
             const isCached = await FSExtra.pathExists(`${cacheDirectory}/${hash}`)
             if (isCached) {
-                if (verbose) alert(`Cached: ${method} ${url}`)
+                if (verbose) alert(`Cached: ${locationName}`)
                 const cacheData = await FSExtra.readJson(`${cacheDirectory}/${hash}`)
                 return {
-                    url,
                     data: cacheData,
                     passthrough: location.passthrough
                 }
             }
         }
         try {
-            if (verbose) alert(`Requesting: ${method} ${url}`)
+            if (verbose) alert(`Requesting: ${locationName}`)
             const response = await instance(location)
             if (cache) {
                 await FSExtra.ensureDir(cacheDirectory)
                 await FSExtra.writeJson(`${cacheDirectory}/${hash}`, response.data)
             }
             return {
-                url,
                 data: response.data,
                 passthrough: location.passthrough
             }

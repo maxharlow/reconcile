@@ -1,5 +1,3 @@
-import FormData from 'form-data'
-
 function initialise(parameters, requestor, die) {
 
     const request = requestor(Infinity, e => {
@@ -18,13 +16,12 @@ function initialise(parameters, requestor, die) {
                 limit: maximumResults
             }]
         })
-        const form = new FormData()
-        form.append('queries', JSON.stringify(Object.fromEntries(queries)))
         return {
             url: 'https://opencorporates.com/reconcile',
             method: 'POST',
-            headers: form.getHeaders(),
-            data: form,
+            dataForm: {
+                queries: Object.fromEntries(queries)
+            },
             passthrough: {
                 entries
             }

@@ -36,7 +36,7 @@ function initialise(parameters, requestor, die) {
         return {
             url: 'http://www.equasis.org/EquasisWeb/restricted/Search',
             method: 'POST',
-            qs: {
+            dataQuery: {
                 P_PAGE: 1,
                 P_PAGE_SHIP: 1,
                 P_ENTREE: shipName
@@ -61,7 +61,7 @@ function initialise(parameters, requestor, die) {
                 const query = {
                     url: response.url,
                     method: 'POST',
-                    qs: {
+                    dataQuery: {
                         P_PAGE: 1,
                         P_PAGE_SHIP: page,
                         P_ENTREE: response.passthrough.shipName

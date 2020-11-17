@@ -23,7 +23,7 @@ function initialise(parameters, requestor, die) {
         return {
             url: `https://eservices.landregistry.gov.uk${action}`,
             method: 'POST',
-            qs: {
+            dataQuery: {
                 titleNo: response.passthrough.titleNumber,
                 enquiryType: 'detailed'
             },
