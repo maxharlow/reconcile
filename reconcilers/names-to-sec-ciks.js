@@ -17,7 +17,7 @@ function initialise(parameters, requestor, die) {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
-            qs: {
+            dataQuery: {
                 company: name
             },
             passthrough: {

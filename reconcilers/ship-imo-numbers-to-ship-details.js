@@ -36,7 +36,7 @@ function initialise(parameters, requestor, die) {
         return {
             url: 'http://www.equasis.org/EquasisWeb/restricted/ShipHistory',
             method: 'POST',
-            qs: {
+            dataQuery: {
                 P_IMO: shipIMONumber
             },
             headers: {
