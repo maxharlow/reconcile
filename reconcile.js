@@ -11,7 +11,7 @@ function request(retries, cache, verbose, alert, limit, messages) {
     const cacheDirectory = '.reconcile-cache'
     const timeout = 45 * 1000
     const toLocationName = location => {
-        const method = location.method.toUpperCase() || 'GET'
+        const method = location.method ? location.method.toUpperCase() : 'GET'
         const url = typeof location === 'string' ? location : location.url
         const stringifyObject = object => Object.entries(object).map(([key, value]) => `${key}=${JSON.stringify(value)}`).join(' ')
         return `${method} ${url}`
