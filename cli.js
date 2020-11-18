@@ -62,7 +62,7 @@ async function setup() {
     const listing = await FSExtra.readdir(Path.resolve(Path.dirname(URL.fileURLToPath(import.meta.url)), 'reconcilers'))
     const reconcilers = listing
         .map(file => file.match(/(.+).js/)[1])
-    const instructions = Yargs(Process.argv)
+    const instructions = Yargs(Process.argv.slice(2))
         .usage('Usage: reconcile <command> <filename>')
         .wrap(null)
         .completion('completion', false, () => reconcilers)
@@ -73,20 +73,21 @@ async function setup() {
         .option('V', { alias: 'verbose', type: 'boolean', describe: 'Print every request made', default: false })
         .help('?').alias('?', 'help')
         .version().alias('v', 'version')
-    await Promise.all(reconcilers.map(async command => {
-        const reconciler = await import(`./reconcilers/${command}.js`)
+    const instructionsCommands = reconcilers.map(async command => {
+        const { default: reconciler } = await import(`./reconcilers/${command}.js`)
         const commandArgs = args => args
             .usage(`Usage: reconcile ${command} <filename>`)
-            .demand(1, '')
+            .demandCommand(1, '')
             .positional('filename', { type: 'string', describe: 'The input file to process' })
             .epilog(display(reconciler.details))
-        instructions.command(command, '', commandArgs)
-    }))
+        return instructions.command(command, '', commandArgs)
+    })
+    await Promise.all(instructionsCommands)
     if (instructions.argv['get-yargs-completions']) Process.exit(0)
-    if (instructions.argv._.length === 2) instructions.showHelp().exit(0)
+    if (instructions.argv._.length === 0) instructions.showHelp().exit(0)
     try {
         const {
-            _: [,, command, filename],
+            _: [command, filename],
             parameters,
             retries,
             cache,
