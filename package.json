@@ -5,7 +5,6 @@
     "author": "Max Harlow <contact@maxharlow.com> (https://maxharlow.com/)",
     "license": "Apache-2.0",
     "type": "module",
-    "preferGlobal": true,
     "repository": {
         "type": "git",
         "url": "https://github.com/maxharlow/reconcile.git"
