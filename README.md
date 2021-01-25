@@ -523,3 +523,18 @@ Produces a CSV including columns:
 * `shipFormerName`
 * `shipTonnage`
 * `shipPersonCapacity`
+
+<hr>
+
+### Using Google Search
+
+#### `terms-to-search-results`
+
+Search Google for a term, and retrieve the results.
+
+Parameters:
+* `termField` Term field.
+
+Produces a CSV including columns:
+* `resultTitle`
+* `resultLocation`
