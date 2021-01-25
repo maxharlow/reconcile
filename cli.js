@@ -73,7 +73,7 @@ async function setup() {
         .option('V', { alias: 'verbose', type: 'boolean', describe: 'Print every request made', default: false })
         .help('?').alias('?', 'help')
         .version().alias('v', 'version')
-    const instructionsCommands = reconcilers.map(async command => {
+    const instructionsCommands = reconcilers.sort().map(async command => {
         const { default: reconciler } = await import(`./reconcilers/${command}.js`)
         const commandArgs = args => args
             .usage(`Usage: reconcile ${command} <filename>`)
