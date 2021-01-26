@@ -58,24 +58,24 @@ function initialise(parameters, requestor, die) {
         return persons.map(person => {
             const fields = {
                 beneficialOwnerName: person.name,
-                beneficialOwnerTitle: person.name_elements ? person.name_elements.title : null,
-                beneficialOwnerFirstName: person.name_elements ? person.name_elements.forename : null,
-                beneficialOwnerOtherFirstNames: person.name_elements ? person.name_elements.other_forenames : null,
-                beneficialOwnerMiddleNames: person.name_elements ? person.name_elements.middle_name : null,
-                beneficialOwnerLastName: person.name_elements ? person.name_elements.surname : null,
+                beneficialOwnerTitle: person.name_elements?.title || null,
+                beneficialOwnerFirstName: person.name_elements?.forename || null,
+                beneficialOwnerOtherFirstNames: person.name_elements?.other_forenames || null,
+                beneficialOwnerMiddleNames: person.name_elements?.middle_name || null,
+                beneficialOwnerLastName: person.name_elements?.surname || null,
                 beneficialOwnerKind: person.kind,
                 beneficialOwnerNaturesOfControl: person.natures_of_control.join('; '),
                 beneficialOwnerNotifiedDate: person.notified_on,
-                beneficialOwnerCeasedDate: person.ceased_on ? person.ceased_on : null,
-                beneficialOwnerNationality: person.nationality ? person.nationality : null,
+                beneficialOwnerCeasedDate: person.ceased_on || null,
+                beneficialOwnerNationality: person.nationality || null,
                 beneficialOwnerAddress: [person.address.care_of, person.address.premises, person.address.po_box, person.address.address_line_1, person.address.address_line_2, person.address.locality, person.address.region, person.address.postal_code, person.address.country].filter(x => x).join(', '),
                 beneficialOwnerDateOfBirth: person.date_of_birth ? [person.date_of_birth.year, person.date_of_birth.month, person.date_of_birth.day].filter(x => x).join('-') : null,
-                beneficialOwnerCountryOfResidence: person.country_of_residence ? person.country_of_residence : null,
-                beneficialOwnerIdentificationLegalAuthority: person.identification && person.identification.legal_authority ? person.identification.legal_authority : null,
-                beneficialOwnerIdentificationLegalForm: person.identification && person.identification.legal_form ? person.identification.legal_form : null,
-                beneficialOwnerIdentificationRegisteredPlace: person.identification && person.identification.place_registered ? person.identification.place_registered : null,
-                beneficialOwnerIdentificationRegisteredCountry: person.identification && person.identification.country_registered ? person.identification.country_registered : null,
-                beneficialOwnerIdentificationNumber: person.identification && person.identification.registration_number ? person.identification.registration_number : null
+                beneficialOwnerCountryOfResidence: person.country_of_residence || null,
+                beneficialOwnerIdentificationLegalAuthority: person.identification?.legal_authority || null,
+                beneficialOwnerIdentificationLegalForm: person.identification?.legal_form || null,
+                beneficialOwnerIdentificationRegisteredPlace: person.identification?.place_registered || null,
+                beneficialOwnerIdentificationRegisteredCountry: person.identification?.country_registered || null,
+                beneficialOwnerIdentificationNumber: person.identification?.registration_number || null
             }
             return fields
         })

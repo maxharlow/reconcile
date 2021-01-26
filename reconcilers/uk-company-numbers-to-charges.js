@@ -132,6 +132,7 @@ const details = {
         { name: 'chargeSatisfiedDate' },
         { name: 'chargeCoveringInstrumentDate' },
         { name: 'chargeTransactions' },
+        { name: 'chargeInsolvencyCases' },
         { name: 'chargeParticulars' },
         { name: 'chargeContainsFixedCharge' },
         { name: 'chargeContainsFloatingCharge' },
