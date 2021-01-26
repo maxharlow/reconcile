@@ -304,6 +304,7 @@ Produces a CSV including columns:
 * `chargeSatisfiedDate`
 * `chargeCoveringInstrumentDate`
 * `chargeTransactions`
+* `chargeInsolvencyCases`
 * `chargeParticulars`
 * `chargeContainsFixedCharge`
 * `chargeContainsFloatingCharge`

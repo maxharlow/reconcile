@@ -29,7 +29,7 @@ function initialise(parameters, requestor, die) {
             const elements = insolvencyCase.dates.filter(date => date.type === type)
             return elements ? elements.map(element => element.date).join('; ') : null
         }
-        const companyInsolvencyStatus = response.data.status ? response.data.status.join('; ') : null
+        const companyInsolvencyStatus = response.data.status?.join('; ') || null
         const cases = response.data.cases
         return cases.map(insolvencyCase => {
             return {
