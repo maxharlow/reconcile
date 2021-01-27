@@ -10,12 +10,12 @@ import Querystring from 'querystring'
 function request(retries, cache, verbose, alert, limit, messages) {
     const cacheDirectory = '.reconcile-cache'
     const timeout = 45 * 1000
+    const toUrl = location => typeof location === 'string' ? location : location.url
     const toLocationName = location => {
         if (!location) throw new Error('Request location is blank')
         const method = location.method ? location.method.toUpperCase() : 'GET'
-        const url = typeof location === 'string' ? location : location.url
         const stringifyObject = object => Object.entries(object).map(([key, value]) => `${key}=${JSON.stringify(value)}`).join(' ')
-        return `${method} ${url}`
+        return `${method} ${toUrl(location)}`
             + (location.params ? '?' + Querystring.stringify(location.params) : '')
             + (location.dataQuery ? ' ' + Querystring.stringify(location.dataQuery) : '')
             + (location.dataForm ? ' <' + stringifyObject(location.dataForm) + '>' : '')
@@ -74,7 +74,7 @@ function request(retries, cache, verbose, alert, limit, messages) {
                 if (verbose) alert(`Cached: ${locationName}`)
                 const cacheData = await FSExtra.readJson(`${cacheDirectory}/${hash}`)
                 return {
-                    url,
+                    url: toUrl(location),
                     data: cacheData,
                     passthrough: location.passthrough
                 }
@@ -88,7 +88,7 @@ function request(retries, cache, verbose, alert, limit, messages) {
                 await FSExtra.writeJson(`${cacheDirectory}/${hash}`, response.data)
             }
             return {
-                url,
+                url: toUrl(location),
                 data: response.data,
                 passthrough: location.passthrough
             }
