@@ -29,7 +29,7 @@ function initialise(parameters, requestor, die) {
         const hasMorePages = document('[aria-label="Next page"]').length
         if (hasMorePages) {
             const query = {
-                url: 'https://www.google.com/search',
+                url: response.url,
                 headers: {
                     'User-Agent': 'Reconcile'
                 },
