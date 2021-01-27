@@ -32,7 +32,7 @@ function initialise(parameters, requestor, die) {
             const pageNumbers = Array.from(Array(pageTotal).keys()).slice(1, 10) // slice off first page as we already have that, and pages over 10 as the API responds with a HTTP 416
             const pageRequests = pageNumbers.map(async page => {
                 const query = {
-                    url: 'https://api.companieshouse.gov.uk/search/officers',
+                    url: response.url,
                     auth: {
                         username: parameters.apiKey,
                         password: ''

@@ -74,6 +74,7 @@ function request(retries, cache, verbose, alert, limit, messages) {
                 if (verbose) alert(`Cached: ${locationName}`)
                 const cacheData = await FSExtra.readJson(`${cacheDirectory}/${hash}`)
                 return {
+                    url,
                     data: cacheData,
                     passthrough: location.passthrough
                 }
@@ -87,6 +88,7 @@ function request(retries, cache, verbose, alert, limit, messages) {
                 await FSExtra.writeJson(`${cacheDirectory}/${hash}`, response.data)
             }
             return {
+                url,
                 data: response.data,
                 passthrough: location.passthrough
             }
