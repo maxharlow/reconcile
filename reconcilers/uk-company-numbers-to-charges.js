@@ -60,7 +60,7 @@ function initialise(parameters, requestor, die) {
                 chargeCode: charge.charge_code || null,
                 chargeNumber: charge.charge_number || null,
                 chargeStatus: charge.status,
-                chargePersonsEntitled: charge.persons_entitled.map(person => person.name).join('; '),
+                chargePersonsEntitled: charge.persons_entitled?.map(person => person.name).join('; ') || null,
                 chargeAcquiredDate: charge.acquired_on || null,
                 chargeCreatedDate: charge.created_on || null,
                 chargeDeliveredDate: charge.delivered_on || null,
