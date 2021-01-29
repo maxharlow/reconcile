@@ -29,7 +29,7 @@ If there are a lot of parameters, it may be more convenient to put them in a sep
 
 HTTP requests are automatically retried if they fail, five times by default, but this can be adjusted with the `-r` flag.
 
-Request caching can be turned on with the `-c` flag. This will save a copy of each HTTP request in a `.reconcile-cache` directory. Reconcile always looks for a cached copy of a request before making one itself. Note that if the data is likely to have changed since it was cached, you will still be getting the cached copy -- delete the directory if this is not what you want. Also beware that this directory can become quite large.
+Request caching can be turned on with the `-c` flag. This will save a copy of each HTTP request in a `.reconcile-cache` directory, and look for a cached copy of a request before making one itself. Note that if the data is likely to have changed since it was cached, you will still be getting the cached copy -- delete the directory if this is not what you want. Also beware that this directory can become quite large.
 
 If you'd like to include rows where no match was found, or an error was encountered, set the join flag `-j` to `'outer'`.
 
