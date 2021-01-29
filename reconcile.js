@@ -126,7 +126,7 @@ async function load(command, filename, parameters = {}, retries = 5, cache = fal
     const columnMap = Object.fromEntries(columnMapEntries)
     const blank = Object.fromEntries(Object.values(columnMap).map(key => [key]))
     const length = async () => {
-        const entries = await Scramjet.StringStream.from(FSExtra.createReadStream(filename)).CSVParse({ header: true }).reduce(a => a + 1, 0)
+        const entries = await source().reduce(a => a + 1, 0)
         return Math.ceil(entries / batch)
     }
     const run = async () => source().batch(batch).setOptions({ maxParallel: 1 }).map(async items => {
