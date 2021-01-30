@@ -2,7 +2,6 @@ function initialise(parameters, requestor, die) {
 
     const request = requestor(2, e => {
         const company = e.config.passthrough.companyNumber
-        if (e.response.status === 404) return `Could not find insolvencies for company ${company}`
         if (e.response.status === 429) die('The rate limit has been reached')
         if (e.response.status === 401) die(`API key ${e.config.auth.username} is invalid`)
         if (e.response.status >= 400) return `Received code ${e.response.status} for company ${company}`
@@ -17,6 +16,7 @@ function initialise(parameters, requestor, die) {
                 username: parameters.apiKey,
                 password: ''
             },
+            validateStatus: status => status === 200 || status === 404, // as a 404 can just indicate no beneficial owners (as well as company not found)
             passthrough: {
                 companyNumber
             }
