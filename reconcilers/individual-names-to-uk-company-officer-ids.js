@@ -11,7 +11,7 @@ function initialise(parameters, requestor, die) {
         const individualName = entry[parameters.individualNameField]
         if (!individualName) throw new Error('No individual name found')
         return {
-            url: 'https://api.companieshouse.gov.uk/search/officers',
+            url: 'https://api.company-information.service.gov.uk/search/officers',
             auth: {
                 username: parameters.apiKey,
                 password: ''
