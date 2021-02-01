@@ -12,7 +12,7 @@ function initialise(parameters, requestor, die) {
         const companyName = entry[parameters.companyNameField]
         if (!companyName) throw new Error('No company name found')
         return {
-            url: 'https://api.companieshouse.gov.uk/search/companies',
+            url: 'https://api.company-information.service.gov.uk/search/companies',
             auth: {
                 username: parameters.apiKey,
                 password: ''

@@ -12,7 +12,7 @@ function initialise(parameters, requestor, die) {
         const officerID = entry[parameters.officerIDField]
         if (!officerID) throw new Error('No officer ID found')
         return {
-            url: `https://api.companieshouse.gov.uk/officers/${officerID}/appointments`,
+            url: `https://api.company-information.service.gov.uk/officers/${officerID}/appointments`,
             auth: {
                 username: parameters.apiKey,
                 password: ''
