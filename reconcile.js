@@ -39,7 +39,7 @@ function request(retries, cache, verbose, alert, limit, messages) {
         },
         retryDelay: (number, e) => {
             const message = toErrorMessage(e)
-            const attempt = number > 0 && number <= retries && retries > 1 ? ` (retrying, attempt ${number}...)` : ''
+            const attempt = number > 0 && number <= retries && retries > 1 ? ' (retrying' + (number > 1 ? `, attempt ${number}` : '') + '...)' : ''
             if (number === 1) alert(`${message}${attempt}`)
             else alert(`  → ${message}${attempt}`)
             return 5 * 1000
