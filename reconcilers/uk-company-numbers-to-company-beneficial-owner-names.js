@@ -64,7 +64,7 @@ function initialise(parameters, requestor, die) {
                 beneficialOwnerMiddleNames: person.name_elements?.middle_name || null,
                 beneficialOwnerLastName: person.name_elements?.surname || null,
                 beneficialOwnerKind: person.kind,
-                beneficialOwnerNaturesOfControl: person.natures_of_control.join('; '),
+                beneficialOwnerNaturesOfControl: person.natures_of_control?.join('; '),
                 beneficialOwnerNotifiedDate: person.notified_on,
                 beneficialOwnerCeasedDate: person.ceased_on || null,
                 beneficialOwnerNationality: person.nationality || null,
