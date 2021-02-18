@@ -60,8 +60,7 @@ function display(details) {
 
 async function setup() {
     const listing = await FSExtra.readdir(Path.resolve(Path.dirname(URL.fileURLToPath(import.meta.url)), 'reconcilers'))
-    const reconcilers = listing
-        .map(file => file.match(/(.+).js/)[1])
+    const reconcilers = listing.map(file => file.match(/(.+).js/)[1]).sort()
     const instructions = Yargs(Process.argv.slice(2))
         .usage('Usage: reconcile <command> <filename>')
         .wrap(null)
@@ -73,7 +72,7 @@ async function setup() {
         .option('V', { alias: 'verbose', type: 'boolean', describe: 'Print every request made', default: false })
         .help('?').alias('?', 'help')
         .version().alias('v', 'version')
-    const instructionsCommands = reconcilers.sort().map(async command => {
+    const instructionsCommands = reconcilers.map(async command => {
         const { default: reconciler } = await import(`./reconcilers/${command}.js`)
         const commandArgs = args => args
             .usage(`Usage: reconcile ${command} <filename>`)
