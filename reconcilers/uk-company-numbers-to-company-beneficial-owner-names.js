@@ -100,11 +100,9 @@ const details = {
     ],
     columns: [
         { name: 'beneficialOwnerName' },
-        { name: 'beneficialOwnerKind' },
-        { name: 'beneficialOwnerNaturesOfControl' },
-        { name: 'beneficialOwnerName' },
         { name: 'beneficialOwnerTitle' },
         { name: 'beneficialOwnerFirstName' },
+        { name: 'beneficialOwnerOtherFirstNames' },
         { name: 'beneficialOwnerMiddleNames' },
         { name: 'beneficialOwnerLastName' },
         { name: 'beneficialOwnerKind' },
