@@ -418,6 +418,27 @@ Produces a CSV including columns:
 <hr>
 
 
+### Using Investegate (UK)
+
+#### `uk-tickers-to-regulatory-announcements`
+
+Use [Investegate](https://www.investegate.co.uk/) to take a list of tickers for UK-listed (FTSE 350, Aim, TechMark) companies, and retrieve all their regulatory announcements.
+
+Parameters:
+* `tickerField` Ticker column.
+* `maximumResults` Maximum number of results to include for each ticker. Optional. Default is all.
+
+Produces a CSV including columns:
+* `announcementDate`
+* `announcementTime`
+* `announcementSource`
+* `announcementTitle`
+* `accouncementURL`
+* `announcementBody`
+
+<hr>
+
+
 ### Using SEC Edgar (US)
 
 #### `sec-ciks-to-sec-filings`
