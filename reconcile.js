@@ -71,7 +71,7 @@ function request(retries, cache, verbose, alert, limit, messages) {
             }
             const isCached = await FSExtra.pathExists(`${cacheDirectory}/${hash}`)
             if (isCached) {
-                if (verbose) alert(`Cached: ${locationName} [${hash}]`)
+                if (verbose) alert(`Cached [${hash}]: ${locationName}`)
                 const cacheData = await FSExtra.readJson(`${cacheDirectory}/${hash}`)
                 return {
                     url: toUrl(location),
