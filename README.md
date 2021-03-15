@@ -427,6 +427,7 @@ Use [Investegate](https://www.investegate.co.uk/) to take a list of tickers for 
 Parameters:
 * `tickerField` Ticker column.
 * `maximumResults` Maximum number of results to include for each ticker. Optional. Default is all.
+* `maximumDate` Maximum announcement date for announcements from each ticker, in ISO 8601 format. Optional. Default is no limit.
 
 Produces a CSV including columns:
 * `announcementDate`
