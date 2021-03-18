@@ -11,14 +11,28 @@ function initialise(parameters, requestor, die) {
     function locate(entry) {
         const ticker = entry[parameters.tickerField]
         if (!ticker) throw new Error('No ticker found')
+        const categories = {
+            'm-and-a': 1,
+            'results': 2,
+            'dividends': 4,
+            'exec-changes': 8,
+            'director-dealings': 16,
+            'advance-results': 32
+        }
+        const category = categories[parameters.category]
+        if (parameters.category && !Object.keys(categories).includes(parameters.category)) die(`Invalid category: ${parameters.category}`)
         return {
-            url: 'https://www.investegate.co.uk/',
+            url: 'https://www.investegate.co.uk/AdvancedSearch.aspx',
             params: {
-                searchtype: 3,
-                words: ticker
+                qsArticleType: 'ann', // search announcements
+                qsSearchFor: 'S2', // via ticker
+                qsContains: ticker,
+                qsSpan: '120', // all time
+                ...(category ? { qsCategory: category } : {})
             },
             passthrough: {
-                ticker
+                ticker,
+                category
             }
         }
     }
@@ -34,8 +48,11 @@ function initialise(parameters, requestor, die) {
             const query = {
                 url: response.url,
                 params: {
-                    searchtype: 3,
-                    words: response.passthrough.ticker,
+                    qsArticleType: 'ann',
+                    qsSearchFor: 'S2',
+                    qsContains: response.passthrough.ticker,
+                    qsSpan: '120', // all time
+                    ...(response.passthrough.category ? { qsCategory: response.passthrough.category } : {}),
                     pno: document('.navBottom').attr('href').split('pno=')[1]
                 },
                 passthrough: {
@@ -65,6 +82,7 @@ function initialise(parameters, requestor, die) {
             const fields = {
                 announcementTime: row('td:nth-of-type(2)').text(),
                 announcementSource: row('td:nth-of-type(3) a').text(),
+                announcementCompany: row('td:nth-of-type(6) strong').text(),
                 announcementTitle: row('td:nth-of-type(7) a').text(),
                 accouncementURL: 'https://www.investegate.co.uk' + row('td:nth-of-type(7) a').attr('href')
             }
@@ -111,6 +129,7 @@ function initialise(parameters, requestor, die) {
 const details = {
     parameters: [
         { name: 'tickerField', description: 'Ticker column.' },
+        { name: 'category', description: 'Only include annoucements in this category. [optional, default: all, can be: m-and-a, results, dividends, exec-changes, director-dealings, advance-results]' },
         { name: 'maximumResults', description: 'Maximum number of results to include for each ticker. [optional, default: all]' },
         { name: 'maximumDate', description: 'Maximum announcement date for announcements from each ticker, in ISO 8601 format. [optional, default: no limit]' }
     ],
@@ -118,6 +137,7 @@ const details = {
         { name: 'announcementDate' },
         { name: 'announcementTime' },
         { name: 'announcementSource' },
+        { name: 'announcementCompany' },
         { name: 'announcementTitle' },
         { name: 'accouncementURL' },
         { name: 'announcementBody' }
