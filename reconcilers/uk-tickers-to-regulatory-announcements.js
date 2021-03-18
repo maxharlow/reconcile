@@ -84,10 +84,10 @@ function initialise(parameters, requestor, die) {
                 announcementSource: row('td:nth-of-type(3) a').text(),
                 announcementCompany: row('td:nth-of-type(6) strong').text(),
                 announcementTitle: row('td:nth-of-type(7) a').text(),
-                accouncementURL: 'https://www.investegate.co.uk' + row('td:nth-of-type(7) a').attr('href')
+                announcementURL: 'https://www.investegate.co.uk' + row('td:nth-of-type(7) a').attr('href')
             }
             return {
-                url: fields.accouncementURL,
+                url: fields.announcementURL,
                 passthrough: {
                     announcementDate: dateFor(i),
                     ...fields
@@ -139,7 +139,7 @@ const details = {
         { name: 'announcementSource' },
         { name: 'announcementCompany' },
         { name: 'announcementTitle' },
-        { name: 'accouncementURL' },
+        { name: 'announcementURL' },
         { name: 'announcementBody' }
     ]
 }
