@@ -201,7 +201,7 @@ Use [Companies House](https://find-and-update.company-information.service.gov.uk
 Parameters:
 * `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/developer/applications/register).
 * `companyNumberField` Company number column.
-* `filingCategory` Category of filings to include, eg. "accounts". Optional. Default is all filings. Can be: accounts, address, annual-return, capital, change-of-name, incorporation, liquidation, miscellaneous, mortgage, officers, resolution.
+* `filingCategory` Category of filings to include, eg. "accounts". Optional. Default is all filings. Can be: `accounts`, `address`, `annual-return`, `capital`, `change-of-name`, `incorporation`, `liquidation`, `miscellaneous`, `mortgage`, `officers`, `resolution`.
 * `includeAll` Set true to include all filed documents, instead of just the first. Optional. Default is first only.
 
 Produces a CSV including columns:
@@ -426,6 +426,7 @@ Use [Investegate](https://www.investegate.co.uk/) to take a list of tickers for 
 
 Parameters:
 * `tickerField` Ticker column.
+* `category` Only include annoucements in this category. Optional. Default: all. Can be: `m-and-a`, `results`, `dividends`, `exec-changes`, `director-dealings`, `advance-results`.
 * `maximumResults` Maximum number of results to include for each ticker. Optional. Default is all.
 * `maximumDate` Maximum announcement date for announcements from each ticker, in ISO 8601 format. Optional. Default is no limit.
 
@@ -433,6 +434,7 @@ Produces a CSV including columns:
 * `announcementDate`
 * `announcementTime`
 * `announcementSource`
+* `announcementCompany`
 * `announcementTitle`
 * `accouncementURL`
 * `announcementBody`
