@@ -12,7 +12,7 @@ function initialise(parameters, requestor, die) {
         const apiVersion = 'v0.4.8'
         const companyNumber = entry[parameters.companyNumberField]
         const companyJurisdiction = parameters.jurisdiction || entry[parameters.companyJurisdictionField]
-        if (!companyNumber) throw new Error('No company number found')
+        if (!companyNumber || companyNumber.match(/^0+$/)) throw new Error('No company number found')
         if (!companyJurisdiction) throw new Error(`No jurisdiction found for company ${companyNumber}`)
         return {
             url: `https://api.opencorporates.com/${apiVersion}/companies/${companyJurisdiction}/${companyNumber}`,

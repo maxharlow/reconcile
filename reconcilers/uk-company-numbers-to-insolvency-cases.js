@@ -9,7 +9,7 @@ function initialise(parameters, requestor, die) {
 
     function locate(entry) {
         const companyNumber = entry[parameters.companyNumberField]
-        if (!companyNumber) throw new Error('No company number found')
+        if (!companyNumber || companyNumber.match(/^0+$/)) throw new Error('No company number found')
         return {
             url: `https://api.company-information.service.gov.uk/company/${companyNumber.padStart(8, '0').toUpperCase()}/insolvency`,
             auth: {
