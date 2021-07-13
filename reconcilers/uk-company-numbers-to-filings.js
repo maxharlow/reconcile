@@ -28,7 +28,7 @@ function initialise(parameters, requestor, die) {
     }
 
     async function paginate(response) {
-        if (response.data.total_count > 100) {
+        if (response.data.total_count > 100 && parameters.includeAll) {
             const pageTotal = Math.ceil(response.data.total_count / 100)
             const pageNumbers = Array.from(Array(pageTotal).keys()).slice(1) // slice off first page as we already have that
             const pageRequests = pageNumbers.map(async page => {
@@ -57,7 +57,6 @@ function initialise(parameters, requestor, die) {
 
     function parse(response) {
         const filings = response.data.items || []
-        const limit = parameters.includeAll ? Infinity : 1
         return filings.map(filing => {
             const fields = {
                 filingDate: filing.date,
@@ -67,18 +66,19 @@ function initialise(parameters, requestor, die) {
                 filingDescription: filing.description,
                 filingActionDate: filing.action_date,
                 filingPaperFiled: filing.paper_filed,
-                filingURL: `https://find-and-update.company-information.service.gov.uk${filing.links.self}/document`
+                filingURL: filing.links?.self ? `https://find-and-update.company-information.service.gov.uk${filing.links.self}/document` : null
             }
             return fields
-        }).slice(0, limit)
+        })
     }
 
     async function run(input) {
+        const limit = parameters.includeAll ? Infinity : 1
         const dataLocated = locate(input)
         const dataLocatedRequested = await request(dataLocated)
         const dataLocatedPaginated = await paginate(dataLocatedRequested)
         const dataParsed = dataLocatedPaginated.flatMap(parse)
-        return dataParsed
+        return dataParsed.slice(0, limit)
     }
 
     return run
