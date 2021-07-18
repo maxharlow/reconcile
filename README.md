@@ -351,6 +351,7 @@ Use [Companies House](https://find-and-update.company-information.service.gov.uk
 Parameters:
 * `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/developer/applications/register).
 * `companyNameField` Company name column.
+* `postcodeField` Postcode column. If given will use it to filter results. Optional.
 * `maximumResults` Maximum number of results to include for each name. Optional. Default is 1, maximum is 100.
 
 Produces a CSV including columns:

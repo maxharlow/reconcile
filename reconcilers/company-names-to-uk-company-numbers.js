@@ -27,10 +27,15 @@ function initialise(parameters, requestor, die) {
         }
     }
 
-    function parse(response) {
+    function parse(response, entry) {
         const maximumResults = parameters.maximumResults || 1
         const companies = response.data.items
-        return companies.slice(0, maximumResults).map(company => {
+        const byPostcode = company => {
+            if (!parameters.postcodeField || !entry[parameters.postcodeField]) return true // field not specified or field for this row is blank
+            if (!company.address?.postal_code) return false // postcode specified in source, but no postcode listed in this search result
+            return company.address.postal_code.replace(/ /g, '').toUpperCase() === entry[parameters.postcodeField].replace(/ /g, '').toUpperCase()
+        }
+        return companies.filter(byPostcode).slice(0, maximumResults).map(company => {
             const fields = {
                 companyNumber: company.company_number,
                 companyName: company.title
@@ -42,7 +47,7 @@ function initialise(parameters, requestor, die) {
     async function run(input) {
         const dataLocated = locate(input)
         const dataLocatedRequested = await request(dataLocated)
-        const dataParsed = parse(dataLocatedRequested)
+        const dataParsed = parse(dataLocatedRequested, input)
         return dataParsed
     }
 
@@ -54,6 +59,7 @@ const details = {
     parameters: [
         { name: 'apiKey', description: 'A Companies House API key.' },
         { name: 'companyNameField', description: 'Company name column.' },
+        { name: 'postcodeField', description: 'Postcode column. If given will use it to filter results. [optional]' },
         { name: 'maximumResults', description: 'Maximum number of results to include for each name. [optional, default: 1, maximum 100]' }
     ],
     columns: [
