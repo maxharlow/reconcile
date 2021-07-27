@@ -177,6 +177,7 @@ Produces a CSV including columns:
 * `companySubtype`
 * `companyStatus`
 * `companyStatusDetail`
+* `companyPostcode`
 * `companyAddress`
 * `companyAddressIsInDispute`
 * `companyAddressIsUndeliverable`
