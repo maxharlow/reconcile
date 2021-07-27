@@ -33,12 +33,27 @@ function initialise(parameters, requestor, die) {
         const byPostcode = company => {
             if (!parameters.postcodeField || !entry[parameters.postcodeField]) return true // field not specified or field for this row is blank
             if (!company.address?.postal_code) return false // postcode specified in source, but no postcode listed in this search result
-            return company.address.postal_code.replace(/ /g, '').toUpperCase() === entry[parameters.postcodeField].replace(/ /g, '').toUpperCase()
+            return company.address.postal_code.replace(/ /g, '').toLowerCase() === entry[parameters.postcodeField].replace(/ /g, '').toLowerCase()
         }
-        return companies.filter(byPostcode).slice(0, maximumResults).map(company => {
+        const normalised = name => {
+            return name.toLowerCase()
+                .replace(/^the /, '')
+                .replace(/ & /g, ' and ')
+                .replace(/[^a-z0-9]/g, '')
+                .replace(/(limited|ltd|publiclimitedcompany|plc)(the)?$/, '')
+        }
+        const byPreciseMatch = company => {
+            if (!parameters.preciseMatch) return true
+            return normalised(company.title) === normalised(entry[parameters.companyNameField])
+        }
+        return companies.filter(byPostcode).filter(byPreciseMatch).slice(0, maximumResults).map(company => {
             const fields = {
                 companyNumber: company.company_number,
-                companyName: company.title
+                companyName: company.title,
+                companyCreationDate: company.date_of_creation,
+                companyCessationDate: company.date_of_cessation,
+                companyPostcode: company.address.postal_code,
+                companyAddress: [company.address.care_of, company.address.premises, company.address.po_box, company.address.address_line_1, company.address.address_line_2, company.address.locality, company.address.region, company.address.postal_code, company.address.country].filter(x => x).join(', ')
             }
             return fields
         })
@@ -59,12 +74,17 @@ const details = {
     parameters: [
         { name: 'apiKey', description: 'A Companies House API key.' },
         { name: 'companyNameField', description: 'Company name column.' },
-        { name: 'postcodeField', description: 'Postcode column. If given will use it to filter results. [optional]' },
+        { name: 'postcodeField', description: 'Postcode column. If given will use it to filter results. Only looks at the current company postcode. [optional]' },
+        { name: 'preciseMatch', description: 'Match company name precisely. Ignores non-alphanumeric differences. [optional]' },
         { name: 'maximumResults', description: 'Maximum number of results to include for each name. [optional, default: 1, maximum 100]' }
     ],
     columns: [
         { name: 'companyNumber' },
-        { name: 'companyName' }
+        { name: 'companyName' },
+        { name: 'companyCreationDate' },
+        { name: 'companyCessationDate' },
+        { name: 'companyPostcode' },
+        { name: 'companyAddress' }
     ]
 }
 

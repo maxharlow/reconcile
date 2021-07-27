@@ -80,6 +80,7 @@ const details = {
         { name: 'companySubtype' },
         { name: 'companyStatus' },
         { name: 'companyStatusDetail' },
+        { name: 'companyPostcode' },
         { name: 'companyAddress' },
         { name: 'companyAddressIsInDispute' },
         { name: 'companyAddressIsUndeliverable' },
