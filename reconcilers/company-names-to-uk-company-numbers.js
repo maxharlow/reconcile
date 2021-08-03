@@ -36,15 +36,16 @@ function initialise(parameters, requestor, die) {
             return company.address.postal_code.replace(/ /g, '').toLowerCase() === entry[parameters.postcodeField].replace(/ /g, '').toLowerCase()
         }
         const normalised = name => {
-            return name.toLowerCase()
+            return name?.toLowerCase()
                 .replace(/^the /, '')
-                .replace(/ & /g, ' and ')
+                .replace(/&/g, 'and')
                 .replace(/[^a-z0-9]/g, '')
-                .replace(/(limited|ltd|publiclimitedcompany|plc)(the)?$/, '')
+                .replace(/(limited|ltd|publiclimitedcompany|plc|llp|limitedliabilitypartnership)(the)?$/, '')
         }
         const byPreciseMatch = company => {
             if (!parameters.preciseMatch) return true
-            return normalised(company.title) === normalised(entry[parameters.companyNameField])
+            const companyNameNormalised = normalised(entry[parameters.companyNameField])
+            return normalised(company.title) === companyNameNormalised || normalised(company.snippet) === companyNameNormalised
         }
         return companies.filter(byPostcode).filter(byPreciseMatch).slice(0, maximumResults).map(company => {
             const fields = {
