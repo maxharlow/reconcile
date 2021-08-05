@@ -94,7 +94,7 @@ function request(retries, cache, verbose, alert, limit, messages) {
             }
         }
         catch (e) {
-            throw new Error(toErrorMessage(e))
+            alert(toErrorMessage(e))
         }
     }
 }
