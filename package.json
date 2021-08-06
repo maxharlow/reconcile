@@ -15,12 +15,12 @@
         "axios-retry": "3.1.x",
         "cheerio": "0.22.x",
         "form-data": "4.0.x",
-        "fs-extra": "9.1.x",
-        "luxon": "1.26.x",
+        "fs-extra": "10.0.x",
+        "luxon": "2.0.x",
         "progress": "2.0.x",
         "scramjet": "4.35.x",
         "yaml": "1.10.x",
-        "yargs": "16.2.x"
+        "yargs": "17.1.x"
     },
     "bin": {
         "reconcile": "./bin.js"
