@@ -66,6 +66,7 @@ function initialise(parameters, requestor, die) {
                 filingDescription: filing.description,
                 filingActionDate: filing.action_date,
                 filingPaperFiled: filing.paper_filed,
+                filingID: filing.links?.document_metadata?.split('document/')[1],
                 filingURL: filing.links?.self ? `https://find-and-update.company-information.service.gov.uk${filing.links.self}/document` : null
             }
             return fields
@@ -100,6 +101,7 @@ const details = {
         { name: 'filingDescription' },
         { name: 'filingActionDate' },
         { name: 'filingPaperFiled' },
+        { name: 'filingID' },
         { name: 'filingURL' }
     ]
 }

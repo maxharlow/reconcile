@@ -213,6 +213,7 @@ Produces a CSV including columns:
 * `filingDescription`
 * `filingActionDate`
 * `filingPaperFiled`
+* `filingID`
 * `filingURL`
 
 <hr>
