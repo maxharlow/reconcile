@@ -64,7 +64,7 @@ function initialise(parameters, requestor, die) {
                 filingSubcategory: filing.subcategory || null,
                 filingType: filing.type,
                 filingDescription: filing.description,
-                filingResolutionTypes: filing.resolutions.map(resolution => resolution.type).join('; '),
+                filingResolutionTypes: filing.resolutions?.map(resolution => resolution.type).join('; '),
                 filingActionDate: filing.action_date,
                 filingPaperFiled: filing.paper_filed,
                 filingID: filing.links?.document_metadata?.split('document/')[1],
