@@ -91,7 +91,7 @@ const details = {
     parameters: [
         { name: 'apiKey', description: 'A Companies House API key.' },
         { name: 'companyNumberField', description: 'Company number column.' },
-        { name: 'filingCategory', description: 'Category of filings to include, eg. "accounts" [optional, default is all filings, can be: accounts, address, annual-return, capital, change-of-name, incorporation, liquidation, miscellaneous, mortgage, officers, resolution]' },
+        { name: 'filingCategory', description: 'Category of filings to include, eg. "accounts" [optional, default is all filings, can be: accounts, address, annual-return, capital, change-of-name, incorporation, liquidation, miscellaneous, mortgage, officers, resolution, confirmation-statement]' },
         { name: 'includeAll', description: 'Set true to include all filed documents, instead of just the first [optional, default is first only]' }
     ],
     columns: [
