@@ -28,7 +28,12 @@ function initialise(parameters, requestor, die) {
     }
 
     async function paginate(response) {
-        if (response.data.total_count > 100 && parameters.includeAll) {
+        const didDescriptionMatchRemoveAll = parameters.filingDescriptionMatch
+            && response.data.items
+            && response.data.items.length > 0
+            && response.data.total_count > 100
+            && response.data.items.filter(filing => filing.description.match(parameters.filingDescriptionMatch)).length === 0
+        if (response.data.total_count > 100 && parameters.includeAll || didDescriptionMatchRemoveAll) {
             const pageTotal = Math.ceil(response.data.total_count / 100)
             const pageNumbers = Array.from(Array(pageTotal).keys()).slice(1) // slice off first page as we already have that
             const pageRequests = pageNumbers.map(async page => {
@@ -57,7 +62,7 @@ function initialise(parameters, requestor, die) {
 
     function parse(response) {
         const filings = response.data.items || []
-        return filings.map(filing => {
+        return filings.filter(filing => filing.description.match(parameters.filingDescriptionMatch)).map(filing => {
             const fields = {
                 filingDate: filing.date,
                 filingCategory: filing.category,
@@ -92,6 +97,7 @@ const details = {
         { name: 'apiKey', description: 'A Companies House API key.' },
         { name: 'companyNumberField', description: 'Company number column.' },
         { name: 'filingCategory', description: 'Category of filings to include, eg. "accounts" [optional, default is all filings, can be: accounts, address, annual-return, capital, change-of-name, incorporation, liquidation, miscellaneous, mortgage, officers, resolution, confirmation-statement]' },
+        { name: 'filingDescriptionMatch', description: 'Filter filing descriptions to only those matching [optional]' },
         { name: 'includeAll', description: 'Set true to include all filed documents, instead of just the first [optional, default is first only]' }
     ],
     columns: [
