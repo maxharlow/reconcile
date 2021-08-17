@@ -203,6 +203,7 @@ Parameters:
 * `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/developer/applications/register).
 * `companyNumberField` Company number column.
 * `filingCategory` Category of filings to include, eg. "accounts". Optional. Default is all filings. Can be: `accounts`, `address`, `annual-return`, `capital`, `change-of-name`, `incorporation`, `liquidation`, `miscellaneous`, `mortgage`, `officers`, `resolution`, `confirmation-statement`.
+* `filingDescription` Descriptions of filings to include. Optional.
 * `includeAll` Set true to include all filed documents, instead of just the first. Optional. Default is first only.
 
 Produces a CSV including columns:
