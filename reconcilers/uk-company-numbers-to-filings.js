@@ -63,6 +63,7 @@ function initialise(parameters, requestor, die) {
     function parse(response) {
         const filings = response.data.items || []
         return filings.filter(filing => filing.description.match(parameters.filingDescriptionMatch)).map(filing => {
+            const filingID = filing.links?.document_metadata?.split('document/')[1]
             const fields = {
                 filingDate: filing.date,
                 filingCategory: filing.category,
@@ -72,8 +73,9 @@ function initialise(parameters, requestor, die) {
                 filingResolutionTypes: filing.resolutions?.map(resolution => resolution.type).join('; '),
                 filingActionDate: filing.action_date,
                 filingPaperFiled: filing.paper_filed,
-                filingID: filing.links?.document_metadata?.split('document/')[1],
-                filingURL: filing.links?.self ? `https://find-and-update.company-information.service.gov.uk${filing.links.self}/document` : null
+                filingID,
+                filingURL: filing.links?.self ? `https://find-and-update.company-information.service.gov.uk${filing.links.self}/document` : null,
+                filingAPIURL: `https://document-api.company-information.service.gov.uk/document/${filingID}/content`
             }
             return fields
         })
@@ -110,7 +112,8 @@ const details = {
         { name: 'filingActionDate' },
         { name: 'filingPaperFiled' },
         { name: 'filingID' },
-        { name: 'filingURL' }
+        { name: 'filingURL' },
+        { name: 'filingAPIURL' }
     ]
 }
 
