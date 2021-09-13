@@ -585,9 +585,9 @@ Produces a CSV including columns:
 
 ### Using Google Search
 
-#### `terms-to-search-results`
+#### `terms-to-urls`
 
-Search Google for a term, and retrieve the results.
+Search Google for a term, and retrieve the URLs of the results.
 
 Parameters:
 * `termField` Term field.
