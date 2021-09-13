@@ -17,9 +17,6 @@ function initialise(parameters, requestor, die) {
                 username: parameters.apiKey,
                 password: ''
             },
-            params: {
-                items_per_page: 100
-            },
             passthrough: {
                 companyNumber
             }
