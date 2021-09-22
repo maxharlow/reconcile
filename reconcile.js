@@ -138,7 +138,9 @@ async function load(command, filename, parameters = {}, retries = 5, cache = fal
                     : [executed] // reconciler produces a single result
                 if (join === 'outer' && results.length === 0) return [{ ...item, ...blank }]
                 return results.map(result => {
-                    const resultRemapped = Object.fromEntries(Object.entries(result).map(([column, value]) => [columnMap[column], value]))
+                    const resultRemapped = result
+                        ? Object.fromEntries(Object.entries(result).map(([column, value]) => [columnMap[column], value]))
+                        : Object.fromEntries(Object.entries(columnMap).map(([column]) => [column, ''])) // if there is no result (eg. not found)
                     return { ...item, ...resultRemapped }
                 })
             })
