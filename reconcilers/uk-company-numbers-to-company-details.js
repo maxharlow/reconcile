@@ -55,6 +55,7 @@ function initialise(parameters, requestor, die) {
     async function run(input) {
         const dataLocated = locate(input)
         const dataLocatedRequested = await request(dataLocated)
+        if (!dataLocatedRequested) return null
         const dataParsed = parse(dataLocatedRequested)
         return dataParsed
     }
