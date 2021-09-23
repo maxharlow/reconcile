@@ -53,8 +53,8 @@ function initialise(parameters, requestor, die) {
                 companyName: company.title,
                 companyCreationDate: company.date_of_creation,
                 companyCessationDate: company.date_of_cessation,
-                companyPostcode: company.address.postal_code,
-                companyAddress: [company.address.care_of, company.address.premises, company.address.po_box, company.address.address_line_1, company.address.address_line_2, company.address.locality, company.address.region, company.address.postal_code, company.address.country].filter(x => x).join(', ')
+                companyPostcode: company.address?.postal_code,
+                companyAddress: [company.address?.care_of, company.address?.premises, company.address?.po_box, company.address?.address?.line_1, company.address?.address?.line_2, company.address?.locality, company.address?.region, company.address?.postal_code, company.address?.country].filter(x => x).join(', ')
             }
             return fields
         })
