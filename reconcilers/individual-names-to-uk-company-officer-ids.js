@@ -38,6 +38,7 @@ function initialise(parameters, requestor, die) {
                         password: ''
                     },
                     params: {
+                        q: response.passthrough.individualName.trim(),
                         items_per_page: 100,
                         start_index: page * 100
                     },
