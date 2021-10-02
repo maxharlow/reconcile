@@ -21,7 +21,7 @@ Where `<command>` is one of the operations listed in the next section.
 
 Each command will need some parameters specific to what it does to work, which are given using the `-p` flag. They should be written in Yaml format, for example:
 
-    $ reconcile company-numbers-to-company-officer-names input.csv -p 'jurisdiction: gb, companyNumberField: RegisteredCompanyNumber' > output.csv
+    $ reconcile company-numbers-to-company-officer-names input.csv -p 'jurisdiction: gb; companyNumberField: RegisteredCompanyNumber' > output.csv
 
 Note this also uses redirection (`>`) to send the output into a new CSV file. If you are giving it a value that has spaces in it, you'll need put it in quotes. If, as above, you used single quotes (`'`) around your whole list of parameters, you should use double quotes (`"`) around the value, and vice-versa.
 
