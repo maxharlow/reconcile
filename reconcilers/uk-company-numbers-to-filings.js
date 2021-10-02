@@ -1,6 +1,17 @@
 function initialise(parameters, requestor, die) {
 
-    const request = requestor(2, e => {
+    const apiKeys = [parameters.apiKey].flat()
+
+    const apiKeysRotated = (() => {
+        let next = 0
+        return () => {
+            const key = apiKeys[next]
+            next = (next + 1) % apiKeys.length
+            return key
+        }
+    })()
+
+    const request = requestor(apiKeys.length * 2, e => {
         const company = e.config.passthrough.companyNumber
         if (e.response.status === 429) die('The rate limit has been reached')
         if (e.response.status === 401) die(`API key ${e.config.auth.username} is invalid`)
@@ -13,7 +24,7 @@ function initialise(parameters, requestor, die) {
         return {
             url: `https://api.company-information.service.gov.uk/company/${companyNumber.padStart(8, '0').toUpperCase()}/filing-history`,
             auth: {
-                username: parameters.apiKey,
+                username: apiKeysRotated(),
                 password: ''
             },
             params: {
@@ -40,7 +51,7 @@ function initialise(parameters, requestor, die) {
                 const query = {
                     url: response.url,
                     auth: {
-                        username: parameters.apiKey,
+                        username: apiKeysRotated,
                         password: ''
                     },
                     params: {

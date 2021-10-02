@@ -1,6 +1,17 @@
 function initialise(parameters, requestor, die) {
 
-    const request = requestor(2, e => {
+    const apiKeys = [parameters.apiKey].flat()
+
+    const apiKeysRotated = (() => {
+        let next = 0
+        return () => {
+            const key = apiKeys[next]
+            next = (next + 1) % apiKeys.length
+            return key
+        }
+    })()
+
+    const request = requestor(apiKeys.length * 2, e => {
         const officerID = e.config.passthrough.officerID
         if (e.response.status === 404) return `Could not find officer ID ${officerID}`
         if (e.response.status === 429) die('The rate limit has been reached')
@@ -14,7 +25,7 @@ function initialise(parameters, requestor, die) {
         return {
             url: `https://api.company-information.service.gov.uk/officers/${officerID}/appointments`,
             auth: {
-                username: parameters.apiKey,
+                username: apiKeysRotated(),
                 password: ''
             },
             params: {
@@ -34,7 +45,7 @@ function initialise(parameters, requestor, die) {
                 const query = {
                     url: response.url,
                     auth: {
-                        username: parameters.apiKey,
+                        username: apiKeysRotated(),
                         password: ''
                     },
                     params: {
