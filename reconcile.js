@@ -51,7 +51,7 @@ function request(retries, cache, verbose, alert, limit, messages) {
     })
     let cacheChecked = false
     return async location => {
-        const hash = Crypto.createHash('sha1').update(JSON.stringify(location)).digest('hex')
+        const hash = Crypto.createHash('sha1').update(JSON.stringify(typeof location === 'string' ? location : { ...location, auth: null })).digest('hex')
         if (location.dataQuery) {
             location.data = Querystring.stringify(location.dataQuery)
         }
