@@ -591,6 +591,8 @@ Search Google for a term, and retrieve the URLs of the results.
 
 Parameters:
 * `termField` Term field.
+* `supplement` Extra terms to be included with the search. Optional.
+* `includeAll` Set true to include all URLs, instead of just the first. Optional. Default is first page only.
 
 Produces a CSV including columns:
 * `resultTitle`
