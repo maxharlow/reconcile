@@ -65,7 +65,7 @@ function initialise(parameters, requestor, die) {
     }
 
     function parse(response) {
-        const charges = response.data.items || []
+        const charges = response?.data.items || []
         return charges.map(charge => {
             const fields = {
                 chargeCode: charge.charge_code || null,

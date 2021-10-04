@@ -72,7 +72,7 @@ function initialise(parameters, requestor, die) {
     }
 
     function parse(response) {
-        const filings = response.data.items || []
+        const filings = response?.data.items || []
         return filings.filter(filing => filing.description.match(parameters.filingDescriptionMatch)).map(filing => {
             const filingID = filing.links?.document_metadata?.split('document/')[1]
             const fields = {

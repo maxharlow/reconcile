@@ -66,7 +66,7 @@ function initialise(parameters, requestor, die) {
     }
 
     function parse(response) {
-        const individuals = response.data.items
+        const individuals = response?.data.items
         return individuals.map(individual => {
             const fields = {
                 officerID: individual.links.self.split('/')[2],
