@@ -65,7 +65,7 @@ function initialise(parameters, requestor, die) {
     }
 
     function parse(response) {
-        const appointments = response.data.items
+        const appointments = response?.data.items
         return appointments.map(appointment => {
             const fields = {
                 companyNumber: appointment.appointed_to.company_number,

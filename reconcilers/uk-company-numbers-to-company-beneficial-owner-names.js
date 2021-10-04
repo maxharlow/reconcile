@@ -65,7 +65,7 @@ function initialise(parameters, requestor, die) {
     }
 
     function parse(response) {
-        const persons = response.data.items || []
+        const persons = response?.data.items || []
         return persons.map(person => {
             const fields = {
                 beneficialOwnerName: person.name,

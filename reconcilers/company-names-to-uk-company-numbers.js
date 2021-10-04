@@ -40,7 +40,7 @@ function initialise(parameters, requestor, die) {
 
     function parse(response, entry) {
         const maximumResults = parameters.maximumResults || 1
-        const companies = response.data.items
+        const companies = response?.data.items
         const byPostcode = company => {
             if (!parameters.postcodeField || !entry[parameters.postcodeField]) return true // field not specified or field for this row is blank
             if (!company.address?.postal_code) return false // postcode specified in source, but no postcode listed in this search result
