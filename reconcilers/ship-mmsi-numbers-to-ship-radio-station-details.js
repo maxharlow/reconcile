@@ -65,7 +65,7 @@ function initialise(parameters, requestor, die) {
 
 const details = {
     parameters: [
-        { name: 'shipMMSINumberField', description: 'Ship MMSI number field.' }
+        { name: 'shipMMSINumberField', description: 'Ship MMSI number column.' }
     ],
     columns: [
         { name: 'shipName' },
