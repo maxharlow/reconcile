@@ -597,3 +597,31 @@ Parameters:
 Produces a CSV including columns:
 * `resultTitle`
 * `resultLocation`
+
+<hr>
+
+### Using data found on the given URLs
+
+#### `urls-to-data`
+
+Download each page and extract out arbitrary elements using CSS selectors.
+
+Parameters:
+* `urlField` URL column.
+* `elements` Array of objects containing two fields, `key` and `selector`.
+
+Produces a CSV including columns:
+* `key`
+* `value`
+
+<hr>
+
+#### `urls-to-google-analytics-ids`
+
+Download each page and extract out anything that looks like a Google Analytics ID.
+
+Parameters:
+* `urlField` URL column.
+
+Produces a CSV including columns:
+* `googleAnalyticsID`
