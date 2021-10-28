@@ -583,6 +583,26 @@ Produces a CSV including columns:
 
 <hr>
 
+### Using IP API
+
+#### `ip-addresses-to-details`
+
+Use [IP API](https://ip-api.com/) to look up a list of IP addresses and get estimated details about their locations.
+
+Parameters:
+* `ipAddressField`
+
+Produces a CSV including columns:
+* `country`
+* `region`
+* `city`
+* `latitude`
+* `longitude`
+* `isp`
+* `organisation`
+
+<hr>
+
 ### Using Google Search
 
 #### `terms-to-urls`
