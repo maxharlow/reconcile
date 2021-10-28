@@ -625,3 +625,31 @@ Parameters:
 
 Produces a CSV including columns:
 * `googleAnalyticsID`
+
+<hr>
+
+### Using the Domain Name System (DNS)
+
+#### `urls-to-domain-records`
+
+Use DNS to look up a list of URLs, and resolve the domain name into records.
+
+Parameters:
+* `urlField` URL column.
+* `recordType` Type of records to retrieve. Optional, default is `A`.
+
+Produces a CSV including columns:
+* `record`
+
+<hr>
+
+#### `urls-to-whois`
+
+Use DNS to look up a list of URLs, and use the domain name to retrieve the Whois record.
+
+Parameters:
+* `urlField` URL column.
+* `lineMatch` Filter lines to only those matching. Optional.
+
+Produces a CSV including columns:
+* `data`
