@@ -607,7 +607,7 @@ Produces a CSV including columns:
 
 #### `terms-to-urls`
 
-Search Google for a term, and retrieve the URLs of the results.
+Use Google to take a list of terms, and retrieve the URLs for each of the results.
 
 Parameters:
 * `termField` Term column.
