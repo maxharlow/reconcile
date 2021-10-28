@@ -16,7 +16,7 @@ async function parse(parameters) {
     }
     catch (e) { // it's not a file, try and parse it instead
         try {
-            return Yaml.parse(parameters.replace(/; ?/g, '\n').replace(/: ?/g, ': '))
+            return Yaml.parse(parameters.replace(/; ?/g, '\n'))
         }
         catch (e) {
             throw new Error('could not parse parameters')
