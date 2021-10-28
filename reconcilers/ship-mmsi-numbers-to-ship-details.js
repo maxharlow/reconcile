@@ -104,7 +104,7 @@ const details = {
     parameters: [
         { name: 'email', description: 'The email address for a registered Equasis account.' },
         { name: 'password', description: 'The password for a registered Equasis account' },
-        { name: 'shipMMSINumberField', description: 'Ship MMSI number field.' }
+        { name: 'shipMMSINumberField', description: 'Ship MMSI number column.' }
     ],
     columns: [
         { name: 'shipName' },

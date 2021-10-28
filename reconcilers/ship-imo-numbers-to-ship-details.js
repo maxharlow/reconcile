@@ -103,7 +103,7 @@ const details = {
     parameters: [
         { name: 'email', description: 'The email address for a registered Equasis account.' },
         { name: 'password', description: 'The password for a registered Equasis account' },
-        { name: 'shipIMONumberField', description: 'Ship IMO number (or ship name) field.' }
+        { name: 'shipIMONumberField', description: 'Ship IMO number (or ship name) column.' }
     ],
     columns: [
         { name: 'shipName' },

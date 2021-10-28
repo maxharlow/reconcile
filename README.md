@@ -419,7 +419,7 @@ Produces a CSV including columns:
 Use [Land Registry detailed enquiries](https://eservices.landregistry.gov.uk/eservices/FindAProperty/view/DetailedEnquiryInit.do) to look up title numbers (such as the result of a [PN1 search](https://www.gov.uk/government/publications/proprieters-names-search-of-the-index-pn1)), and find their addresses.
 
 Parameters:
-* `titleNumberField` Title number field.
+* `titleNumberField` Title number column.
 
 Produces a CSV including columns:
 * `titleAddress`
@@ -497,7 +497,7 @@ Use [Equasis](https://www.equasis.org/) to take a list of ship IMO numbers, and 
 Parameters:
 * `email` The email address for a registered Equasis account.
 * `password` The password for a registered Equasis account.
-* `shipIMONumberField` Ship IMO number field.
+* `shipIMONumberField` Ship IMO number column.
 
 Produces a CSV including columns:
 * `shipName`
@@ -524,7 +524,7 @@ Use [Equasis](https://www.equasis.org/) to take a list of ship MMSI numbers, and
 Parameters:
 * `email` The email address for a registered Equasis account.
 * `password` The password for a registered Equasis account.
-* `shipMMSINumberField` Ship MMSI number field.
+* `shipMMSINumberField` Ship MMSI number column.
 
 Produces a CSV including columns:
 * `shipName`
@@ -551,7 +551,7 @@ Use [Equasis](https://www.equasis.org/) to take a list of ship names, and retrie
 Parameters:
 * `email` The email address for a registered Equasis account.
 * `password` The password for a registered Equasis account.
-* `shipNameField` Ship name field.
+* `shipNameField` Ship name column.
 
 Produces a CSV including columns:
 * `shipIMONumber`
@@ -570,7 +570,7 @@ Produces a CSV including columns:
 Use the [International Telecommunication Union's database of ship-based radio stations (ITU Mars)](https://www.itu.int/mmsapp/ShipStation/list) to take a list of ship MMSI numbers, and retrieve their details, including the owner.
 
 Parameters:
-* `shipMMSINumberField` Ship MMSI number field.
+* `shipMMSINumberField` Ship MMSI number column.
 
 Produces a CSV including columns:
 * `shipName`
@@ -590,7 +590,7 @@ Produces a CSV including columns:
 Search Google for a term, and retrieve the URLs of the results.
 
 Parameters:
-* `termField` Term field.
+* `termField` Term column.
 * `supplement` Extra terms to be included with the search. Optional.
 * `includeAll` Set true to include all URLs, instead of just the first. Optional. Default is first page only.
 

@@ -58,7 +58,7 @@ function initialise(parameters, requestor, die) {
 
 const details = {
     parameters: [
-        { name: 'titleNumberField', description: 'Title number field.' }
+        { name: 'titleNumberField', description: 'Title number column.' }
     ],
     columns: [
         { name: 'titleAddress' },
