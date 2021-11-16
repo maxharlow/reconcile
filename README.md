@@ -487,6 +487,46 @@ Produces a CSV including columns:
 
 <hr>
 
+### Using Wikipedia & Wikidata
+
+#### `terms-to-wikidata-concepts`
+
+Use Wikidata to take a list of terms, and retrieve the Wikidata concept IDs for each of the results.
+
+Parameters:
+* `termField` Term column.
+* `includeAll` Set true to include all URLs, instead of just the first. Optional. Default is first 50 only.
+
+Produces a CSV including columns:
+* `wikidataConceptID`
+* `wikidataConceptDescription`
+
+<hr>
+
+#### `wikidata-concepts-to-data`
+
+Use Wikidata to extract a specific [property](https://www.wikidata.org/wiki/Wikidata:List_of_properties) from each of the results, such as the [date of birth](https://www.wikidata.org/wiki/Property:P569) or [Facebook ID](https://www.wikidata.org/wiki/Property:P2013).
+
+Parameters:
+* `conceptIDField` Concept ID column.
+* `property` Wikidata property to extract.
+
+Produces a CSV including columns:
+* `value`
+
+<hr>
+
+#### `wikipedia-urls-to-wikidata-concepts`
+
+Use Wikipedia to take a list of URLs, and extract out the Wikidata concept IDs for each.
+
+Parameters:
+* `urlField` URL column.
+
+Produces a CSV including columns:
+* `wikidataConceptID`
+
+<hr>
 
 ### Using Equasis
 
