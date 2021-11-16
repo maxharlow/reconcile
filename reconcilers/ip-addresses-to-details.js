@@ -6,6 +6,7 @@ function initialise(parameters, requestor, die) {
     })
 
     function locate(entries) {
+        if (!parameters.ipAddressField) die('No IP address field found')
         const queries = entries.map(entry => {
             return entry[parameters.ipAddressField]
         })
@@ -50,7 +51,7 @@ function initialise(parameters, requestor, die) {
 const details = {
     batch: 100,
     parameters: [
-        { name: 'ipAddressField', description: '' }
+        { name: 'ipAddressField', description: 'IP address column.' }
     ],
     columns: [
         { name: 'country' },

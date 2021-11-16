@@ -590,7 +590,7 @@ Produces a CSV including columns:
 Use [IP API](https://ip-api.com/) to look up a list of IP addresses and get estimated details about their locations.
 
 Parameters:
-* `ipAddressField`
+* `ipAddressField` IP address column.
 
 Produces a CSV including columns:
 * `country`
