@@ -55,8 +55,8 @@ function initialise(parameters, requestor, die) {
         }
         const byPreciseMatch = company => {
             if (!parameters.preciseMatch) return true
-            const companyNameNormalised = normalised(entry[parameters.companyNameField])
-            return normalised(company.title) === companyNameNormalised || normalised(company.snippet) === companyNameNormalised
+            const entryCompanyName = normalised(entry[parameters.companyNameField])
+            return normalised(company.title) === entryCompanyName || normalised(company.snippet) === entryCompanyName
         }
         return companies.filter(byPostcode).filter(byPreciseMatch).slice(0, maximumResults).map(company => {
             const fields = {

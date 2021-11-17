@@ -65,9 +65,31 @@ function initialise(parameters, requestor, die) {
         else return [response]
     }
 
-    function parse(response) {
+    function parse(response, entry) {
         const individuals = response?.data.items
-        return individuals.map(individual => {
+        const byDateOfBirth = individual => {
+            if (!parameters.dateOfBirthField || !entry[parameters.dateOfBirthField]) return true // field not specified or field for this row is blank
+            if (!individual.date_of_birth?.year || !individual.date_of_birth?.month) return false // date of birth specified in source, but no date of birth listed in this search result
+            return individual.date_of_birth.year.toString() === entry[parameters.dateOfBirthField].slice(0, 4)
+                && individual.date_of_birth.month.toString().padStart(2, '0') === entry[parameters.dateOfBirthField].slice(5, 7)
+        }
+        const normalised = name => {
+            return name?.toLowerCase()
+                .replace(/[^a-z ]/g, '')
+                .replace(/^(mr|ms|mrs|miss|dr|sir)\.? /, '')
+        }
+        const byPreciseMatch = individual => {
+            if (!parameters.preciseMatch) return true
+            return normalised(individual.title) === normalised(entry[parameters.individualNameField])
+        }
+        const byNonMiddleNameMatch = individual => {
+            if (!parameters.nonMiddleNameMatch) return true
+            const entryIndividualName = normalised(entry[parameters.individualNameField])
+            const resultIndividualName = normalised(individual.title)
+            return resultIndividualName.split(' ')[0] === entryIndividualName.split(' ')[0]
+                && resultIndividualName.split(' ').pop() === entryIndividualName.split(' ').pop()
+        }
+        return individuals.filter(byDateOfBirth).filter(byPreciseMatch).filter(byNonMiddleNameMatch).map(individual => {
             const fields = {
                 officerID: individual.links.self.split('/')[2],
                 officerName: individual.title,
@@ -84,7 +106,7 @@ function initialise(parameters, requestor, die) {
         const dataLocated = locate(input)
         const dataLocatedRequested = await request(dataLocated)
         const dataLocatedPaginated = await paginate(dataLocatedRequested)
-        const dataParsed = dataLocatedPaginated.flatMap(parse)
+        const dataParsed = dataLocatedPaginated.flatMap(response => parse(response, input))
         return dataParsed
     }
 
@@ -95,7 +117,10 @@ function initialise(parameters, requestor, die) {
 const details = {
     parameters: [
         { name: 'apiKey', description: 'A Companies House API key.' },
-        { name: 'individualNameField', description: 'Individual name column.' }
+        { name: 'individualNameField', description: 'Individual name column.' },
+        { name: 'dateOfBirthField', description: 'Date of birth column, in ISO 8601 format. If given will use the month and year to filter results. [optional]' },
+        { name: 'nonMiddleNameMatch', description: 'Match individual name only based on the first and last names. Ignores non-alphabetical differences and titles. [optional]' },
+        { name: 'preciseMatch', description: 'Match individual name precisely. Ignores non-alphabetical differences and titles. [optional]' }
     ],
     columns: [
         { name: 'officerID' },

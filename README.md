@@ -376,6 +376,9 @@ Use [Companies House](https://find-and-update.company-information.service.gov.uk
 Parameters:
 * `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/developer/applications/register).
 * `individualNameField` Individual name column.
+* `dateOfBirthField` Date of birth column, in ISO 8601 format. If given will use the month and year to filter results. Optional.
+* `nonMiddleNameMatch` Match individual name only based on the first and last names. Ignores non-alphabetical differences and titles. Optional.
+* `preciseMatch` Match individual name precisely. Ignores non-alphabetical differences and titles. Optional.
 
 Produces a CSV including columns:
 * `officerID`
