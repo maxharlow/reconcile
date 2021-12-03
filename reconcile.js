@@ -101,8 +101,7 @@ function request(retries, cache, verbose, alert, limit, messages) {
 
 async function load(command, filename, parameters = {}, retries = 5, cache = false, join = 'inner', verbose = false, alert = () => {}) {
     const die = message => {
-        alert(`Exiting early: ${message}`)
-        process.exit(1)
+        throw new Error(message)
     }
     const requestor = request.bind(null, retries, cache, verbose, alert)
     const { default: reconciler } = await import(`./reconcilers/${command}.js`)

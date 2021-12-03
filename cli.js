@@ -1,12 +1,11 @@
 import Path from 'path'
 import URL from 'url'
-import Readline from 'readline'
 import FSExtra from 'fs-extra'
 import Yargs from 'yargs'
 import Process from 'process'
 import Yaml from 'yaml'
-import Progress from 'progress'
 import reconcile from './reconcile.js'
+import cliRenderer from './cli-renderer.js'
 
 async function parse(parameters) {
     if (!parameters) return {}
@@ -22,22 +21,6 @@ async function parse(parameters) {
             throw new Error('could not parse parameters')
         }
     }
-}
-
-function alert(message) {
-    Readline.clearLine(process.stderr)
-    Readline.cursorTo(process.stderr, 0)
-    console.error(message)
-}
-
-function ticker(text, total) {
-    const progress = new Progress(text + ' |:bar| :percent / :etas left', {
-        total,
-        width: Infinity,
-        complete: '█',
-        incomplete: ' '
-    })
-    return () => progress.tick()
 }
 
 function write(line) {
@@ -84,6 +67,7 @@ async function setup() {
     await Promise.all(instructionsCommands)
     if (instructions.argv['get-yargs-completions']) Process.exit(0)
     if (instructions.argv._.length === 0) instructions.showHelp().exit(0)
+    const { alert, progress, finalise } = cliRenderer(instructions.argv.verbose)
     try {
         const {
             _: [command, filename],
@@ -103,15 +87,16 @@ async function setup() {
         const total = await reconcillation.length()
         const processing = await reconcillation.run()
         await processing
-            .each(ticker('Working...', total))
+            .each(progress('Working...', total))
             .flatten()
             .CSVStringify()
             .each(write)
             .whenEnd()
-        console.error('Done!')
+        await finalise('completed')
     }
     catch (e) {
-        console.error(e.message)
+        await finalise('error')
+        console.error(instructions.argv.verbose ? e.stack : e.message)
         Process.exit(1)
     }
 
