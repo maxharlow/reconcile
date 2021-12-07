@@ -86,7 +86,7 @@ function initialise(parameters, requestor, die) {
                 filingPaperFiled: filing.paper_filed,
                 filingID,
                 filingURL: filing.links?.self ? `https://find-and-update.company-information.service.gov.uk${filing.links.self}/document` : null,
-                filingAPIURL: `https://document-api.company-information.service.gov.uk/document/${filingID}/content`
+                filingAPIURL: filingID ? `https://document-api.company-information.service.gov.uk/document/${filingID}/content` : null
             }
             return fields
         })
