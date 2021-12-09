@@ -169,6 +169,7 @@ Parameters:
 * `companyNumberField` Company number column.
 
 Produces a CSV including columns:
+* `companyNumber`
 * `companyName`
 * `companyUKJurisdiction`
 * `companyCreationDate`

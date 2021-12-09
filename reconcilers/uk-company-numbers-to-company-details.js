@@ -37,6 +37,7 @@ function initialise(parameters, requestor, die) {
     function parse(response) {
         const company = response.data
         return {
+            companyNumber: company.company_number,
             companyName: company.company_name,
             companyUKJurisdiction: company.jurisdiction,
             companyCreationDate: company.date_of_creation,
@@ -81,6 +82,7 @@ const details = {
         { name: 'companyNumberField', description: 'Company number column.' }
     ],
     columns: [
+        { name: 'companyNumber' },
         { name: 'companyName' },
         { name: 'companyUKJurisdiction' },
         { name: 'companyCreationDate' },
