@@ -7,7 +7,7 @@ import AxiosRateLimit from 'axios-rate-limit'
 import FormData from 'form-data'
 import Querystring from 'querystring'
 
-function request(retries, cache, verbose, alert, limit, messages) {
+function request(retries, cache, alert, limit, messages) {
     const cacheDirectory = '.reconcile-cache'
     const timeout = 45 * 1000
     const toUrl = location => typeof location === 'string' ? location : location.url
@@ -71,7 +71,7 @@ function request(retries, cache, verbose, alert, limit, messages) {
             }
             const isCached = await FSExtra.pathExists(`${cacheDirectory}/${hash}`)
             if (isCached) {
-                if (verbose) alert(`Cached [${hash}]: ${locationName}`)
+                alert(`Cached [${hash}]: ${locationName}`)
                 const cacheData = await FSExtra.readJson(`${cacheDirectory}/${hash}`)
                 return {
                     url: toUrl(location),
@@ -81,7 +81,7 @@ function request(retries, cache, verbose, alert, limit, messages) {
             }
         }
         try {
-            if (verbose) alert(`Requesting: ${locationName}`)
+            alert(`Requesting: ${locationName}`)
             const response = await instance(location)
             if (cache) {
                 await FSExtra.ensureDir(cacheDirectory)
@@ -103,7 +103,7 @@ async function load(command, filename, parameters = {}, retries = 5, cache = fal
     const die = message => {
         throw new Error(message)
     }
-    const requestor = request.bind(null, retries, cache, verbose, alert)
+    const requestor = request.bind(null, retries, cache, alert)
     const { default: reconciler } = await import(`./reconcilers/${command}.js`)
     Object.keys(parameters).forEach(parameter => {
         if (!reconciler.details.parameters.find(p => p.name === parameter)) alert(`Ignoring unexpected parameter '${parameter}'`)
