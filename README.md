@@ -370,6 +370,27 @@ Produces a CSV including columns:
 
 <hr>
 
+#### `place-names-to-uk-company-numbers`
+
+Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of place names and retrieve all the companies who include that term in their registered address.
+
+Parameters:
+* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/developer/applications/register).
+* `placeNameField` Place name column.
+* `maximumResults` Maximum number of results to include for each name. Optional. Default is all.
+
+Produces a CSV including columns:
+* `companyNumber`
+* `companyName`
+* `companyStatus`
+* `companyType`
+* `companyCreationDate`
+* `companyCessationDate`
+* `companyPostcode`
+* `companyAddress`
+
+<hr>
+
 #### `individual-names-to-uk-company-officer-ids`
 
 Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of individual names and find the ID numbers for each. Many officers will have multiple IDs associated with them. This is limited to bringing back the first 10 pages of matches.
