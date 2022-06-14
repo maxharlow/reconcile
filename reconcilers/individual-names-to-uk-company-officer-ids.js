@@ -93,9 +93,7 @@ function initialise(parameters, requestor, die) {
             const fields = {
                 officerID: individual.links.self.split('/')[2],
                 officerName: individual.title,
-                officerBirthMonth: individual.date_of_birth ? individual.date_of_birth.month : null,
-                officerBirthYear: individual.date_of_birth ? individual.date_of_birth.year : null,
-                officerAppointments: individual.appointments,
+                officerDateOfBirth: individual.date_of_birth ? [individual.date_of_birth.year, individual.date_of_birth.month, individual.date_of_birth.day].filter(x => x).join('-') : null,
                 officerAddress: individual.address_snippet
             }
             return fields
@@ -125,9 +123,7 @@ const details = {
     columns: [
         { name: 'officerID' },
         { name: 'officerName' },
-        { name: 'officerBirthMonth' },
-        { name: 'officerBirthYear' },
-        { name: 'officerAppointments' },
+        { name: 'officerDateOfBirth' },
         { name: 'officerAddress' }
     ]
 }

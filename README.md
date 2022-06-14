@@ -265,13 +265,13 @@ Parameters:
 Produces a CSV including columns:
 * `officerID`
 * `officerName`
+* `officerDateOfBirth`
+* `officerNationality`
 * `officerRole`
 * `officerAppointedDate`
 * `officerResignedDate`
-* `officerNationality`
 * `officerOccupation`
 * `officerAddress`
-* `officerDateOfBirth`
 * `officerCountryOfResidence`
 * `officerFormerNames`
 * `officerIdentificationType`
@@ -405,9 +405,7 @@ Parameters:
 Produces a CSV including columns:
 * `officerID`
 * `officerName`
-* `officerBirthMonth`
-* `officerBirthYear`
-* `officerAppointments`
+* `officerDateOfBirth`
 * `officerAddress`
 
 <hr>
@@ -426,10 +424,10 @@ Produces a CSV including columns:
 * `companyStatus`
 * `officerID`
 * `officerName`
+* `officerNationality`
 * `officerRole`
 * `officerAppointedDate`
 * `officerResignedDate`
-* `officerNationality`
 * `officerOccupation`
 * `officerAddress`
 * `officerCountryOfResidence`

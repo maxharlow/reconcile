@@ -108,10 +108,10 @@ const details = {
         { name: 'companyStatus' },
         { name: 'officerID' },
         { name: 'officerName' },
+        { name: 'officerNationality' },
         { name: 'officerRole' },
         { name: 'officerAppointedDate' },
         { name: 'officerResignedDate' },
-        { name: 'officerNationality' },
         { name: 'officerOccupation' },
         { name: 'officerAddress' },
         { name: 'officerCountryOfResidence' }
