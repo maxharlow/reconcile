@@ -67,9 +67,10 @@ function initialise(parameters, requestor, die) {
     function parse(response) {
         const officers = response?.data.items || []
         return officers.map(officer => {
+            const [lastName, firstName] = officer.name.split(', ')
             const fields = {
                 officerID: officer.links.officer.appointments.split('/')[2],
-                officerName: officer.name,
+                officerName: `${firstName} ${lastName}`,
                 officerRole: officer.officer_role,
                 officerAppointedDate: officer.appointed_on,
                 officerResignedDate: officer.resigned_on,
