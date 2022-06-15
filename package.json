@@ -18,6 +18,7 @@
         "form-data": "4.0.x",
         "fs-extra": "10.0.x",
         "luxon": "2.1.x",
+        "puppeteer": "14.4.x",
         "scramjet": "4.36.x",
         "simple-wcswidth": "1.0.x",
         "yaml": "1.10.x",
