@@ -1,8 +1,11 @@
 function initialise(parameters, requestor, die) {
 
-    const request = requestor(0.24, e => {
-        if (e.response.status === 429) die('The rate limit has been reached')
-        if (e.response.status >= 400) return `Received code ${e.response.status}`
+    const request = requestor({
+        limit: 0.24,
+        messages: e => {
+            if (e.response.status === 429) die('The rate limit has been reached')
+            if (e.response.status >= 400) return `Received code ${e.response.status}`
+        }
     })
 
     function locate(entries) {

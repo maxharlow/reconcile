@@ -7,94 +7,99 @@ import AxiosRateLimit from 'axios-rate-limit'
 import FormData from 'form-data'
 import Querystring from 'querystring'
 
-function request(retries, cache, alert, limit, messages) {
-    const cacheDirectory = '.reconcile-cache'
-    const timeout = 45 * 1000
-    const toUrl = location => typeof location === 'string' ? location : location.url
-    const toLocationName = location => {
-        if (!location) throw new Error('Request location is blank')
-        const method = location.method ? location.method.toUpperCase() : 'GET'
-        const stringifyObject = object => Object.entries(object).map(([key, value]) => `${key}=${JSON.stringify(value)}`).join(' ')
-        return `${method} ${toUrl(location)}`
-            + (location.params ? '?' + Querystring.stringify(location.params) : '')
-            + (location.dataQuery ? ' ' + Querystring.stringify(location.dataQuery) : '')
-            + (location.dataForm ? ' <' + stringifyObject(location.dataForm) + '>' : '')
-            + (location.data && !location.dataQuery && !location.dataForm ? ' [' + stringifyObject(location.data) + ']' : '')
-    }
-    const toErrorMessage = e => {
-        const reconcilerError = e.response && messages(e)
-        if (reconcilerError) return reconcilerError // look for reconciler-specific errors first
-        const locationName = toLocationName(e.config)
-        if (e.response) return `Received code ${e.response.status}: ${locationName}` // response recieved, but non-2xx
-        if (e.code === 'ECONNABORTED') return `Timed out after ${timeout / 1000}ms: ${locationName}` // request timed out
-        if (e.code) return `Error ${e.code}: ${locationName}` // request failed, with error code
-        return e.message // request not made
-    }
-    const instance = Axios.create({ timeout })
-    AxiosRetry(instance, {
-        retries,
-        shouldResetTimeout: true,
-        retryCondition: e => {
-            return !e.response || e.response.status >= 500 || e.response.status === 429 // no response, server error, or hit rate limit
-        },
-        retryDelay: (number, e) => {
-            const message = toErrorMessage(e)
-            const attempt = number > 0 && number <= retries && retries > 1 ? ' (retrying' + (number > 1 ? `, attempt ${number}` : '') + '...)' : ''
-            if (number === 1) alert(`${message}${attempt}`)
-            else alert(`  → ${message}${attempt}`)
-            return 5 * 1000
+function requestify(retries, cache, alert) {
+    return config => {
+        const limit = config.limit || Infinity
+        const messages = config.messages || (() => {})
+        const cacheDirectory = '.reconcile-cache'
+        const timeout = 45 * 1000
+        const toUrl = location => typeof location === 'string' ? location : location.url
+        const toLocationName = location => {
+            if (!location) throw new Error('Request location is blank')
+            const method = location.method ? location.method.toUpperCase() : 'GET'
+            const stringifyObject = object => Object.entries(object).map(([key, value]) => `${key}=${JSON.stringify(value)}`).join(' ')
+            return `${method} ${toUrl(location)}`
+                + (location.params ? '?' + Querystring.stringify(location.params) : '')
+                + (location.dataQuery ? ' ' + Querystring.stringify(location.dataQuery) : '')
+                + (location.dataForm ? ' <' + stringifyObject(location.dataForm) + '>' : '')
+                + (location.data && !location.dataQuery && !location.dataForm ? ' [' + stringifyObject(location.data) + ']' : '')
         }
-    })
-    AxiosRateLimit(instance, {
-        maxRequests: limit, // so limit is number of requests per second
-        perMilliseconds: 1 * 1000
-    })
-    let cacheChecked = false
-    return async location => {
-        const hash = Crypto.createHash('sha1').update(JSON.stringify(typeof location === 'string' ? location : { ...location, auth: null })).digest('hex')
-        if (location.dataQuery) {
-            location.data = Querystring.stringify(location.dataQuery)
+        const toErrorMessage = e => {
+            const reconcilerError = e.response && messages(e)
+            if (reconcilerError) return reconcilerError // look for reconciler-specific errors first
+            const locationName = toLocationName(e.config)
+            if (e.response) return `Received code ${e.response.status}: ${locationName}` // response recieved, but non-2xx
+            if (e.code === 'ECONNABORTED') return `Timed out after ${timeout / 1000}ms: ${locationName}` // request timed out
+            if (e.code) return `Error ${e.code}: ${locationName}` // request failed, with error code
+            return e.message // request not made
         }
-        if (location.dataForm) {
-            const form = new FormData()
-            location.headers = form.getHeaders()
-            Object.entries(location.dataForm).forEach(([key, value]) => form.append(key, JSON.stringify(value)))
-            location.data = form
-        }
-        const locationName = toLocationName(location)
-        if (cache) {
-            if (!cacheChecked) {
-                const cacheExists = await FSExtra.pathExists(cacheDirectory)
-                if (cacheExists) alert('Cached data found!')
-                else alert('No existing cached data found')
-                cacheChecked = true
+        const instance = Axios.create({ timeout })
+        AxiosRetry(instance, {
+            retries,
+            shouldResetTimeout: true,
+            retryCondition: e => {
+                return !e.response || e.response.status >= 500 || e.response.status === 429 // no response, server error, or hit rate limit
+            },
+            retryDelay: (number, e) => {
+                const message = toErrorMessage(e)
+                const attempt = number > 0 && number <= retries && retries > 1 ? ' (retrying' + (number > 1 ? `, attempt ${number}` : '') + '...)' : ''
+                if (number === 1) alert(`${message}${attempt}`)
+                else alert(`  → ${message}${attempt}`)
+                return 5 * 1000
             }
-            const isCached = await FSExtra.pathExists(`${cacheDirectory}/${hash}`)
-            if (isCached) {
-                alert(`Cached [${hash}]: ${locationName}`)
-                const cacheData = await FSExtra.readJson(`${cacheDirectory}/${hash}`)
+        })
+        AxiosRateLimit(instance, {
+            maxRequests: limit, // so limit is number of requests per second
+            perMilliseconds: 1 * 1000
+        })
+        let cacheChecked = false
+        return async location => {
+            const hash = Crypto.createHash('sha1').update(JSON.stringify(typeof location === 'string' ? location : { ...location, auth: null })).digest('hex')
+            const locationName = toLocationName(location)
+            if (cache) {
+                if (!cacheChecked) {
+                    const cacheExists = await FSExtra.pathExists(cacheDirectory)
+                    if (cacheExists) alert('Cached data found!')
+                    else alert('No existing cached data found')
+                    cacheChecked = true
+                }
+                const isCached = await FSExtra.pathExists(`${cacheDirectory}/${hash}`)
+                if (isCached) {
+                    alert(`Cached [${hash}]: ${locationName}`)
+                    const cacheData = await FSExtra.readJson(`${cacheDirectory}/${hash}`)
+                    return {
+                        url: toUrl(location),
+                        data: cacheData,
+                        passthrough: location.passthrough
+                    }
+                }
+            }
+            if (config.validator) await config.validator(location)
+            if (location.dataQuery) {
+                location.data = Querystring.stringify(location.dataQuery)
+            }
+            if (location.dataForm) {
+                const form = new FormData()
+                location.headers = form.getHeaders()
+                Object.entries(location.dataForm).forEach(([key, value]) => form.append(key, JSON.stringify(value)))
+                location.data = form
+            }
+            try {
+                alert(`Requesting: ${locationName}`)
+                const response = await instance(location)
+                if (cache) {
+                    await FSExtra.ensureDir(cacheDirectory)
+                    await FSExtra.writeJson(`${cacheDirectory}/${hash}`, response.data)
+                }
                 return {
                     url: toUrl(location),
-                    data: cacheData,
+                    data: response.data,
                     passthrough: location.passthrough
                 }
             }
-        }
-        try {
-            alert(`Requesting: ${locationName}`)
-            const response = await instance(location)
-            if (cache) {
-                await FSExtra.ensureDir(cacheDirectory)
-                await FSExtra.writeJson(`${cacheDirectory}/${hash}`, response.data)
+            catch (e) {
+                alert(toErrorMessage(e))
             }
-            return {
-                url: toUrl(location),
-                data: response.data,
-                passthrough: location.passthrough
-            }
-        }
-        catch (e) {
-            alert(toErrorMessage(e))
         }
     }
 }
@@ -103,7 +108,7 @@ async function load(command, filename, parameters = {}, retries = 5, cache = fal
     const die = message => {
         throw new Error(message)
     }
-    const requestor = request.bind(null, retries, cache, alert)
+    const requestor = requestify(retries, cache, alert)
     const { default: reconciler } = await import(`./reconcilers/${command}.js`)
     Object.keys(parameters).forEach(parameter => {
         if (!reconciler.details.parameters.find(p => p.name === parameter)) alert(`Ignoring unexpected parameter '${parameter}'`)

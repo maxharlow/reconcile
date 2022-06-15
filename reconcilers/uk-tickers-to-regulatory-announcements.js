@@ -3,9 +3,12 @@ import Luxon from 'luxon'
 
 function initialise(parameters, requestor, die) {
 
-    const request = requestor(10, e => {
-        const ticker = e.config.passthrough.ticker
-        if (e.response.status >= 400) return `Received code ${e.response.status} for ticker ${ticker}`
+    const request = requestor({
+        limit: 10,
+        messages: e => {
+            const ticker = e.config.passthrough.ticker
+            if (e.response.status >= 400) return `Received code ${e.response.status} for ticker ${ticker}`
+        }
     })
 
     function locate(entry) {

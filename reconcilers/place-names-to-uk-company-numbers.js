@@ -11,12 +11,15 @@ function initialise(parameters, requestor, die) {
         }
     })()
 
-    const request = requestor(apiKeys.length * 2, e => {
-        const place = e.config.passthrough.placeName
-        if (e.response.status === 404) return `Could not find any companies registered at "${place}"`
-        if (e.response.status === 429) die('The rate limit has been reached')
-        if (e.response.status === 401) die(`API key ${e.config.auth.username} is invalid`)
-        if (e.response.status >= 400) return `Received code ${e.response.status} for "${place}"`
+    const request = requestor({
+        limit: apiKeys.length * 2,
+        messages: e => {
+            const place = e.config.passthrough.placeName
+            if (e.response.status === 404) return `Could not find any companies registered at "${place}"`
+            if (e.response.status === 429) die('The rate limit has been reached')
+            if (e.response.status === 401) die(`API key ${e.config.auth.username} is invalid`)
+            if (e.response.status >= 400) return `Received code ${e.response.status} for "${place}"`
+        }
     })
 
     function locate(entry) {

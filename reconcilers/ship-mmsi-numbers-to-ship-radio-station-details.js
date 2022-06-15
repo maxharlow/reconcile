@@ -2,9 +2,11 @@ import Cheerio from 'cheerio'
 
 function initialise(parameters, requestor, die) {
 
-    const request = requestor(Infinity, e => {
-        const ship = e.config.passthrough.shipMMSINumber
-        if (e.response.status >= 400) return `Received code ${e.response.status} for ship ${ship}`
+    const request = requestor({
+        messages: e => {
+            const ship = e.config.passthrough.shipMMSINumber
+            if (e.response.status >= 400) return `Received code ${e.response.status} for ship ${ship}`
+        }
     })
 
     function locate(entry) {

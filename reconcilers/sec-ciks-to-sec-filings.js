@@ -2,10 +2,13 @@ import Cheerio from 'cheerio'
 
 function initialise(parameters, requestor, die) {
 
-    const request = requestor(10, e => {
-        const cik = e.config.passthrough.cik
-        if (e.response.status === 429) die('The rate limit has been reached')
-        if (e.response.status >= 400) return `Received code ${e.response.status} for CIK ${cik}`
+    const request = requestor({
+        limit: 10,
+        messages: e => {
+            const cik = e.config.passthrough.cik
+            if (e.response.status === 429) die('The rate limit has been reached')
+            if (e.response.status >= 400) return `Received code ${e.response.status} for CIK ${cik}`
+        }
     })
 
     function locate(entry) {

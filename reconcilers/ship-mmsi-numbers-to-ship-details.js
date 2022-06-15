@@ -4,10 +4,12 @@ import Cheerio from 'cheerio'
 
 function initialise(parameters, requestor, die) {
 
-    const request = requestor(Infinity, e => {
-        const ship = e.config.passthrough.shipMMSINumber
-        if (e.response.headers.connection === 'close') die('The rate limit has been reached (Equasis allows about 500 per day)')
-        if (e.response.status >= 400) return `Received code ${e.response.status} for ship ${ship}`
+    const request = requestor({
+        messages: e => {
+            const ship = e.config.passthrough.shipMMSINumber
+            if (e.response.headers.connection === 'close') die('The rate limit has been reached (Equasis allows about 500 per day)')
+            if (e.response.status >= 400) return `Received code ${e.response.status} for ship ${ship}`
+        }
     })
 
     async function login() {

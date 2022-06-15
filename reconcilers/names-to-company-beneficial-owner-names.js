@@ -1,10 +1,12 @@
 function initialise(parameters, requestor, die) {
 
-    const request = requestor(Infinity, e => {
-        const name = e.config.passthrough.name
-        if (e.response.status === 403) die('The rate limit has been reached')
-        if (e.response.status === 401) die(`Invalid API token ${e.config.params.api_token}`)
-        if (e.response.status >= 400) return `Received code ${e.response.status} for name ${name} [page ${e.config.passthrough.page}]`
+    const request = requestor({
+        messages: e => {
+            const name = e.config.passthrough.name
+            if (e.response.status === 403) die('The rate limit has been reached')
+            if (e.response.status === 401) die(`Invalid API token ${e.config.params.api_token}`)
+            if (e.response.status >= 400) return `Received code ${e.response.status} for name ${name} [page ${e.config.passthrough.page}]`
+        }
     })
 
     function locate(entry) {

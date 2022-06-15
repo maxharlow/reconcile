@@ -1,7 +1,9 @@
 function initialise(parameters, requestor, die) {
 
-    const request = requestor(Infinity, e => {
-        if (e.response.status >= 400) return `Received code ${e.response.status}`
+    const request = requestor({
+        messages: e => {
+            if (e.response.status >= 400) return `Received code ${e.response.status}`
+        }
     })
 
     function locate(entries) {

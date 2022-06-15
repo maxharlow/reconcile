@@ -1,8 +1,10 @@
 function initialise(parameters, requestor, die) {
 
-    const request = requestor(Infinity, e => {
-        const concepts = e.config.passthrough.conceptIDs
-        if (e.response.status >= 400) return `Received code ${e.response.status} for concept "${concepts}"`
+    const request = requestor({
+        messages: e => {
+            const concepts = e.config.passthrough.conceptIDs
+            if (e.response.status >= 400) return `Received code ${e.response.status} for concept "${concepts}"`
+        }
     })
 
     function locate(entries) {
