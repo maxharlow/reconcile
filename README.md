@@ -435,22 +435,6 @@ Produces a CSV including columns:
 <hr>
 
 
-### Using Land Registry (UK)
-
-#### `uk-land-title-numbers-to-addresses`
-
-Use [Land Registry detailed enquiries](https://eservices.landregistry.gov.uk/eservices/FindAProperty/view/DetailedEnquiryInit.do) to look up title numbers (such as the result of a [PN1 search](https://www.gov.uk/government/publications/proprieters-names-search-of-the-index-pn1)), and find their addresses.
-
-Parameters:
-* `titleNumberField` Title number column.
-
-Produces a CSV including columns:
-* `titleAddress`
-* `titleTenure` Leasehold or freehold.
-
-<hr>
-
-
 ### Using Investegate (UK)
 
 #### `uk-tickers-to-regulatory-announcements`
