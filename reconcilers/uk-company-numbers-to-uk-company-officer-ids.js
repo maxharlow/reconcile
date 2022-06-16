@@ -73,7 +73,7 @@ function initialise(parameters, requestor, die) {
             const [lastName, firstName] = officer.name.split(', ')
             const fields = {
                 officerID: officer.links.officer.appointments.split('/')[2],
-                officerName: `${firstName} ${lastName}`,
+                officerName: firstName ? `${firstName} ${lastName}` : officer.name,
                 officerDateOfBirth: officer.date_of_birth ? [officer.date_of_birth.year, officer.date_of_birth.month, officer.date_of_birth.day].filter(x => x).join('-') : null,
                 officerNationality: officer.nationality,
                 officerRole: officer.officer_role,
