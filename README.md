@@ -213,6 +213,7 @@ Produces a CSV including columns:
 * `filingSubcategory`
 * `filingType`
 * `filingDescription`
+* `filingDescriptionData`
 * `filingActionDate`
 * `filingPaperFiled`
 * `filingID`
