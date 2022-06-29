@@ -272,6 +272,7 @@ Produces a CSV including columns:
 * `officerAppointedDate`
 * `officerResignedDate`
 * `officerOccupation`
+* `officerPostcode`
 * `officerAddress`
 * `officerCountryOfResidence`
 * `officerFormerNames`
