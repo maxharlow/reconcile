@@ -453,6 +453,31 @@ Produces a CSV including columns:
 <hr>
 
 
+### Using Valuation Office Agency (UK)
+
+#### `uk-addresses-to-council-tax-band`
+
+Use the [Valuation Office Agency council tax band information service](https://www.tax.service.gov.uk/check-council-tax-band/search-council-tax-advanced) to look up addresses, and find the council tax band.
+
+Parameters:
+* `addressNumberField` Property number (or name) column. Optional.
+* `addressStreetField` Property street column. Optional.
+* `addressCityField` Property city column. Optional.
+* `addressPostcodeField` Property postcode column. Optional.
+
+Produces a CSV including columns:
+* `address`
+* `localAuthority`
+* `localAuthorityReference`
+* `councilTaxBand`
+* `improvementIndicator`
+* `effectFromDate`
+* `isMixedUseProperty`
+* `courtCode`
+
+<hr>
+
+
 ### Using Investegate (UK)
 
 #### `uk-tickers-to-regulatory-announcements`
