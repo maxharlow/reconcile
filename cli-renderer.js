@@ -60,9 +60,9 @@ function draw(linesDrawn) {
         return
     }
     const linesFull = [
-        ...Object.values(alerts).map(text => {
+        ...Object.values(alerts).map(details => {
             const width = Process.stderr.columns
-            return truncate(width, text)
+            return truncate(width, details.text)
         }),
         ...Object.entries(tickers).map(([operation, { proportion, prediction }]) => {
             const width = Process.stderr.columns - (operation.length + 20)
@@ -114,10 +114,11 @@ function setup(verbose) {
             isDirty = true
         }
     }
-    const alert = text => {
+    const alert = details => {
         if (finalisation) return
-        if (!verbose) return
-        alerts[text] = text
+        if (!verbose && !details.importance) return
+        const key = details.text
+        alerts[key] = details
         isDirty = true
     }
     const finalise = mode => {

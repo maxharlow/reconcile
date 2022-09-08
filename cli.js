@@ -96,7 +96,7 @@ async function setup() {
     }
     catch (e) {
         await finalise('error')
-        console.error(instructions.argv.verbose ? e.stack : e.message)
+        alert({ text: instructions.argv.verbose ? e.stack : e.message, importance: 'error' })
         Process.exit(1)
     }
 

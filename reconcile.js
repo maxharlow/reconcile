@@ -43,8 +43,8 @@ function requestify(retries, cache, alert) {
             retryDelay: (number, e) => {
                 const message = toErrorMessage(e)
                 const attempt = number > 0 && number <= retries && retries > 1 ? ' (retrying' + (number > 1 ? `, attempt ${number}` : '') + '...)' : ''
-                if (number === 1) alert(`${message}${attempt}`)
-                else alert(`  → ${message}${attempt}`)
+                if (number === 1) alert({ text: `${message}${attempt}` })
+                else alert({ text: `  → ${message}${attempt}`})
                 return 5 * 1000
             }
         })
@@ -59,13 +59,13 @@ function requestify(retries, cache, alert) {
             if (cache) {
                 if (!cacheChecked) {
                     const cacheExists = await FSExtra.pathExists(cacheDirectory)
-                    if (cacheExists) alert('Cached data found!')
-                    else alert('No existing cached data found')
+                    if (cacheExists) alert({ text: 'Cached data found!' })
+                    else alert({ text: 'No existing cached data found' })
                     cacheChecked = true
                 }
                 const isCached = await FSExtra.pathExists(`${cacheDirectory}/${hash}`)
                 if (isCached) {
-                    alert(`Cached [${hash}]: ${locationName}`)
+                    alert({ text: `Cached [${hash}]: ${locationName}` })
                     const cacheData = await FSExtra.readJson(`${cacheDirectory}/${hash}`)
                     return {
                         url: toUrl(location),
@@ -85,7 +85,7 @@ function requestify(retries, cache, alert) {
                 location.data = form
             }
             try {
-                alert(`Requesting: ${locationName}`)
+                alert({ text: `Requesting: ${locationName}` })
                 const response = await instance(location)
                 if (cache) {
                     await FSExtra.ensureDir(cacheDirectory)
@@ -98,7 +98,7 @@ function requestify(retries, cache, alert) {
                 }
             }
             catch (e) {
-                alert(toErrorMessage(e))
+                alert({ text: toErrorMessage(e), importance: 'error' })
             }
         }
     }
@@ -111,7 +111,7 @@ async function load(command, filename, parameters = {}, retries = 5, cache = fal
     const requestor = requestify(retries, cache, alert)
     const { default: reconciler } = await import(`./reconcilers/${command}.js`)
     Object.keys(parameters).forEach(parameter => {
-        if (!reconciler.details.parameters.find(p => p.name === parameter)) alert(`Ignoring unexpected parameter '${parameter}'`)
+        if (!reconciler.details.parameters.find(p => p.name === parameter)) alert({ text: `Ignoring unexpected parameter '${parameter}'`, importance: 'warning' })
     })
     const batch = reconciler.details.batch || 1
     const execute = reconciler.initialise(parameters, requestor, die)
@@ -122,7 +122,7 @@ async function load(command, filename, parameters = {}, retries = 5, cache = fal
         const columnUnique = (i = '') => {
             const attempt = `${column}${i}`
             if (columnsSource.find(name => name === attempt)) return columnUnique(Number(i) + 1)
-            if (i) alert(`Column '${column}' from the reconciler has been renamed '${attempt}' so it does not overwrite the source`)
+            if (i) alert({ text: `Column '${column}' from the reconciler has been renamed '${attempt}' so it does not overwrite the source`, importance: 'warning' })
             return attempt
         }
         return [column, columnUnique()]
@@ -151,7 +151,7 @@ async function load(command, filename, parameters = {}, retries = 5, cache = fal
             })
         }
         catch (e) {
-            alert(verbose ? e.stack : e.message)
+            alert({ text: verbose ? e.stack : e.message, importance: 'error' })
             if (join === 'outer') {
                 return items.map(item => ({ ...item, ...blank }))
             }
