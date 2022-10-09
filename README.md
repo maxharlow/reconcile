@@ -165,7 +165,7 @@ Produces a CSV including columns:
 Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of company numbers, and retrieve various details for each.
 
 Parameters:
-* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/developer/applications/register).
+* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications).
 * `companyNumberField` Company number column.
 
 Produces a CSV including columns:
@@ -201,7 +201,7 @@ Produces a CSV including columns:
 Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of company numbers, and retrieve the filings for each.
 
 Parameters:
-* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/developer/applications/register).
+* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications).
 * `companyNumberField` Company number column.
 * `filingCategory` Category of filings to include, eg. "accounts". Optional. Default is all filings. Can be: `accounts`, `address`, `annual-return`, `capital`, `change-of-name`, `incorporation`, `liquidation`, `miscellaneous`, `mortgage`, `officers`, `resolution`, `confirmation-statement`.
 * `filingDescription` Descriptions of filings to include. Optional.
@@ -227,7 +227,7 @@ Produces a CSV including columns:
 Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of company numbers, and retrieve the names of their beneficial owners.
 
 Parameters:
-* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/developer/applications/register).
+* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications).
 * `companyNumberField` Company number column.
 
 Produces a CSV including columns:
@@ -260,7 +260,7 @@ Produces a CSV including columns:
 Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of company numbers, and retrieve the IDs and names of their officers.
 
 Parameters:
-* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/developer/applications/register).
+* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications).
 * `companyNumberField` Company number column.
 
 Produces a CSV including columns:
@@ -289,7 +289,7 @@ Produces a CSV including columns:
 Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of company numbers, and retrieve the insolvency cases for each.
 
 Parameters:
-* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/developer/applications/register).
+* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications).
 * `companyNumberField` Company number column.
 
 Produces a CSV including columns:
@@ -318,7 +318,7 @@ Produces a CSV including columns:
 Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of company numbers, and retrieve the charges for each.
 
 Parameters:
-* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/developer/applications/register).
+* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications).
 * `companyNumberField` Company number column.
 
 Produces a CSV including columns:
@@ -356,7 +356,7 @@ Produces a CSV including columns:
 Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of company names and find the most likely registration number for each. Beware incorrect matches! Company names are terrible unique identifiers.
 
 Parameters:
-* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/developer/applications/register).
+* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications).
 * `companyNameField` Company name column.
 * `postcodeField` Postcode column. If given will use it to filter results. Only looks at the current company postcode. Optional.
 * `preciseMatch` Match company name precisely. Ignores non-alphanumeric differences. Optional.
@@ -377,7 +377,7 @@ Produces a CSV including columns:
 Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of place names and retrieve all the companies who include that term in their registered address.
 
 Parameters:
-* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/developer/applications/register).
+* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications).
 * `placeNameField` Place name column.
 * `maximumResults` Maximum number of results to include for each name. Optional. Default is all.
 
@@ -398,7 +398,7 @@ Produces a CSV including columns:
 Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of individual names and find the ID numbers for each. Many officers will have multiple IDs associated with them. This is limited to bringing back the first 10 pages of matches.
 
 Parameters:
-* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/developer/applications/register).
+* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications).
 * `individualNameField` Individual name column.
 * `dateOfBirthField` Date of birth column, in ISO 8601 format. If given will use the month and year to filter results. Optional.
 * `nonMiddleNameMatch` Match individual name only based on the first and last names. Ignores non-alphabetical differences and titles. Optional.
@@ -417,7 +417,7 @@ Produces a CSV including columns:
 Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of officer IDs, and retrieve the company numbers for their appointments.
 
 Parameters:
-* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/developer/applications/register).
+* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications).
 * `officerIDField` Officer ID column.
 
 Produces a CSV including columns:
