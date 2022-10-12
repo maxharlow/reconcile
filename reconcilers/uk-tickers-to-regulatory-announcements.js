@@ -1,5 +1,5 @@
 import Cheerio from 'cheerio'
-import Luxon from 'luxon'
+import * as Luxon from 'luxon'
 
 function initialise(parameters, requestor, die) {
 

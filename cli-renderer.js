@@ -1,7 +1,7 @@
 import Process from 'process'
 import Events from 'events'
 import Chalk from 'chalk'
-import Luxon from 'luxon'
+import * as Luxon from 'luxon'
 import SimpleWCSWidth from 'simple-wcswidth'
 
 const events = new Events.EventEmitter()
