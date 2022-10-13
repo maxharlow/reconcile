@@ -24,13 +24,12 @@ function initialise(parameters, requestor, die) {
     function locate(entry) {
         const companyNumber = entry[parameters.companyNumberField]
         if (!companyNumber || companyNumber.match(/^0+$/)) throw new Error('No company number found')
-        return {
+        return { // note a 404 can just indicate no insolvency cases (as well as company not found)
             url: `https://api.company-information.service.gov.uk/company/${companyNumber.padStart(8, '0').toUpperCase()}/insolvency`,
             auth: {
                 username: apiKeysRotated(),
                 password: ''
             },
-            validateStatus: status => status === 200 || status === 404, // as a 404 can just indicate no beneficial owners (as well as company not found)
             passthrough: {
                 companyNumber
             }
@@ -38,13 +37,14 @@ function initialise(parameters, requestor, die) {
     }
 
     function parse(response) {
-        if (!response.data) return []
+        if (!response || !response.data) return []
         const getDate = (insolvencyCase, type) => {
             const elements = insolvencyCase.dates.filter(date => date.type === type)
             return elements ? elements.map(element => element.date).join('; ') : null
         }
         const companyInsolvencyStatus = response.data.status?.join('; ') || null
         const cases = response.data.cases
+        if (!cases) return null
         return cases.map(insolvencyCase => {
             return {
                 companyInsolvencyStatus,
