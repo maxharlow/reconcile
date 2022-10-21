@@ -92,7 +92,7 @@ async function setup() {
             .CSVStringify()
             .each(write)
             .whenEnd()
-        await finalise('completed')
+        await finalise('complete')
     }
     catch (e) {
         await finalise('error')
