@@ -372,6 +372,26 @@ Produces a CSV including columns:
 
 <hr>
 
+#### `uk-company-types-to-company-numbers`
+
+Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of company types and retrieve all the companies of that type, up to a maximum of 10,000.
+
+Parameters:
+* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications).
+* `companyTypeField` Company type column. Identify the specific type using the [advanced search web interface](https://find-and-update.company-information.service.gov.uk/advanced-search).
+
+Produces a CSV including columns:
+* `companyNumber`
+* `companyName`
+* `companyStatus`
+* `companyType`
+* `companyCreationDate`
+* `companyCessationDate`
+* `companyPostcode`
+* `companyAddress`
+
+<hr>
+
 #### `place-names-to-uk-company-numbers`
 
 Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of place names and retrieve all the companies who include that term in their registered address.
@@ -379,7 +399,7 @@ Use [Companies House](https://find-and-update.company-information.service.gov.uk
 Parameters:
 * `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications).
 * `placeNameField` Place name column.
-* `maximumResults` Maximum number of results to include for each name. Optional. Default is all.
+* `maximumResults` Maximum number of results to include for each name. Optional. Default is all. Maximum is 10,000.
 
 Produces a CSV including columns:
 * `companyNumber`
