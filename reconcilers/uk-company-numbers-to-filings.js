@@ -46,7 +46,7 @@ function initialise(parameters, requestor, die) {
             && response.data.items
             && response.data.items.length > 0
             && response.data.total_count > 100
-            && response.data.items.filter(filing => filing.description.match(parameters.filingDescriptionMatch)).length === 0
+            && (parameters.filingDescriptionMatch && response.data.items.filter(filing => filing.description?.match(parameters.filingDescriptionMatch)).length === 0)
         if (response.data.total_count > 100 && parameters.includeAll || didDescriptionMatchRemoveAll) {
             const pageTotal = Math.ceil(response.data.total_count / 100)
             const pageNumbers = Array.from(Array(pageTotal).keys()).slice(1) // slice off first page as we already have that
@@ -76,7 +76,8 @@ function initialise(parameters, requestor, die) {
 
     function parse(response) {
         const filings = response?.data.items || []
-        return filings.filter(filing => filing.description.match(parameters.filingDescriptionMatch)).map(filing => {
+        const filingsFiltered = parameters.filingDescriptionMatch ? filings.filter(filing => filing.description?.match(parameters.filingDescriptionMatch)) : filings
+        return filingsFiltered.map(filing => {
             const filingID = filing.links?.document_metadata?.split('document/')[1]
             const fields = {
                 filingDate: filing.date,
