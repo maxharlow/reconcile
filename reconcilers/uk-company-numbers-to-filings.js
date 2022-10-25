@@ -34,7 +34,6 @@ function initialise(parameters, requestor, die) {
                 category: parameters.filingCategory,
                 items_per_page: 100
             },
-            validateStatus: status => status === 200 || status === 404, // as a 404 can just indicate no filings (as well as company not found)
             passthrough: {
                 companyNumber
             }
@@ -54,7 +53,7 @@ function initialise(parameters, requestor, die) {
                 const query = {
                     url: response.url,
                     auth: {
-                        username: apiKeysRotated,
+                        username: apiKeysRotated(),
                         password: ''
                     },
                     params: {
@@ -75,6 +74,9 @@ function initialise(parameters, requestor, die) {
     }
 
     function parse(response) {
+        if (response?.data.filing_history_status === 'filing-history-not-available-invalid-format') {
+            die(`Filings not available for company ${response.passthrough.companyNumber}, perhaps company number is invalid?`)
+        }
         const filings = response?.data.items || []
         const filingsFiltered = parameters.filingDescriptionMatch ? filings.filter(filing => filing.description?.match(parameters.filingDescriptionMatch)) : filings
         return filingsFiltered.map(filing => {
