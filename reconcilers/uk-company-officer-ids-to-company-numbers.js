@@ -23,8 +23,8 @@ function initialise(parameters, requestor, die) {
     })
 
     function locate(entry) {
-        const officerID = entry[parameters.officerIDField]
-        if (!officerID) throw new Error('No officer ID found')
+        const officerID = entry.data[parameters.officerIDField]
+        if (!officerID) throw new Error(`No officer ID found on line ${entry.line}`)
         return {
             url: `https://api.company-information.service.gov.uk/officers/${officerID}/appointments`,
             auth: {

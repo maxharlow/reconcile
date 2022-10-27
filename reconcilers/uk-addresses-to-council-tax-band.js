@@ -11,10 +11,10 @@ function initialise(parameters, requestor, die) {
     })
 
     function locate(entry) {
-        const addressNumber = entry[parameters.addressNumberField]
-        const addressStreet = entry[parameters.addressStreetField]
-        const addressCity = entry[parameters.addressCityField]
-        const addressPostcode = entry[parameters.addressPostcodeField]
+        const addressNumber = entry.data[parameters.addressNumberField]
+        const addressStreet = entry.data[parameters.addressStreetField]
+        const addressCity = entry.data[parameters.addressCityField]
+        const addressPostcode = entry.data[parameters.addressPostcodeField]
         return {
             url: 'https://www.tax.service.gov.uk/check-council-tax-band/search-council-tax-advanced',
             method: 'POST',

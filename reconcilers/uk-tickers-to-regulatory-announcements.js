@@ -12,8 +12,8 @@ function initialise(parameters, requestor, die) {
     })
 
     function locate(entry) {
-        const ticker = entry[parameters.tickerField]
-        if (!ticker) throw new Error('No ticker found')
+        const ticker = entry.data[parameters.tickerField]
+        if (!ticker) throw new Error(`No ticker found on line ${entry.line}`)
         const categories = {
             'm-and-a': 1,
             'results': 2,

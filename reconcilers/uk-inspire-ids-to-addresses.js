@@ -39,8 +39,8 @@ function initialise(parameters, requestor, die) {
     })
 
     async function locate(entry) {
-        const inspireID = entry[parameters.inspireIDField]
-        if (!inspireID) throw new Error('No title number found')
+        const inspireID = entry.data[parameters.inspireIDField]
+        if (!inspireID) throw new Error(`No title number found on line ${entry.line}`)
         return {
             url: 'https://search-property-information.service.gov.uk/search/search-by-inspire-id',
             method: 'POST',

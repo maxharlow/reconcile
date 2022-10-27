@@ -10,8 +10,8 @@ function initialise(parameters, requestor, die) {
     })
 
     function locate(entry) {
-        const shipMMSINumber = entry[parameters.shipMMSINumberField]
-        if (!shipMMSINumber) throw new Error('No ship MMSI number found')
+        const shipMMSINumber = entry.data[parameters.shipMMSINumberField]
+        if (!shipMMSINumber) throw new Error(`No ship MMSI number found on line ${entry.line}`)
         return {
             url: 'https://www.itu.int/mmsapp/ShipStation/list',
             method: 'POST',

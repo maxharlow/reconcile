@@ -27,8 +27,8 @@ function initialise(parameters, _, die) {
     }
 
     function locate(entry) {
-        const url = entry[parameters.urlField]
-        if (!url) throw new Error('No URL found')
+        const url = entry.data[parameters.urlField]
+        if (!url) throw new Error(`No URL found on line ${entry.line}`)
         return url
     }
 

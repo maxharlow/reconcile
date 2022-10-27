@@ -11,7 +11,7 @@ function initialise(parameters, requestor, die) {
     function locate(entries) {
         if (!parameters.ipAddressField) die('No IP address field found')
         const queries = entries.map(entry => {
-            return entry[parameters.ipAddressField]
+            return entry.data[parameters.ipAddressField]
         })
         return {
             url: 'http://ip-api.com/batch',

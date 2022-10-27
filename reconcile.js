@@ -115,9 +115,17 @@ async function load(command, filename, parameters = {}, retries = 5, cache = fal
     })
     const batch = reconciler.details.batch || 1
     const execute = reconciler.initialise(parameters, requestor, die)
-    const source = () => Scramjet.StringStream.from(FSExtra.createReadStream(filename)).CSVParse({ header: true })
+    const source = () => {
+        let line = 1
+        return Scramjet.StringStream.from(FSExtra.createReadStream(filename)).CSVParse({ header: true }).map(data => {
+            return {
+                line: line++,
+                data
+            }
+        })
+    }
     const columnsReconciler = reconciler.details.columns.map(column => column.name)
-    const columnsSource = Object.keys((await source().slice(0, 1).toArray())[0])
+    const columnsSource = Object.keys((await source().slice(0, 1).toArray())[0].data)
     const columnMapEntries = columnsReconciler.map(column => {
         const columnUnique = (i = '') => {
             const attempt = `${column}${i}`
@@ -146,7 +154,7 @@ async function load(command, filename, parameters = {}, retries = 5, cache = fal
                     const resultRemapped = result
                         ? Object.fromEntries(Object.entries(result).map(([column, value]) => [columnMap[column], value]))
                         : Object.fromEntries(Object.entries(columnMap).map(([column]) => [column, ''])) // if there is no result (eg. not found)
-                    return { ...item, ...resultRemapped }
+                    return { ...item.data, ...resultRemapped }
                 })
             })
         }

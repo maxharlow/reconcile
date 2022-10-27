@@ -12,8 +12,8 @@ function initialise(parameters, requestor, die) {
     })
 
     function locate(entry) {
-        const name = entry[parameters.nameField]
-        if (!name) throw new Error('No name found')
+        const name = entry.data[parameters.nameField]
+        if (!name) throw new Error(`No name found on line ${entry.line}`)
         return {
             url: 'https://www.sec.gov/cgi-bin/cik_lookup',
             method: 'POST',

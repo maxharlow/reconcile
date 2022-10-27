@@ -12,10 +12,10 @@ function initialise(parameters, requestor, die) {
     function locate(entry) {
         if (!parameters.apiToken) die('No API token found')
         const apiVersion = 'v0.4.8'
-        const individualName = entry[parameters.individualNameField]
-        const individualDateOfBirth = entry[parameters.individualDateOfBirthField]
-        const individualJurisdiction = parameters.jurisdiction || entry[parameters.individualJurisdictionField]
-        if (!individualName) throw new Error('No individual name found')
+        const individualName = entry.data[parameters.individualNameField]
+        const individualDateOfBirth = entry.data[parameters.individualDateOfBirthField]
+        const individualJurisdiction = parameters.jurisdiction || entry.data[parameters.individualJurisdictionField]
+        if (!individualName) throw new Error(`No individual name found on line ${entry.line}`)
         return {
             url: `https://api.opencorporates.com/${apiVersion}/officers/search`,
             params: {

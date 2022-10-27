@@ -33,8 +33,8 @@ function initialise(parameters, requestor, die) {
     }
 
     function locate(entry, key) {
-        const shipMMSINumber = entry[parameters.shipMMSINumberField]
-        if (!shipMMSINumber) throw new Error('No ship MMSI number found')
+        const shipMMSINumber = entry.data[parameters.shipMMSINumberField]
+        if (!shipMMSINumber) throw new Error(`No ship MMSI number found on line ${entry.line}`)
         return {
             url: 'http://www.equasis.org/EquasisWeb/restricted/ShipHistory',
             method: 'POST',

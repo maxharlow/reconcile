@@ -23,8 +23,8 @@ function initialise(parameters, requestor, die) {
     })
 
     function locate(entry) {
-        const companyName = entry[parameters.companyNameField]
-        if (!companyName) throw new Error('No company name found')
+        const companyName = entry.data[parameters.companyNameField]
+        if (!companyName) throw new Error(`No company name found on line ${entry.line}`)
         return {
             url: 'https://api.company-information.service.gov.uk/search/companies',
             auth: {

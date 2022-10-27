@@ -33,8 +33,8 @@ function initialise(parameters, requestor, die) {
     }
 
     function locate(entry, key) {
-        const shipIMONumber = entry[parameters.shipIMONumberField]
-        if (!shipIMONumber) throw new Error('No ship IMO number found')
+        const shipIMONumber = entry.data[parameters.shipIMONumberField]
+        if (!shipIMONumber) throw new Error(`No ship IMO number found on line ${entry.line}`)
         return {
             url: 'http://www.equasis.org/EquasisWeb/restricted/ShipHistory',
             method: 'POST',

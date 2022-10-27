@@ -9,9 +9,9 @@ function initialise(parameters, requestor, die) {
     function locate(entries) {
         const maximumResults = parameters.maximumResults || 1
         const queries = entries.map((entry, i) => {
-            const companyName = entry[parameters.companyNameField]
+            const companyName = entry.data[parameters.companyNameField]
             if (!companyName) return // have to skip, ideally would log an error
-            const companyJurisdiction = parameters.jurisdiction || entry[parameters.companyJurisdictionField] || null
+            const companyJurisdiction = parameters.jurisdiction || entry.data[parameters.companyJurisdictionField] || null
             return [`q${i}`, {
                 query: companyName,
                 ...(companyJurisdiction ? { jurisdiction_code: companyJurisdiction } : {}),

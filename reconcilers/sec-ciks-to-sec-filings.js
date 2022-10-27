@@ -12,8 +12,8 @@ function initialise(parameters, requestor, die) {
     })
 
     function locate(entry) {
-        const cik = entry[parameters.cikField]
-        if (!cik) throw new Error('No CIK found')
+        const cik = entry.data[parameters.cikField]
+        if (!cik) throw new Error(`No CIK found on line ${entry.line}`)
         return {
             url: 'https://www.sec.gov/cgi-bin/browse-edgar',
             params: {

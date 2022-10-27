@@ -12,8 +12,8 @@ function initialise(parameters, requestor, die) {
     })
 
     function locate(entry) {
-        const term = entry[parameters.termField]
-        if (!term) throw new Error('No term found')
+        const term = entry.data[parameters.termField]
+        if (!term) throw new Error(`No term found on line ${entry.line}`)
         return {
             url: 'https://www.google.com/search',
             headers: {

@@ -10,7 +10,7 @@ function initialise(parameters, requestor, die) {
     function locate(entries) {
         if (!parameters.conceptIDField) die('No concept ID field found')
         const conceptIDs = entries.map(entry => {
-            return entry[parameters.conceptIDField]
+            return entry.data[parameters.conceptIDField]
         })
         return {
             url: 'https://www.wikidata.org/w/api.php',

@@ -9,8 +9,8 @@ function initialise(parameters, requestor, die) {
 
     function locate(entry) {
         if (!parameters.termField) die('No term field found!')
-        const term = entry[parameters.termField]
-        if (!term) throw new Error('No term found')
+        const term = entry.data[parameters.termField]
+        if (!term) throw new Error(`No term found on line ${entry.line}`)
         return {
             url: 'https://www.wikidata.org/w/api.php',
             params: {

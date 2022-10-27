@@ -12,8 +12,8 @@ function initialise(parameters, requestor, die) {
     function locate(entry) {
         if (!parameters.apiToken) die('No API token found')
         const apiVersion = 'v0.4.8'
-        const name = entry[parameters.nameField]
-        if (!name) throw new Error('No name found')
+        const name = entry.data[parameters.nameField]
+        if (!name) throw new Error(`No name found on line ${entry.line}`)
         return {
             url: `https://api.opencorporates.com/${apiVersion}/statements/control_statements/search`,
             params: {

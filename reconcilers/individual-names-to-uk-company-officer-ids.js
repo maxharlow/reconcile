@@ -22,8 +22,8 @@ function initialise(parameters, requestor, die) {
     })
 
     function locate(entry) {
-        const individualName = entry[parameters.individualNameField]
-        if (!individualName) throw new Error('No individual name found')
+        const individualName = entry.data[parameters.individualNameField]
+        if (!individualName) throw new Error(`No individual name found on line ${entry.line}`)
         return {
             url: 'https://api.company-information.service.gov.uk/search/officers',
             auth: {

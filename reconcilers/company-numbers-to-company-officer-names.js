@@ -12,9 +12,9 @@ function initialise(parameters, requestor, die) {
 
     function locate(entry) {
         const apiVersion = 'v0.4.8'
-        const companyNumber = entry[parameters.companyNumberField]
-        const companyJurisdiction = parameters.jurisdiction || entry[parameters.companyJurisdictionField]
-        if (!companyNumber || companyNumber.match(/^0+$/)) throw new Error('No company number found')
+        const companyNumber = entry.data[parameters.companyNumberField]
+        const companyJurisdiction = parameters.jurisdiction || entry.data[parameters.companyJurisdictionField]
+        if (!companyNumber || companyNumber.match(/^0+$/)) throw new Error(`No company number found on line ${entry.line}`)
         if (!companyJurisdiction) throw new Error(`No jurisdiction found for company ${companyNumber}`)
         return {
             url: `https://api.opencorporates.com/${apiVersion}/companies/${companyJurisdiction}/${companyNumber}`,

@@ -33,8 +33,8 @@ function initialise(parameters, requestor, die) {
     }
 
     function locate(entry, key) {
-        const shipName = entry[parameters.shipNameField]
-        if (!shipName) throw new Error('No ship name found')
+        const shipName = entry.data[parameters.shipNameField]
+        if (!shipName) throw new Error(`No ship name found on line ${entry.line}`)
         return {
             url: 'http://www.equasis.org/EquasisWeb/restricted/Search',
             method: 'POST',
