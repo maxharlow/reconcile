@@ -32,7 +32,7 @@ function initialise(parameters, requestor, die) {
                 password: ''
             },
             params: {
-                q: companyName,
+                q: companyName.replace(/[^A-Za-z0-9\-\.,& ]/g, ''), // special characters can mean no matches are returned
                 items_per_page: 100 // as there's a bug in their API where giving 1 produces zero results when there is only one match
             },
             passthrough: {
