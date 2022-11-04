@@ -71,10 +71,10 @@ function initialise(parameters, requestor, die) {
     function parse(response, entry) {
         const individuals = response?.data.items
         const byDateOfBirth = individual => {
-            if (!parameters.dateOfBirthField || !entry[parameters.dateOfBirthField]) return true // field not specified or field for this row is blank
+            if (!parameters.dateOfBirthField || !entry.data[parameters.dateOfBirthField]) return true // field not specified or field for this row is blank
             if (!individual.date_of_birth?.year || !individual.date_of_birth?.month) return false // date of birth specified in source, but no date of birth listed in this search result
-            return individual.date_of_birth.year.toString() === entry[parameters.dateOfBirthField].slice(0, 4)
-                && individual.date_of_birth.month.toString().padStart(2, '0') === entry[parameters.dateOfBirthField].slice(5, 7)
+            return individual.date_of_birth.year.toString() === entry.data[parameters.dateOfBirthField].slice(0, 4)
+                && individual.date_of_birth.month.toString().padStart(2, '0') === entry.data[parameters.dateOfBirthField].slice(5, 7)
         }
         const normalised = name => {
             return name?.toLowerCase()
@@ -83,11 +83,11 @@ function initialise(parameters, requestor, die) {
         }
         const byPreciseMatch = individual => {
             if (!parameters.preciseMatch) return true
-            return normalised(individual.title) === normalised(entry[parameters.individualNameField])
+            return normalised(individual.title) === normalised(entry.data[parameters.individualNameField])
         }
         const byNonMiddleNameMatch = individual => {
             if (!parameters.nonMiddleNameMatch) return true
-            const entryIndividualName = normalised(entry[parameters.individualNameField])
+            const entryIndividualName = normalised(entry.data[parameters.individualNameField])
             const resultIndividualName = normalised(individual.title)
             return resultIndividualName.split(' ')[0] === entryIndividualName.split(' ')[0]
                 && resultIndividualName.split(' ').pop() === entryIndividualName.split(' ').pop()

@@ -45,9 +45,9 @@ function initialise(parameters, requestor, die) {
         const maximumResults = parameters.maximumResults || 1
         const companies = response?.data.items
         const byPostcode = company => {
-            if (!parameters.postcodeField || !entry[parameters.postcodeField]) return true // field not specified or field for this row is blank
+            if (!parameters.postcodeField || !entry.data[parameters.postcodeField]) return true // field not specified or field for this row is blank
             if (!company.address?.postal_code) return false // postcode specified in source, but no postcode listed in this search result
-            return company.address.postal_code.replace(/ /g, '').toLowerCase() === entry[parameters.postcodeField].replace(/ /g, '').toLowerCase()
+            return company.address.postal_code.replace(/ /g, '').toLowerCase() === entry.data[parameters.postcodeField].replace(/ /g, '').toLowerCase()
         }
         const normalised = name => {
             return name?.toLowerCase()
@@ -58,7 +58,7 @@ function initialise(parameters, requestor, die) {
         }
         const byPreciseMatch = company => {
             if (!parameters.preciseMatch) return true
-            const entryCompanyName = normalised(entry[parameters.companyNameField])
+            const entryCompanyName = normalised(entry.data[parameters.companyNameField])
             return normalised(company.title) === entryCompanyName || normalised(company.snippet) === entryCompanyName
         }
         return companies.filter(byPostcode).filter(byPreciseMatch).slice(0, maximumResults).map(company => {
