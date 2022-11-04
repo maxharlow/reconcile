@@ -149,7 +149,7 @@ async function load(command, filename, parameters = {}, retries = 5, cache = fal
                     : batch > 1 ? [executed[i]] // batch mode, reconciler is one-to-one
                     : Array.isArray(executed) ? executed // reconciler is one-to-many
                     : [executed] // reconciler is one-to-one
-                if (join === 'outer' && results.length === 0) return [{ ...item, ...blank }]
+                if (join === 'outer' && results.length === 0) return [{ ...item.data, ...blank }]
                 return results.map(result => {
                     const resultRemapped = result
                         ? Object.fromEntries(Object.entries(result).map(([column, value]) => [columnMap[column], value]))
