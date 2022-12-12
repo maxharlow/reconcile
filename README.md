@@ -673,6 +673,24 @@ Produces a CSV including columns:
 
 <hr>
 
+### Using the International Group of P&I Clubs
+
+#### `ship-imo-numbers-to-insurer-names`
+
+Use [IGP&I](https://www.igpandi.org/ship-search/) to take a list of IMO numbers (or ship names), and retrieve the names of their insurers, and the club their insurer belongs to. Note if using ship names and there are multiple matches you will only receieve the first 20.
+
+Parameters:
+* `shipIMONumberField` Ship IMO number (or name) column.
+
+Produces a CSV including columns:
+* `shipIMONumber`
+* `shipName`
+* `shipType`
+* `shipInsurerClub`
+* `shipInsurer`
+
+<hr>
+
 ### Using ITU Mars
 
 #### `ship-mmsi-numbers-to-ship-radio-station-details`

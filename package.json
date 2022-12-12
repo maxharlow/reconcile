@@ -17,6 +17,7 @@
         "cheerio": "0.22.0",
         "form-data": "4.0.x",
         "fs-extra": "10.1.x",
+        "html-entities": "2.3.x",
         "luxon": "3.0.x",
         "puppeteer": "18.2.x",
         "scramjet": "4.36.x",
