@@ -15,9 +15,10 @@ function initialise(parameters, requestor, die) {
         limit: apiKeys.length * 2,
         messages: e => {
             const company = e.config.passthrough.companyNumber
+            const page = e.config.passthrough.page
             if (e.response.status === 429) die('The rate limit has been reached')
             if (e.response.status === 401) die(`API key ${e.config.auth.username} is invalid`)
-            if (e.response.status >= 400) return `Received code ${e.response.status} for company ${company}`
+            if (e.response.status >= 400) return `Received code ${e.response.status} for company ${company} on page ${page}`
         }
     })
 
@@ -35,7 +36,8 @@ function initialise(parameters, requestor, die) {
                 items_per_page: 100
             },
             passthrough: {
-                companyNumber
+                companyNumber,
+                page: 1
             }
         }
     }
@@ -62,7 +64,8 @@ function initialise(parameters, requestor, die) {
                         start_index: page * 100
                     },
                     passthrough: {
-                        companyNumber: response.passthrough.companyNumber
+                        companyNumber: response.passthrough.companyNumber,
+                        page: page + 1
                     }
                 }
                 return request(query)
