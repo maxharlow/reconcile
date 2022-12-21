@@ -1,4 +1,4 @@
-function initialise(parameters, requestor, die) {
+function initialise(parameters, requestor, alert, die) {
 
     const apiKeys = [parameters.apiKey].flat()
 

@@ -1,6 +1,6 @@
 import Process from 'process'
 import Events from 'events'
-import Chalk from 'chalk'
+import * as Chalk from 'chalk'
 import * as Luxon from 'luxon'
 import SimpleWCSWidth from 'simple-wcswidth'
 
@@ -67,8 +67,19 @@ function draw(linesDrawn) {
     }
     const linesFull = [
         ...Object.values(alerts).map(details => {
-            const width = Process.stderr.columns
-            return truncate(width, details.text)
+            const width = Process.stderr.columns - (details.message.length + 1)
+            const sourceTruncated = details.source ? truncate(width, details.source) : null
+            const elements = [
+                sourceTruncated,
+                sourceTruncated ? ' ' : '',
+                details.importance === 'error' ? Chalk.chalkStderr.red.bold(details.message)
+                    : details.importance === 'warning' ? Chalk.chalkStderr.magenta.bold(details.message)
+                    : details.message.endsWith('...') ? Chalk.chalkStderr.yellow(details.message)
+                    : details.message.toLowerCase().startsWith('done') ? Chalk.chalkStderr.green(details.message)
+                    : details.source ? Chalk.chalkStderr.magenta(details.message)
+                    : details.message
+            ]
+            return elements.filter(x => x).join('').slice(0, Process.stderr.cols)
         }),
         ...Object.entries(tickers).map(([operation, { proportion, prediction }]) => {
             const width = Process.stderr.columns - (operation.length + 20)
@@ -120,8 +131,8 @@ function setup(verbose) {
     const alert = details => {
         if (finalisation) return
         if (!verbose && !details.importance) return
-        if (!doRedisplay) console.error(details.text)
-        const key = details.text
+        if (!doRedisplay) console.error([details.source, details.message].filter(x => x).join(' '))
+        const key = details.source || details.message
         alerts[key] = details
         isDirty = true
     }
@@ -134,7 +145,7 @@ function setup(verbose) {
     Process.stdin.setEncoding('utf8')
     Process.stdin.on('data', async data => {
         if (data === '\u0003') {
-            console.error(Chalk.bgRedBright.white('Stopping...'))
+            console.error(Chalk.chalkStderr.bgRedBright.white('Stopping...'))
             if (doRedisplay) Process.stderr.moveCursor(0, -1)
             await finalise('interrupt')
             Process.exit(0)

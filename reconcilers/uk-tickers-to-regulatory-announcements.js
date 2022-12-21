@@ -1,7 +1,7 @@
 import Cheerio from 'cheerio'
 import * as Luxon from 'luxon'
 
-function initialise(parameters, requestor, die) {
+function initialise(parameters, requestor, alert, die) {
 
     const request = requestor({
         limit: 10,

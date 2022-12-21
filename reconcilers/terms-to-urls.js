@@ -1,6 +1,6 @@
 import Cheerio from 'cheerio'
 
-function initialise(parameters, requestor, die) {
+function initialise(parameters, requestor, alert, die) {
 
     const request = requestor({
         limit: 1,

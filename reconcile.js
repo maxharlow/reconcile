@@ -15,8 +15,7 @@ function requestify(retries, cache, alert) {
         const timeout = 45 * 1000
         const toUrl = location => typeof location === 'string' ? location : location.url
         const toLocationName = location => {
-            if (!location) throw new Error('Request location is blank')
-            const method = location.method ? location.method.toUpperCase() : 'GET'
+            const method = location.method?.toUpperCase() || 'GET'
             const stringifyObject = object => Object.entries(object).map(([key, value]) => `${key}=${JSON.stringify(value)}`).join(' ')
             return `${method} ${toUrl(location)}`
                 + (location.params ? '?' + Querystring.stringify(location.params) : '')
@@ -27,10 +26,9 @@ function requestify(retries, cache, alert) {
         const toErrorMessage = e => {
             const reconcilerError = e.response && messages(e)
             if (reconcilerError) return reconcilerError // look for reconciler-specific errors first
-            const locationName = toLocationName(e.config)
-            if (e.response) return `Received code ${e.response.status}: ${locationName}` // response recieved, but non-2xx
-            if (e.code === 'ECONNABORTED') return `Timed out after ${timeout / 1000}ms: ${locationName}` // request timed out
-            if (e.code) return `Error ${e.code}: ${locationName}` // request failed, with error code
+            if (e.response) return `received code ${e.response.status}` // response recieved, but non-2xx
+            if (e.code === 'ECONNABORTED') return `timed out after ${timeout / 1000}ms` // request timed out
+            if (e.code) return `received ${e.code}` // request failed, with error code
             return e.message // request not made
         }
         const instance = Axios.create({ timeout })
@@ -43,8 +41,14 @@ function requestify(retries, cache, alert) {
             retryDelay: (number, e) => {
                 const message = toErrorMessage(e)
                 const attempt = number > 0 && number <= retries && retries > 1 ? ' (retrying' + (number > 1 ? `, attempt ${number}` : '') + '...)' : ''
-                if (number === 1) alert({ text: `${message}${attempt}` })
-                else alert({ text: `  → ${message}${attempt}`})
+                if (number === 1) alert({
+                    source: toLocationName(e.config),
+                    message: `${message}${attempt}`
+                })
+                else alert({
+                    source: toLocationName(e.config),
+                    message: `${message}${attempt}`
+                })
                 return 5 * 1000
             }
         })
@@ -59,13 +63,16 @@ function requestify(retries, cache, alert) {
             if (cache) {
                 if (!cacheChecked) {
                     const cacheExists = await FSExtra.pathExists(cacheDirectory)
-                    if (cacheExists) alert({ text: 'Cached data found!' })
-                    else alert({ text: 'No existing cached data found' })
+                    if (cacheExists) alert({ message: 'Cached data found!' })
+                    else alert({ message: 'No existing cached data found' })
                     cacheChecked = true
                 }
                 const isCached = await FSExtra.pathExists(`${cacheDirectory}/${hash}`)
                 if (isCached) {
-                    alert({ text: `Cached [${hash}]: ${locationName}` })
+                    alert({
+                        source: locationName,
+                        message: `cached @ ${hash}`
+                    })
                     const cacheData = await FSExtra.readJson(`${cacheDirectory}/${hash}`)
                     return {
                         url: toUrl(location),
@@ -85,12 +92,19 @@ function requestify(retries, cache, alert) {
                 location.data = form
             }
             try {
-                alert({ text: `Requesting: ${locationName}` })
+                alert({
+                    source: locationName,
+                    message: 'requesting...'
+                })
                 const response = await instance(location)
                 if (cache) {
                     await FSExtra.ensureDir(cacheDirectory)
                     await FSExtra.writeJson(`${cacheDirectory}/${hash}`, response.data)
                 }
+                alert({
+                    source: locationName,
+                    message: 'done'
+                })
                 return {
                     url: toUrl(location),
                     data: response.data,
@@ -98,7 +112,11 @@ function requestify(retries, cache, alert) {
                 }
             }
             catch (e) {
-                alert({ text: toErrorMessage(e), importance: 'error' })
+                alert({
+                    source: locationName,
+                    message: toErrorMessage(e),
+                    importance: 'error'
+                })
             }
         }
     }
@@ -111,10 +129,13 @@ async function load(command, filename, parameters = {}, retries = 5, cache = fal
     const requestor = requestify(retries, cache, alert)
     const { default: reconciler } = await import(`./reconcilers/${command}.js`)
     Object.keys(parameters).forEach(parameter => {
-        if (!reconciler.details.parameters.find(p => p.name === parameter)) alert({ text: `Ignoring unexpected parameter '${parameter}'`, importance: 'warning' })
+        if (!reconciler.details.parameters.find(p => p.name === parameter)) alert({
+            message: `Ignoring unexpected parameter '${parameter}'`,
+            importance: 'warning'
+        })
     })
     const batch = reconciler.details.batch || 1
-    const execute = reconciler.initialise(parameters, requestor, die)
+    const execute = reconciler.initialise(parameters, requestor, alert, die)
     const source = () => {
         let line = 1
         return Scramjet.StringStream.from(FSExtra.createReadStream(filename)).CSVParse({ header: true }).map(data => {
@@ -130,7 +151,10 @@ async function load(command, filename, parameters = {}, retries = 5, cache = fal
         const columnUnique = (i = '') => {
             const attempt = `${column}${i}`
             if (columnsSource.find(name => name === attempt)) return columnUnique(Number(i) + 1)
-            if (i) alert({ text: `Column '${column}' from the reconciler has been renamed '${attempt}' so it does not overwrite the source`, importance: 'warning' })
+            if (i) alert({
+                message: `Column '${column}' from the reconciler has been renamed '${attempt}' so it does not overwrite the source`,
+                importance: 'warning'
+            })
             return attempt
         }
         return [column, columnUnique()]
@@ -159,7 +183,10 @@ async function load(command, filename, parameters = {}, retries = 5, cache = fal
             })
         }
         catch (e) {
-            alert({ text: verbose ? e.stack : e.message, importance: 'error' })
+            alert({
+                message: verbose ? e.stack : e.message,
+                importance: 'error'
+            })
             if (join === 'outer') {
                 return items.map(item => ({ ...item, ...blank }))
             }

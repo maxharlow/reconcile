@@ -3,7 +3,7 @@ import Querystring from 'querystring'
 import Cheerio from 'cheerio'
 import HTMLEntities from 'html-entities'
 
-function initialise(parameters, requestor, die) {
+function initialise(parameters, requestor, alert, die) {
 
     const request = requestor({
         messages: e => {
@@ -37,9 +37,10 @@ function initialise(parameters, requestor, die) {
 
     function parse(response) {
         const document = Cheerio.load(response.data)
-        // if (document('.alert-info').text().trim().includes('search returned more than 20 results')) {
-        //     console.error(`More than 20 results were found for "${response.passthrough.shipIMONumber}" -- subsequent results are omitted`)
-        // }
+        if (document('.alert-info').text().trim().includes('search returned more than 20 results')) alert({
+            message: `More than 20 results were found for "${response.passthrough.shipIMONumber}" -- subsequent results are omitted`,
+            importance: 'warning'
+        })
         const ships = document('.result-box').get()
         return ships.map(ship => {
             const element = Cheerio.load(ship)
