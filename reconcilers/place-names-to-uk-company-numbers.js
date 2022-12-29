@@ -15,10 +15,11 @@ function initialise(parameters, requestor, alert) {
         limit: apiKeys.length * 2,
         messages: e => {
             const place = e.config.passthrough.placeName
+            const page = e.config.passthrough.page
             if (e.response.status === 404) return `Could not find any companies registered at "${place}"`
             if (e.response.status === 429) throw new Error('The rate limit has been reached')
             if (e.response.status === 401) throw new Error(`API key ${e.config.auth.username} is invalid`)
-            if (e.response.status >= 400) return `Received code ${e.response.status} for "${place}"`
+            if (e.response.status >= 400) return `Received code ${e.response.status} for "${place}" on page ${page}`
         }
     })
 
@@ -42,7 +43,8 @@ function initialise(parameters, requestor, alert) {
                 size: 5000
             },
             passthrough: {
-                placeName
+                placeName,
+                page: 1
             }
         }
     }
@@ -65,7 +67,8 @@ function initialise(parameters, requestor, alert) {
                         start_index: page * 5000
                     },
                     passthrough: {
-                        placeName: response.passthrough.placeName
+                        placeName: response.passthrough.placeName,
+                        page: page + 1
                     }
                 }
                 return request(query)

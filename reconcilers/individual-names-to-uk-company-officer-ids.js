@@ -15,9 +15,10 @@ function initialise(parameters, requestor, alert) {
         limit: apiKeys.length * 2,
         messages: e => {
             const individual = e.config.passthrough.individualName
+            const page = e.config.passthrough.page
             if (e.response.status === 429) throw new Error('The rate limit has been reached')
             if (e.response.status === 401) throw new Error(`API key ${e.config.auth.username} is invalid`)
-            if (e.response.status >= 400) return `Received code ${e.response.status} for individual ${individual}`
+            if (e.response.status >= 400) return `Received code ${e.response.status} for individual ${individual} on page ${page}`
         }
     })
 
@@ -41,7 +42,8 @@ function initialise(parameters, requestor, alert) {
                 items_per_page: 100
             },
             passthrough: {
-                individualName
+                individualName,
+                page: 1
             }
         }
     }
@@ -64,7 +66,8 @@ function initialise(parameters, requestor, alert) {
                         start_index: page * 100
                     },
                     passthrough: {
-                        individualName: response.passthrough.individualName
+                        individualName: response.passthrough.individualName,
+                        page: page + 1
                     }
                 }
                 return request(query)

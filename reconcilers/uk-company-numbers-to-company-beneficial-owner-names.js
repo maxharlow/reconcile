@@ -15,9 +15,10 @@ function initialise(parameters, requestor, alert) {
         limit: apiKeys.length * 2,
         messages: e => {
             const company = e.config.passthrough.companyNumber
+            const page = e.config.passthrough.page
             if (e.response.status === 429) throw new Error('The rate limit has been reached')
             if (e.response.status === 401) throw new Error(`API key ${e.config.auth.username} is invalid`)
-            if (e.response.status >= 400) return `Received code ${e.response.status} for company ${company}`
+            if (e.response.status >= 400) return `Received code ${e.response.status} for company ${company} on page ${page}`
         }
     })
 
@@ -41,7 +42,8 @@ function initialise(parameters, requestor, alert) {
             },
             validateStatus: status => status === 200 || status === 404, // as a 404 can just indicate no beneficial owners (as well as company not found)
             passthrough: {
-                companyNumber
+                companyNumber,
+                page: 1
             }
         }
     }
@@ -63,7 +65,8 @@ function initialise(parameters, requestor, alert) {
                         start_index: page * 100
                     },
                     passthrough: {
-                        companyNumber: response.passthrough.companyNumber
+                        companyNumber: response.passthrough.companyNumber,
+                        page: page + 1
                     }
                 }
                 return request(query)
