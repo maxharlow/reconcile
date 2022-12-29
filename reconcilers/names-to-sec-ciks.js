@@ -1,24 +1,30 @@
 import Cheerio from 'cheerio'
 
-function initialise(parameters, requestor, alert, die) {
+function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         limit: 10,
         messages: e => {
             const name = e.config.passthrough.name
-            if (e.response.status === 429) die('The rate limit has been reached')
+            if (e.response.status === 429) throw new Error('The rate limit has been reached')
             if (e.response.status >= 400) return `Received code ${e.response.status} for name ${name}`
         }
     })
 
     function locate(entry) {
         const name = entry.data[parameters.nameField]
-        if (!name) throw new Error(`No name found on line ${entry.line}`)
+        if (!name) {
+            alert({
+                message: `No name found on line ${entry.line}`,
+                importance: 'error'
+            })
+            return
+        }
         return {
             url: 'https://www.sec.gov/cgi-bin/cik_lookup',
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'content-type': 'application/x-www-form-urlencoded'
             },
             dataQuery: {
                 company: name
@@ -30,11 +36,16 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     function parse(response) {
+        if (!response) return
         const document = Cheerio.load(response.data)
         const results = document('table tr > td:nth-child(2) > pre:nth-child(5)').html()
         if (results === null) {
             const name = response.passthrough.name
-            throw new Error(`Could not find name ${name}`)
+            alert({
+                message: `Could not find name ${name}`,
+                importance: 'error'
+            })
+            return
         }
         const maximumResults = parameters.maximumResults || 1
         return results.split('\n').slice(0, maximumResults).map(name => {

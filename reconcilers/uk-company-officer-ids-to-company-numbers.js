@@ -1,4 +1,4 @@
-function initialise(parameters, requestor, alert, die) {
+function initialise(parameters, requestor, alert) {
 
     const apiKeys = [parameters.apiKey].flat()
 
@@ -16,15 +16,21 @@ function initialise(parameters, requestor, alert, die) {
         messages: e => {
             const officerID = e.config.passthrough.officerID
             if (e.response.status === 404) return `Could not find officer ID ${officerID}`
-            if (e.response.status === 429) die('The rate limit has been reached')
-            if (e.response.status === 401) die(`API key ${e.config.auth.username} is invalid`)
+            if (e.response.status === 429) throw new Error('The rate limit has been reached')
+            if (e.response.status === 401) throw new Error(`API key ${e.config.auth.username} is invalid`)
             if (e.response.status >= 400) return `Received code ${e.response.status} for officer ID ${officerID}`
         }
     })
 
     function locate(entry) {
         const officerID = entry.data[parameters.officerIDField]
-        if (!officerID) throw new Error(`No officer ID found on line ${entry.line}`)
+        if (!officerID) {
+            alert({
+                message: `No officer ID found on line ${entry.line}`,
+                importance: 'error'
+            })
+            return
+        }
         return {
             url: `https://api.company-information.service.gov.uk/officers/${officerID}/appointments`,
             auth: {
@@ -41,6 +47,7 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     async function paginate(response) {
+        if (!response) return
         if (response.data.total_results > 50) {
             const pageTotal = Math.ceil(response.data.total_results / 50)
             const pageNumbers = Array.from(Array(pageTotal).keys()).slice(1) // slice off first page as we already have that
@@ -68,6 +75,7 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     function parse(response) {
+        if (!response) return
         const appointments = response?.data.items
         return appointments.map(appointment => {
             const fields = {
@@ -77,12 +85,12 @@ function initialise(parameters, requestor, alert, die) {
                 officerID: response.passthrough.officerID,
                 officerName: appointment.name,
                 officerRole: appointment.officer_role,
-                officerAppointedDate: appointment.appointed_on,
-                officerResignedDate: appointment.resigned_on,
-                officerNationality: appointment.nationality,
-                officerOccupation: appointment.occupation,
+                officerAppointedDate: appointment.appointed_on || null,
+                officerResignedDate: appointment.resigned_on || null,
+                officerNationality: appointment.nationality || null,
+                officerOccupation: appointment.occupation || null,
                 officerAddress: [appointment.address.care_of, appointment.address.premises, appointment.address.po_box, appointment.address.address_line_1, appointment.address.address_line_2, appointment.address.locality, appointment.address.region, appointment.address.postal_code, appointment.address.country].filter(x => x).join(', '),
-                officerCountryOfResidence: appointment.country_of_residence
+                officerCountryOfResidence: appointment.country_of_residence || null
             }
             return fields
         })
@@ -92,6 +100,7 @@ function initialise(parameters, requestor, alert, die) {
         const dataLocated = locate(input)
         const dataLocatedRequested = await request(dataLocated)
         const dataLocatedPaginated = await paginate(dataLocatedRequested)
+        if (!dataLocatedPaginated) return
         const dataParsed = dataLocatedPaginated.flatMap(parse)
         return dataParsed
     }

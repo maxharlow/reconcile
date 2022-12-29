@@ -1,4 +1,4 @@
-function initialise(parameters, requestor, alert, die) {
+function initialise(parameters, requestor, alert) {
 
     const apiKeys = [parameters.apiKey].flat()
 
@@ -15,15 +15,21 @@ function initialise(parameters, requestor, alert, die) {
         limit: apiKeys.length * 2,
         messages: e => {
             const individual = e.config.passthrough.individualName
-            if (e.response.status === 429) die('The rate limit has been reached')
-            if (e.response.status === 401) die(`API key ${e.config.auth.username} is invalid`)
+            if (e.response.status === 429) throw new Error('The rate limit has been reached')
+            if (e.response.status === 401) throw new Error(`API key ${e.config.auth.username} is invalid`)
             if (e.response.status >= 400) return `Received code ${e.response.status} for individual ${individual}`
         }
     })
 
     function locate(entry) {
         const individualName = entry.data[parameters.individualNameField]
-        if (!individualName) throw new Error(`No individual name found on line ${entry.line}`)
+        if (!individualName) {
+            alert({
+                message: `No individual name found on line ${entry.line}`,
+                importance: 'error'
+            })
+            return
+        }
         return {
             url: 'https://api.company-information.service.gov.uk/search/officers',
             auth: {
@@ -41,6 +47,7 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     async function paginate(response) {
+        if (!response) return
         if (response.data.total_results > 100) {
             const pageTotal = Math.ceil(response.data.total_results / 100)
             const pageNumbers = Array.from(Array(pageTotal).keys()).slice(1, 10) // slice off first page as we already have that, and pages over 10 as the API responds with a HTTP 416
@@ -69,7 +76,8 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     function parse(response, entry) {
-        const individuals = response?.data.items
+        if (!response) return
+        const individuals = response.data.items
         const byDateOfBirth = individual => {
             if (!parameters.dateOfBirthField || !entry.data[parameters.dateOfBirthField]) return true // field not specified or field for this row is blank
             if (!individual.date_of_birth?.year || !individual.date_of_birth?.month) return false // date of birth specified in source, but no date of birth listed in this search result
@@ -107,6 +115,7 @@ function initialise(parameters, requestor, alert, die) {
         const dataLocated = locate(input)
         const dataLocatedRequested = await request(dataLocated)
         const dataLocatedPaginated = await paginate(dataLocatedRequested)
+        if (!dataLocatedPaginated) return
         const dataParsed = dataLocatedPaginated.flatMap(response => parse(response, input))
         return dataParsed
     }

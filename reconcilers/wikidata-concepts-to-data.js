@@ -1,16 +1,17 @@
-function initialise(parameters, requestor, alert, die) {
+function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         messages: e => {
-            const concepts = e.config.passthrough.conceptIDs
-            if (e.response.status >= 400) return `Received code ${e.response.status} for concept "${concepts}"`
+            const concepts = e.config.passthrough.wikidataConceptIDs
+            if (e.response.status >= 400) return `Received code ${e.response.status} for concepts: ${concepts}`
         }
     })
 
     function locate(entries) {
-        if (!parameters.conceptIDField) die('No concept ID field found')
-        const conceptIDs = entries.map(entry => {
-            return entry.data[parameters.conceptIDField]
+        const wikidataConceptIDs = entries.map(entry => {
+            const wikidataConceptID = entry.data[parameters.wikidataConceptIDField]
+            if (!wikidataConceptID) throw new Error(`No Wikidata concept ID field found on line ${entry.line}`)
+            return wikidataConceptID
         })
         return {
             url: 'https://www.wikidata.org/w/api.php',
@@ -19,18 +20,17 @@ function initialise(parameters, requestor, alert, die) {
                 props: 'claims',
                 languages: 'en',
                 format: 'json',
-                ids: conceptIDs.join('|')
+                ids: wikidataConceptIDs.join('|')
             },
             passthrough: {
-                conceptIDs
+                wikidataConceptIDs
             }
         }
     }
 
     function parse(response) {
-        if (!parameters.property) die('No property found')
         return Object.values(response.data.entities).map(entity => {
-            const claim = entity.claims[parameters.property]
+            const claim = entity.claims[parameters.wikidataProperty]
             if (!claim) return {
                 value: null
             }
@@ -58,8 +58,8 @@ function initialise(parameters, requestor, alert, die) {
 const details = {
     batch: 50,
     parameters: [
-        { name: 'conceptIDField', description: 'Concept ID column.' },
-        { name: 'property', description: 'Wikidata property to extract.' }
+        { name: 'wikidataConceptIDField', description: 'Concept ID column.' },
+        { name: 'wikidataProperty', description: 'Wikidata property to extract.' }
     ],
     columns: [
         { name: 'value' }

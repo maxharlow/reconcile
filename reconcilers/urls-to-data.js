@@ -1,6 +1,6 @@
 import Cheerio from 'cheerio'
 
-function initialise(parameters, requestor, alert, die) {
+function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         messages: e => {
@@ -11,7 +11,13 @@ function initialise(parameters, requestor, alert, die) {
 
     function locate(entry) {
         const url = entry.data[parameters.urlField]
-        if (!url) throw new Error(`No URL found on line ${entry.line}`)
+        if (!url) {
+            alert({
+                message: `No URL found on line ${entry.line}`,
+                importance: 'error'
+            })
+            return
+        }
         return {
             url,
             passthrough: {
@@ -21,12 +27,19 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     function parse(response) {
+        if (!response) return
         const document = Cheerio.load(response.data)
         return parameters.elements.map(element => {
-            if (!element.key) die(`Element has no key: ${JSON.stringify(element)}`)
-            if (!element.selector) die(`Element has no selector: ${JSON.stringify(element)}`)
+            if (!element.key) throw new Error(`Element has no key: ${JSON.stringify(element)}`)
+            if (!element.selector) throw new Error(`Element has no selector: ${JSON.stringify(element)}`)
             const selection = document(element.selector)
-            if (!selection) throw new Error(`Could not select "${element.selector}"`)
+            if (!selection) {
+                alert({
+                    message: `Could not select "${element.selector}"`,
+                    importance: 'error'
+                })
+                return
+            }
             return {
                 key: element.key,
                 value: selection.text().trim().replace(/\n/g, '')

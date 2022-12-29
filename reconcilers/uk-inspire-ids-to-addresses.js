@@ -1,7 +1,7 @@
 import Cheerio from 'cheerio'
 import Puppeteer from 'puppeteer'
 
-function initialise(parameters, requestor, alert, die) {
+function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         messages: e => {
@@ -40,7 +40,13 @@ function initialise(parameters, requestor, alert, die) {
 
     async function locate(entry) {
         const inspireID = entry.data[parameters.inspireIDField]
-        if (!inspireID) throw new Error(`No title number found on line ${entry.line}`)
+        if (!inspireID) {
+            alert({
+                message: `No title number found on line ${entry.line}`,
+                importance: 'error'
+            })
+            return
+        }
         return {
             url: 'https://search-property-information.service.gov.uk/search/search-by-inspire-id',
             method: 'POST',
@@ -58,9 +64,16 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     function parse(response) {
+        if (!response) return
         const document = Cheerio.load(response.data)
         const failure = document('.govuk-error-summary__list').get().length > 0
-        if (failure) throw new Error(`Could not find ID ${response.passthrough.inspireID}`)
+        if (failure) {
+            alert({
+                message: `Could not find ID ${response.passthrough.inspireID}`,
+                importance: 'error'
+            })
+            return
+        }
         return {
             titleAddress: document('.summary-list__row:nth-of-type(1) .summary-list__value > .govuk-body').text().trim(),
             titleTenure: document('.summary-list__row:nth-of-type(2) .summary-list__value').clone().children().remove().end().text().trim()

@@ -1,4 +1,4 @@
-function initialise(parameters, requestor, alert, die) {
+function initialise(parameters, requestor, alert) {
 
     const apiKeys = [parameters.apiKey].flat()
 
@@ -16,15 +16,21 @@ function initialise(parameters, requestor, alert, die) {
         messages: e => {
             const type = e.config.passthrough.companyType
             if (e.response.status === 404) return `Could not find any companies of type "${type}"`
-            if (e.response.status === 429) die('The rate limit has been reached')
-            if (e.response.status === 401) die(`API key ${e.config.auth.username} is invalid`)
+            if (e.response.status === 429) throw new Error('The rate limit has been reached')
+            if (e.response.status === 401) throw new Error(`API key ${e.config.auth.username} is invalid`)
             if (e.response.status >= 400) return `Received code ${e.response.status} for "${type}"`
         }
     })
 
     function locate(entry) {
         const companyType = entry.data[parameters.companyTypeField]
-        if (!companyType) throw new Error(`No company name found on line ${entry.line}`)
+        if (!companyType) {
+            alert({
+                message: `No company type found on line ${entry.line}`,
+                importance: 'error'
+            })
+            return
+        }
         return {
             url: 'https://api.company-information.service.gov.uk/advanced-search/companies',
             auth: {
@@ -78,8 +84,8 @@ function initialise(parameters, requestor, alert, die) {
                 companyStatus: company.company_status,
                 companyType: company.company_type,
                 companyCreationDate: company.date_of_creation,
-                companyCessationDate: company.date_of_cessation,
-                companyPostcode: company.registered_office_address?.postal_code,
+                companyCessationDate: company.date_of_cessation || null,
+                companyPostcode: company.registered_office_address?.postal_code || null,
                 companyAddress: [company.registered_office_address?.care_of, company.registered_office_address?.premises, company.registered_office_address?.po_box, company.registered_office_address?.address_line_1, company.registered_office_address?.address_line_2, company.registered_office_address?.locality, company.registered_office_address?.region, company.registered_office_address?.postal_code, company.registered_office_address?.country].filter(x => x).join(', ')
             }
             return fields

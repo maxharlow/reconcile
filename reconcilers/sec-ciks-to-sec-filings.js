@@ -1,19 +1,25 @@
 import Cheerio from 'cheerio'
 
-function initialise(parameters, requestor, alert, die) {
+function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         limit: 10,
         messages: e => {
             const cik = e.config.passthrough.cik
-            if (e.response.status === 429) die('The rate limit has been reached')
+            if (e.response.status === 429) throw new Error('The rate limit has been reached')
             if (e.response.status >= 400) return `Received code ${e.response.status} for CIK ${cik}`
         }
     })
 
     function locate(entry) {
         const cik = entry.data[parameters.cikField]
-        if (!cik) throw new Error(`No CIK found on line ${entry.line}`)
+        if (!cik) {
+            alert({
+                message: `No CIK found on line ${entry.line}`,
+                importance: 'error'
+            })
+            return
+        }
         return {
             url: 'https://www.sec.gov/cgi-bin/browse-edgar',
             params: {
@@ -29,22 +35,32 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     function details(response) {
+        if (!response) return
         const document = Cheerio.load(response.data)
         const table = document('.tableFile2').get()
         if (table.length === 0) {
             const cik = response.passthrough.cik
-            throw new Error(`Could not find CIK ${cik}`)
+            alert({
+                message: `Could not find CIK ${cik}`,
+                importance: 'error'
+            })
+            return
         }
         const results = document('.tableFile2 tr:not(:first-of-type)').get() // note this will only get the first 100 results!
         if (results.length === 0) {
             const filings = parameters.filingType ? `${parameters.filingType} filings` : 'filings'
             const cik = response.passthrough.cik
-            throw new Error(`No ${filings} found for CIK ${cik}`)
+            alert({
+                message: `No ${filings} found for CIK ${cik}`,
+                importance: 'error'
+            })
+            return
         }
         return results.map(result => {
             const element = Cheerio.load(result)
+            const url = 'https://www.sec.gov' + element('td:nth-of-type(2) a').attr('href')
             return {
-                url: 'https://www.sec.gov' + element('td:nth-of-type(2) a').attr('href'),
+                url,
                 passthrough: {
                     filingDate: element('td:nth-of-type(4)').text(),
                     filingType: element('td:nth-of-type(1)').text(),
@@ -55,6 +71,7 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     function parse(response) {
+        if (!response) return
         const document = Cheerio.load(response.data)
         const files = document('table tr:not(:first-of-type)').get()
         const contents = files.map(file => {
@@ -71,8 +88,11 @@ function initialise(parameters, requestor, alert, die) {
         })
         const limit = parameters.includeAll ? Infinity : 1
         return contents
-            .filter(document => document.filingDocumentName !== '') // exclude documents with no name
-            .map(document => ({ filingDocumentName, ...rest } = document) && rest) // remove document name from data
+            .filter(entry => entry.filingDocumentName !== '') // exclude documents with no name
+            .map(entry => { // remove document name from entry
+                const { filingDocumentName, ...rest } = entry
+                return rest
+            })
             .slice(0, limit)
     }
 
@@ -80,7 +100,9 @@ function initialise(parameters, requestor, alert, die) {
         const dataLocated = locate(input)
         const dataLocatedRequested = await request(dataLocated)
         const dataDetailed = details(dataLocatedRequested)
+        if (!dataDetailed) return
         const dataDetailedRequested = await Promise.all(dataDetailed.map(request))
+        if (!dataDetailedRequested) return
         const dataParsed = dataDetailedRequested.flatMap(parse)
         return dataParsed
     }

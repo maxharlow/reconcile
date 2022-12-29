@@ -1,15 +1,21 @@
-function initialise(parameters, requestor, alert, die) {
+function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         limit: 0.24,
         messages: e => {
-            if (e.response.status === 429) die('The rate limit has been reached')
+            if (e.response.status === 429) throw new Error('The rate limit has been reached')
             if (e.response.status >= 400) return `Received code ${e.response.status}`
         }
     })
 
     function locate(entries) {
-        if (!parameters.ipAddressField) die('No IP address field found')
+        if (!parameters.ipAddressField) {
+            alert({
+                message: 'No IP address field found',
+                importance: 'error'
+            })
+            return
+        }
         const queries = entries.map(entry => {
             return entry.data[parameters.ipAddressField]
         })
@@ -17,9 +23,9 @@ function initialise(parameters, requestor, alert, die) {
             url: 'http://ip-api.com/batch',
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'content-type': 'application/x-www-form-urlencoded'
             },
-            data: queries,
+            data: JSON.stringify(queries),
             passthrough: {
                 entries
             }
@@ -27,7 +33,9 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     function parse(response) {
+        if (!response) return
         return response.data.map(entry => {
+            if (entry.status === 'fail') return
             return {
                 country: entry.countryCode,
                 region: entry.regionName,

@@ -1,4 +1,4 @@
-function initialise(parameters, requestor, alert, die) {
+function initialise(parameters, requestor, alert) {
 
     const apiKeys = [parameters.apiKey].flat()
 
@@ -15,15 +15,21 @@ function initialise(parameters, requestor, alert, die) {
         limit: apiKeys.length * 2,
         messages: e => {
             const company = e.config.passthrough.companyNumber
-            if (e.response.status === 429) die('The rate limit has been reached')
-            if (e.response.status === 401) die(`API key ${e.config.auth.username} is invalid`)
+            if (e.response.status === 429) throw new Error('The rate limit has been reached')
+            if (e.response.status === 401) throw new Error(`API key ${e.config.auth.username} is invalid`)
             if (e.response.status >= 400) return `Received code ${e.response.status} for company ${company}`
         }
     })
 
     function locate(entry) {
         const companyNumber = entry.data[parameters.companyNumberField]
-        if (!companyNumber || companyNumber.match(/^0+$/)) throw new Error(`No company number found on line ${entry.line}`)
+        if (!companyNumber || companyNumber.match(/^0+$/)) {
+            alert({
+                message: `No company number found on line ${entry.line}`,
+                importance: 'error'
+            })
+            return
+        }
         return {
             url: `https://api.company-information.service.gov.uk/company/${companyNumber.padStart(8, '0').toUpperCase()}/persons-with-significant-control`,
             auth: {
@@ -41,6 +47,7 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     async function paginate(response) {
+        if (!response) return
         if (response.data.total_results > 100) {
             const pageTotal = Math.ceil(response.data.total_results / 100)
             const pageNumbers = Array.from(Array(pageTotal).keys()).slice(1) // slice off first page as we already have that
@@ -68,6 +75,7 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     function parse(response) {
+        if (!response) return
         const persons = response?.data.items || []
         return persons.map(person => {
             const fields = {
@@ -99,6 +107,7 @@ function initialise(parameters, requestor, alert, die) {
         const dataLocated = locate(input)
         const dataLocatedRequested = await request(dataLocated)
         const dataLocatedPaginated = await paginate(dataLocatedRequested)
+        if (!dataLocatedPaginated) return
         const dataParsed = dataLocatedPaginated.flatMap(parse)
         return dataParsed
     }

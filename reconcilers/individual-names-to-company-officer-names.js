@@ -1,21 +1,27 @@
-function initialise(parameters, requestor, alert, die) {
+function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         messages: e => {
             const individual = e.config.passthrough.individualName + (e.config.passthrough.individualJurisdiction ? ` (${e.config.passthrough.individualJurisdiction.toUpperCase()})` : '')
-            if (e.response.status === 403) die('The rate limit has been reached')
-            if (e.response.status === 401) die(`Invalid API token ${e.config.params.api_token}`)
+            if (e.response.status === 403) throw new Error('The rate limit has been reached')
+            if (e.response.status === 401) throw new Error(`Invalid API token ${e.config.params.api_token}`)
             if (e.response.status >= 400) return `Received code ${e.response.status} for individual ${individual} [page ${e.config.passthrough.page}]`
         }
     })
 
     function locate(entry) {
-        if (!parameters.apiToken) die('No API token found')
+        if (!parameters.apiToken) throw new Error('No API token found')
         const apiVersion = 'v0.4.8'
         const individualName = entry.data[parameters.individualNameField]
         const individualDateOfBirth = entry.data[parameters.individualDateOfBirthField]
         const individualJurisdiction = parameters.jurisdiction || entry.data[parameters.individualJurisdictionField]
-        if (!individualName) throw new Error(`No individual name found on line ${entry.line}`)
+        if (!individualName) {
+            alert({
+                message: `No individual name found on line ${entry.line}`,
+                importance: 'error'
+            })
+            return
+        }
         return {
             url: `https://api.opencorporates.com/${apiVersion}/officers/search`,
             params: {
@@ -67,7 +73,11 @@ function initialise(parameters, requestor, alert, die) {
     function parse(response) {
         if (response.data.results.officers.length === 0) {
             const individual = response.passthrough.individualName + (response.passthrough.individualJurisdiction ? ` (${response.passthrough.individualJurisdiction.toUpperCase()})` : '')
-            throw new Error(`Could not find individual ${individual}`)
+            alert({
+                message: `Could not find individual ${individual}`,
+                importance: 'error'
+            })
+            return
         }
         const officers = response.data.results.officers
         return officers.map(officer => {

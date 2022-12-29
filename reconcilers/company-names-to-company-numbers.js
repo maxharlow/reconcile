@@ -1,4 +1,4 @@
-function initialise(parameters, requestor, alert, die) {
+function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         messages: e => {
@@ -10,7 +10,13 @@ function initialise(parameters, requestor, alert, die) {
         const maximumResults = parameters.maximumResults || 1
         const queries = entries.map((entry, i) => {
             const companyName = entry.data[parameters.companyNameField]
-            if (!companyName) return // have to skip, ideally would log an error
+            if (!companyName) {
+                alert({
+                    message: `No company name found on line ${entry.line}`,
+                    importance: 'error'
+                })
+                return
+            }
             const companyJurisdiction = parameters.jurisdiction || entry.data[parameters.companyJurisdictionField] || null
             return [`q${i}`, {
                 query: companyName,
@@ -31,6 +37,7 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     function parse(response) {
+        if (!response) return
         return Object.entries(response.data).filter(entry => typeof entry[1] !== 'number').map(([, entry]) => { // filter out duration key
             const companies = entry.result
             return companies.map(company => {

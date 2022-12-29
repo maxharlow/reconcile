@@ -1,6 +1,6 @@
 import Cheerio from 'cheerio'
 
-function initialise(parameters, requestor, alert, die) {
+function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         messages: e => {
@@ -11,7 +11,13 @@ function initialise(parameters, requestor, alert, die) {
 
     function locate(entry) {
         const shipMMSINumber = entry.data[parameters.shipMMSINumberField]
-        if (!shipMMSINumber) throw new Error(`No ship MMSI number found on line ${entry.line}`)
+        if (!shipMMSINumber) {
+            alert({
+                message: `No ship MMSI number found on line ${entry.line}`,
+                importance: 'error'
+            })
+            return
+        }
         return {
             url: 'https://www.itu.int/mmsapp/ShipStation/list',
             method: 'POST',
@@ -26,7 +32,15 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     function details(response) {
+        if (!response) return
         const document = Cheerio.load(response.data)
+        if (document('.label-danger').text().trim() === 'No record found!') {
+            alert({
+                message: `No record found for MMSI ${response.passthrough.shipMMSINumber}`,
+                importance: 'error'
+            })
+            return
+        }
         return {
             url: 'https://www.itu.int/mmsapp/ShipStation/list',
             method: 'POST',
@@ -40,15 +54,16 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     function parse(response) {
+        if (!response) return
         const document = Cheerio.load(response.data)
         return {
             shipName: document('label').eq(0).text().trim(),
             shipCallSign: document('label').eq(1).text().trim(),
             shipIdentificationNumber: document('label').eq(22).text().trim(),
             shipOwner: document('label').eq(18).text().trim(),
-            shipFormerName: document('label').eq(19).text().trim(),
-            shipTonnage: document('label').eq(23).text().trim(),
-            shipPersonCapacity: document('label').eq(24).text().trim()
+            shipFormerName: document('label').eq(19).text().trim() || null,
+            shipTonnage: document('label').eq(23).text().trim() || null,
+            shipPersonCapacity: document('label').eq(24).text().trim() || null
         }
     }
 

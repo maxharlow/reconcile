@@ -1,4 +1,4 @@
-function initialise(parameters, requestor, alert, die) {
+function initialise(parameters, requestor, alert) {
 
     const apiKeys = [parameters.apiKey].flat()
 
@@ -16,15 +16,21 @@ function initialise(parameters, requestor, alert, die) {
         messages: e => {
             const company = e.config.passthrough.companyName
             if (e.response.status === 404) return `Could not find company ${company}`
-            if (e.response.status === 429) die('The rate limit has been reached')
-            if (e.response.status === 401) die(`API key ${e.config.auth.username} is invalid`)
+            if (e.response.status === 429) throw new Error('The rate limit has been reached')
+            if (e.response.status === 401) throw new Error(`API key ${e.config.auth.username} is invalid`)
             if (e.response.status >= 400) return `Received code ${e.response.status} for company ${company}`
         }
     })
 
     function locate(entry) {
         const companyName = entry.data[parameters.companyNameField]
-        if (!companyName) throw new Error(`No company name found on line ${entry.line}`)
+        if (!companyName) {
+            alert({
+                message: `No company name found on line ${entry.line}`,
+                importance: 'error'
+            })
+            return
+        }
         return {
             url: 'https://api.company-information.service.gov.uk/search/companies',
             auth: {
@@ -42,6 +48,7 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     function parse(response, entry) {
+        if (!response) return
         const maximumResults = parameters.maximumResults || 1
         const companies = response?.data.items
         const byPostcode = company => {
@@ -66,7 +73,7 @@ function initialise(parameters, requestor, alert, die) {
                 companyNumber: company.company_number,
                 companyName: company.title,
                 companyCreationDate: company.date_of_creation,
-                companyCessationDate: company.date_of_cessation,
+                companyCessationDate: company.date_of_cessation || null,
                 companyPostcode: company.address?.postal_code,
                 companyAddress: [company.address?.care_of, company.address?.premises, company.address?.po_box, company.address?.address?.line_1, company.address?.address?.line_2, company.address?.locality, company.address?.region, company.address?.postal_code, company.address?.country].filter(x => x).join(', ')
             }

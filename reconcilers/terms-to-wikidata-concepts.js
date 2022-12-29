@@ -1,4 +1,4 @@
-function initialise(parameters, requestor, alert, die) {
+function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         messages: e => {
@@ -8,9 +8,21 @@ function initialise(parameters, requestor, alert, die) {
     })
 
     function locate(entry) {
-        if (!parameters.termField) die('No term field found!')
+        if (!parameters.termField) {
+            alert({
+                message: 'No term field found!',
+                importance: 'error'
+            })
+            return
+        }
         const term = entry.data[parameters.termField]
-        if (!term) throw new Error(`No term found on line ${entry.line}`)
+        if (!term) {
+            alert({
+                message: `No term found on line ${entry.line}`,
+                importance: 'error'
+            })
+            return
+        }
         return {
             url: 'https://www.wikidata.org/w/api.php',
             params: {
@@ -28,6 +40,7 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     async function paginate(response, responses = []) {
+        if (!response) return
         const hasMorePages = response.data.search.length === 50
         if (parameters.includeAll && hasMorePages) {
             const query = {
@@ -51,10 +64,11 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     function parse(response) {
+        if (!response) return
         return response.data.search.map(result => {
             return {
-                conceptID: result.id,
-                conceptDescription: result.description
+                wikidataConceptID: result.id,
+                wikidataConceptLabel: result.label
             }
         })
     }
@@ -63,6 +77,7 @@ function initialise(parameters, requestor, alert, die) {
         const dataLocated = locate(input)
         const dataLocatedRequested = await request(dataLocated)
         const dataLocatedPaginated = await paginate(dataLocatedRequested)
+        if (!dataLocatedPaginated) return
         const dataParsed = dataLocatedPaginated.flatMap(parse)
         return dataParsed
     }
@@ -78,7 +93,7 @@ const details = {
     ],
     columns: [
         { name: 'wikidataConceptID' },
-        { name: 'wikidataConceptDescription' }
+        { name: 'wikidataConceptLabel' }
     ]
 }
 

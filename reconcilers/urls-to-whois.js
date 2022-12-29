@@ -2,7 +2,7 @@ import Util from 'util'
 import DNS from 'dns'
 import Net from 'net'
 
-function initialise(parameters, _, die) {
+function initialise(parameters, _, alert) {
 
     async function request(url) {
         const domain = url.replace(/https?:\/\/(www\.)?/, '').split('/')[0]
@@ -28,14 +28,34 @@ function initialise(parameters, _, die) {
 
     function locate(entry) {
         const url = entry.data[parameters.urlField]
-        if (!url) throw new Error(`No URL found on line ${entry.line}`)
+        if (!url) {
+            alert({
+                message: `No URL found on line ${entry.line}`,
+                importance: 'error'
+            })
+            return
+        }
         return url
     }
 
     function parse(response) {
+        if (!response) return
+        if (!response.data) {
+            alert({
+                message: `No response for URL ${response.passthrough.url}`,
+                importance: 'error'
+            })
+            return
+        }
         if (!parameters.lineMatch) return { data: response.data }
         const data = response.data.split('\n').filter(line => line.match(parameters.lineMatch)).map(line => line.trim()).join('\n')
-        if (!data) throw new Error(`No line matches for URL ${response.passthrough.url}`)
+        if (!data) {
+            alert({
+                message: `No line matches for URL ${response.passthrough.url}`,
+                importance: 'error'
+            })
+            return
+        }
         return { data }
     }
 

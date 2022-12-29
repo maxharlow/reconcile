@@ -1,4 +1,4 @@
-function initialise(parameters, requestor, alert, die) {
+function initialise(parameters, requestor, alert) {
 
     const apiKeys = [parameters.apiKey].flat()
 
@@ -16,15 +16,21 @@ function initialise(parameters, requestor, alert, die) {
         messages: e => {
             const place = e.config.passthrough.placeName
             if (e.response.status === 404) return `Could not find any companies registered at "${place}"`
-            if (e.response.status === 429) die('The rate limit has been reached')
-            if (e.response.status === 401) die(`API key ${e.config.auth.username} is invalid`)
+            if (e.response.status === 429) throw new Error('The rate limit has been reached')
+            if (e.response.status === 401) throw new Error(`API key ${e.config.auth.username} is invalid`)
             if (e.response.status >= 400) return `Received code ${e.response.status} for "${place}"`
         }
     })
 
     function locate(entry) {
         const placeName = entry.data[parameters.placeNameField]
-        if (!placeName) throw new Error(`No company name found on line ${entry.line}`)
+        if (!placeName) {
+            alert({
+                message: `No place name found on line ${entry.line}`,
+                importance: 'error'
+            })
+            return
+        }
         return {
             url: 'https://api.company-information.service.gov.uk/advanced-search/companies',
             auth: {
@@ -42,6 +48,7 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     async function paginate(response) {
+        if (!response) return
         if (response.data.hits > 5000) { // also if there are over 10,000 we can't get them because of the two-page limit
             const pageTotal = Math.ceil(response.data.hits / 5000)
             const pageNumbers = Array.from(Array(pageTotal).keys()).slice(1, 2) // slice off first page as we already have that, also you get an error beyond two pages
@@ -70,6 +77,7 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     function parse(response) {
+        if (!response) return
         const maximumResults = parameters.maximumResults || Infinity
         const companies = response?.data.items
         return companies.slice(0, maximumResults).map(company => {
@@ -79,8 +87,8 @@ function initialise(parameters, requestor, alert, die) {
                 companyStatus: company.company_status,
                 companyType: company.company_type,
                 companyCreationDate: company.date_of_creation,
-                companyCessationDate: company.date_of_cessation,
-                companyPostcode: company.registered_office_address?.postal_code,
+                companyCessationDate: company.date_of_cessation || null,
+                companyPostcode: company.registered_office_address?.postal_code || null,
                 companyAddress: [company.registered_office_address?.care_of, company.registered_office_address?.premises, company.registered_office_address?.po_box, company.registered_office_address?.address_line_1, company.registered_office_address?.address_line_2, company.registered_office_address?.locality, company.registered_office_address?.region, company.registered_office_address?.postal_code, company.registered_office_address?.country].filter(x => x).join(', ')
             }
             return fields
@@ -91,6 +99,7 @@ function initialise(parameters, requestor, alert, die) {
         const dataLocated = locate(input)
         const dataLocatedRequested = await request(dataLocated)
         const dataLocatedPaginated = await paginate(dataLocatedRequested)
+        if (!dataLocatedPaginated) return
         const dataParsed = dataLocatedPaginated.flatMap(parse)
         return dataParsed
     }

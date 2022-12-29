@@ -2,12 +2,12 @@ import Axios from 'axios'
 import Querystring from 'querystring'
 import Cheerio from 'cheerio'
 
-function initialise(parameters, requestor, alert, die) {
+function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         messages: e => {
             const ship = e.config.passthrough.shipIMONumber
-            if (e.response.headers.connection === 'close') die('The rate limit has been reached (Equasis allows about 500 per day)')
+            if (e.response.headers.connection === 'close') throw new Error('The rate limit has been reached (Equasis allows about 500 per day)')
             if (e.response.status >= 400) return `Received code ${e.response.status} for ship ${ship}`
         }
     })
@@ -15,9 +15,9 @@ function initialise(parameters, requestor, alert, die) {
     async function login() {
         try {
             const response = await Axios({
+                method: 'POST',
                 url: 'http://www.equasis.org/EquasisWeb/authen/HomePage',
                 validateStatus: status => (status >= 200 && status < 300) || status === 404,
-                method: 'POST',
                 data: Querystring.stringify({
                     j_email: parameters.email,
                     j_password: parameters.password
@@ -34,7 +34,13 @@ function initialise(parameters, requestor, alert, die) {
 
     function locate(entry, key) {
         const shipIMONumber = entry.data[parameters.shipIMONumberField]
-        if (!shipIMONumber) throw new Error(`No ship IMO number found on line ${entry.line}`)
+        if (!shipIMONumber) {
+            alert({
+                message: `No ship IMO number found on line ${entry.line}`,
+                importance: 'error'
+            })
+            return
+        }
         return {
             url: 'http://www.equasis.org/EquasisWeb/restricted/ShipHistory',
             method: 'POST',
@@ -51,6 +57,7 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     function parse(response) {
+        if (!response) return
         const document = Cheerio.load(response.data)
         const formerNames = document('#collapse1 tbody .hidden-sm').get().map(row => {
             const element = Cheerio.load(row)

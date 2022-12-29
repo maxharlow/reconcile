@@ -3,7 +3,7 @@ import Querystring from 'querystring'
 import Cheerio from 'cheerio'
 import HTMLEntities from 'html-entities'
 
-function initialise(parameters, requestor, alert, die) {
+function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         messages: e => {
@@ -14,7 +14,13 @@ function initialise(parameters, requestor, alert, die) {
 
     async function locate(entry, key) {
         const shipIMONumber = entry.data[parameters.shipIMONumberField]
-        if (!shipIMONumber) throw new Error(`No ship IMO number/name found on line ${entry.line}`)
+        if (!shipIMONumber) {
+            alert({
+                message: `No ship IMO number/name found on line ${entry.line}`,
+                importance: 'error'
+            })
+            return
+        }
         const tokenResponse = await Axios('https://www.igpandi.org/ship-search/')
         const tokenDocument = Cheerio.load(tokenResponse.data)
         const token = tokenDocument('[name=csrfmiddlewaretoken]').attr('value')
@@ -36,6 +42,7 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     function parse(response) {
+        if (!response) return
         const document = Cheerio.load(response.data)
         if (document('.alert-info').text().trim().includes('search returned more than 20 results')) alert({
             message: `More than 20 results were found for "${response.passthrough.shipIMONumber}" -- subsequent results are omitted`,

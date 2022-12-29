@@ -1,6 +1,6 @@
 import Cheerio from 'cheerio'
 
-function initialise(parameters, requestor, alert, die) {
+function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         messages: e => {
@@ -11,7 +11,13 @@ function initialise(parameters, requestor, alert, die) {
 
     function locate(entry) {
         const url = entry.data[parameters.urlField]
-        if (!url) throw new Error(`No URL found on line ${entry.line}`)
+        if (!url) {
+            alert({
+                message: `No URL found on line ${entry.line}`,
+                importance: 'error'
+            })
+            return
+        }
         return {
             url,
             passthrough: {
@@ -21,7 +27,7 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     function parse(response) {
-        if (!response) return []
+        if (!response) return
         const regex = /(?<="|')[A-Z][A-Z]?-[A-Z0-9]{4,10}(?=\-[0-9]+)/ig
         const document = Cheerio.load(response.data)
         return document('script').get().flatMap(element => {

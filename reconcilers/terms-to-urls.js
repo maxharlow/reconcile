@@ -1,19 +1,25 @@
 import Cheerio from 'cheerio'
 
-function initialise(parameters, requestor, alert, die) {
+function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         limit: 1,
         messages: e => {
             const term = e.config.passthrough.term
-            if (e.response.status === 429) die('The rate limit has been reached')
+            if (e.response.status === 429) throw new Error('The rate limit has been reached')
             if (e.response.status >= 400) return `Received code ${e.response.status} for term "${term}"`
         }
     })
 
     function locate(entry) {
         const term = entry.data[parameters.termField]
-        if (!term) throw new Error(`No term found on line ${entry.line}`)
+        if (!term) {
+            alert({
+                message: `No term found on line ${entry.line}`,
+                importance: 'error'
+            })
+            return
+        }
         return {
             url: 'https://www.google.com/search',
             headers: {
@@ -29,6 +35,7 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     async function paginate(response, responses = []) {
+        if (!response) return
         const document = Cheerio.load(response.data)
         const hasMorePages = document('[aria-label="Next page"]').length
         if (parameters.includeAll && hasMorePages) {
@@ -51,11 +58,16 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     function parse(response) {
+        if (!response) return
         const document = Cheerio.load(response.data)
         const results = document('#main > div > div > div > a[href^="/url"]')
         if (results.length === 0) {
             const term = parameters.supplement ? `${parameters.supplement} ${term}` : response.passthrough.term
-            throw new Error(`Could not find term "${term}"`)
+            alert({
+                message: `Could not find term "${term}"`,
+                importance: 'error'
+            })
+            return []
         }
         return results.get().flatMap(result => {
             const element = Cheerio.load(result)

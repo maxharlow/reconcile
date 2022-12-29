@@ -1,11 +1,11 @@
 import Cheerio from 'cheerio'
 
-function initialise(parameters, requestor, alert, die) {
+function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         messages: e => {
             const address = [e.config.passthrough.addressNumber, e.config.passthrough.addressStreet, e.config.passthrough.addressCity, e.config.passthrough.addressPostcode].filter(x => x).join(', ')
-            if (e.response.status === 403) die('The rate limit has been reached')
+            if (e.response.status === 403) throw new Error('The rate limit has been reached')
             if (e.response.status >= 400) return `Received code ${e.response.status} for address ${address}`
         }
     })
@@ -19,7 +19,7 @@ function initialise(parameters, requestor, alert, die) {
             url: 'https://www.tax.service.gov.uk/check-council-tax-band/search-council-tax-advanced',
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'content-type': 'application/x-www-form-urlencoded'
             },
             dataQuery: {
                 propertyName: addressNumber,
@@ -48,7 +48,7 @@ function initialise(parameters, requestor, alert, die) {
                     url: response.url,
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
+                        'content-type': 'application/x-www-form-urlencoded'
                     },
                     dataQuery: {
                         propertyName: response.passthrough.addressNumber,
@@ -74,7 +74,11 @@ function initialise(parameters, requestor, alert, die) {
         const results = document('#search-results-table tbody tr').get()
         if (results.length === 0) {
             const address = [response.passthrough.addressNumber, response.passthrough.addressStreet, response.passthrough.addressCity, response.passthrough.addressPostcode].filter(x => x).join(', ')
-            throw new Error(`Could not find any council tax registrations for address ${address}`)
+            alert({
+                message: `Could not find any council tax registrations for address ${address}`,
+                importance: 'error'
+            })
+            return []
         }
         return results.map(element => {
             const row = Cheerio.load(element)
@@ -89,6 +93,7 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     function parse(response) {
+        if (!response) return
         const document = Cheerio.load(response.data)
         return {
             address: response.passthrough.address,

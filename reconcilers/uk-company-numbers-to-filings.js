@@ -1,4 +1,4 @@
-function initialise(parameters, requestor, alert, die) {
+function initialise(parameters, requestor, alert) {
 
     const apiKeys = [parameters.apiKey].flat()
 
@@ -16,15 +16,21 @@ function initialise(parameters, requestor, alert, die) {
         messages: e => {
             const company = e.config.passthrough.companyNumber
             const page = e.config.passthrough.page
-            if (e.response.status === 429) die('The rate limit has been reached')
-            if (e.response.status === 401) die(`API key ${e.config.auth.username} is invalid`)
+            if (e.response.status === 429) throw new Error('The rate limit has been reached')
+            if (e.response.status === 401) throw new Error(`API key ${e.config.auth.username} is invalid`)
             if (e.response.status >= 400) return `Received code ${e.response.status} for company ${company} on page ${page}`
         }
     })
 
     function locate(entry) {
         const companyNumber = entry.data[parameters.companyNumberField]
-        if (!companyNumber || companyNumber.match(/^0+$/)) throw new Error(`No company number found on line ${entry.line}`)
+        if (!companyNumber || companyNumber.match(/^0+$/)) {
+            alert({
+                message: `No company number found on line ${entry.line}`,
+                importance: 'error'
+            })
+            return
+        }
         return {
             url: `https://api.company-information.service.gov.uk/company/${companyNumber.padStart(8, '0').toUpperCase()}/filing-history`,
             auth: {
@@ -43,6 +49,7 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     async function paginate(response) {
+        if (!response) return
         const didDescriptionMatchRemoveAll = parameters.filingDescriptionMatch
             && response.data.items
             && response.data.items.length > 0
@@ -78,12 +85,16 @@ function initialise(parameters, requestor, alert, die) {
 
     function parse(response) {
         if (response?.data.filing_history_status === 'filing-history-not-available-invalid-format') {
-            die(`Filings not available for company ${response.passthrough.companyNumber}, perhaps company number is invalid?`)
+            alert({
+                message: `Filings not available for company ${response.passthrough.companyNumber}, perhaps company number is invalid?`,
+                importance: 'error'
+            })
+            return
         }
         const filings = response?.data.items || []
         const filingsFiltered = parameters.filingDescriptionMatch ? filings.filter(filing => filing.description?.match(parameters.filingDescriptionMatch)) : filings
         return filingsFiltered.map(filing => {
-            const filingID = filing.links?.document_metadata?.split('document/')[1]
+            const filingID = filing.links?.document_metadata?.split('document/')[1] || null
             const fields = {
                 filingDate: filing.date,
                 filingCategory: filing.category,
@@ -91,9 +102,9 @@ function initialise(parameters, requestor, alert, die) {
                 filingType: filing.type,
                 filingDescription: filing.description,
                 filingDescriptionData: filing.description_values ? JSON.stringify(filing.description_values) : null,
-                filingResolutionTypes: filing.resolutions?.map(resolution => resolution.type).join('; '),
-                filingActionDate: filing.action_date,
-                filingPaperFiled: filing.paper_filed,
+                filingResolutionTypes: filing.resolutions?.map(resolution => resolution.type).join('; ') || null,
+                filingActionDate: filing.action_date || null,
+                filingPaperFiled: filing.paper_filed || null,
                 filingID,
                 filingURL: filing.links?.self ? `https://find-and-update.company-information.service.gov.uk${filing.links.self}/document` : null,
                 filingAPIURL: filingID ? `https://document-api.company-information.service.gov.uk/document/${filingID}/content` : null
@@ -107,6 +118,7 @@ function initialise(parameters, requestor, alert, die) {
         const dataLocated = locate(input)
         const dataLocatedRequested = await request(dataLocated)
         const dataLocatedPaginated = await paginate(dataLocatedRequested)
+        if (!dataLocatedPaginated) return
         const dataParsed = dataLocatedPaginated.flatMap(parse)
         return dataParsed.slice(0, limit)
     }

@@ -1,6 +1,6 @@
 import Cheerio from 'cheerio'
 
-function initialise(parameters, requestor, alert, die) {
+function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         messages: e => {
@@ -10,9 +10,15 @@ function initialise(parameters, requestor, alert, die) {
     })
 
     function locate(entry) {
-        if (!parameters.urlField) die('No URL field found!')
+        if (!parameters.urlField) throw new Error('No URL field found!')
         const url = entry.data[parameters.urlField]
-        if (!url) throw new Error(`No URL found on line ${entry.line}`)
+        if (!url) {
+            alert({
+                message: `No URL found on line ${entry.line}`,
+                importance: 'error'
+            })
+            return
+        }
         return {
             url,
             passthrough: {
@@ -22,9 +28,16 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     function parse(response) {
+        if (!response) return
         const document = Cheerio.load(response.data)
         const wikidataConcept = document('#t-wikibase a').attr('href')
-        if (!wikidataConcept) throw new Error(`No Wikidata concept found for URL: "${response.passthrough.url}"`)
+        if (!wikidataConcept) {
+            alert({
+                message: `No Wikidata concept found for URL: "${response.passthrough.url}"`,
+                importance: 'error'
+            })
+            return
+        }
         return {
             wikidataConceptID: wikidataConcept.split('/').pop()
         }

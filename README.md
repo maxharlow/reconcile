@@ -351,7 +351,7 @@ Produces a CSV including columns:
 
 <hr>
 
-#### `company-names-to-uk-company-numbers`
+#### `uk-company-names-to-uk-company-numbers`
 
 Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of company names and find the most likely registration number for each. Beware incorrect matches! Company names are terrible unique identifiers.
 
@@ -475,7 +475,7 @@ Produces a CSV including columns:
 
 ### Using Valuation Office Agency (UK)
 
-#### `uk-addresses-to-council-tax-band`
+#### `uk-addresses-to-council-tax-bands`
 
 Use the [Valuation Office Agency council tax band information service](https://www.tax.service.gov.uk/check-council-tax-band/search-council-tax-advanced) to look up addresses, and find the council tax band.
 
@@ -569,7 +569,7 @@ Parameters:
 
 Produces a CSV including columns:
 * `wikidataConceptID`
-* `wikidataConceptDescription`
+* `wikidataConceptLabel`
 
 <hr>
 
@@ -578,7 +578,7 @@ Produces a CSV including columns:
 Use Wikidata to extract a specific [property](https://www.wikidata.org/wiki/Wikidata:List_of_properties) from each of the results, such as the [date of birth](https://www.wikidata.org/wiki/Property:P569) or [Facebook ID](https://www.wikidata.org/wiki/Property:P2013).
 
 Parameters:
-* `conceptIDField` Concept ID column.
+* `wikidataConceptIDField` Concept ID column.
 * `property` Wikidata property to extract.
 
 Produces a CSV including columns:
@@ -627,9 +627,9 @@ Produces a CSV including columns:
 
 <hr>
 
-#### `ship-mmsi-numbers-to-ship-details`
+#### `ship-mmsi-numbers-to-ship-imo-numbers`
 
-Use [Equasis](https://www.equasis.org/) to take a list of ship MMSI numbers, and retrieve all their connected companies, as well as other details. Note Equasis only allows around 500 lookups per day. If you exceed that two days in a row you get blocked for seven days.
+Use [Equasis](https://www.equasis.org/) to take a list of ship MMSI numbers, and retrieve the IMO number for each. Note Equasis only allows around 500 lookups per day. If you exceed that two days in a row you get blocked for seven days.
 
 Parameters:
 * `email` The email address for a registered Equasis account.
@@ -637,20 +637,12 @@ Parameters:
 * `shipMMSINumberField` Ship MMSI number column.
 
 Produces a CSV including columns:
+* `shipIMONumber
 * `shipName`
-* `shipCallSign`
-* `shipMMSI`
 * `shipTonnage`
-* `shipDWT`
 * `shipType`
 * `shipBuildYear`
 * `shipFlag`
-* `shipStatus`
-* `shipFormerNames`
-* `shipFormerFlags`
-* `shipCompanyRole`
-* `shipCompanyName`
-* `shipCompanyDate`
 
 <hr>
 

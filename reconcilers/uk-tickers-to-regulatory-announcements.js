@@ -1,7 +1,7 @@
 import Cheerio from 'cheerio'
 import * as Luxon from 'luxon'
 
-function initialise(parameters, requestor, alert, die) {
+function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         limit: 10,
@@ -23,7 +23,7 @@ function initialise(parameters, requestor, alert, die) {
             'advance-results': 32
         }
         const category = categories[parameters.category]
-        if (parameters.category && !Object.keys(categories).includes(parameters.category)) die(`Invalid category: ${parameters.category}`)
+        if (parameters.category && !Object.keys(categories).includes(parameters.category)) throw new Error(`Invalid category: ${parameters.category}`)
         return {
             url: 'https://www.investegate.co.uk/AdvancedSearch.aspx',
             params: {
@@ -72,7 +72,11 @@ function initialise(parameters, requestor, alert, die) {
         const results = document('#announcementList > tr:not(:first-of-type)').get()
         if (results.length === 0) {
             const ticker = response.passthrough.ticker
-            throw new Error(`Could not find ticker ${ticker}`)
+            alert({
+                message: `Could not find ticker ${ticker}`,
+                importance: 'error'
+            })
+            return
         }
         const dateFor = i => {
             const row = Cheerio.load(results[i])

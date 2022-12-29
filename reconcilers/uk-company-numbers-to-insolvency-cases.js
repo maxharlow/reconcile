@@ -1,4 +1,4 @@
-function initialise(parameters, requestor, alert, die) {
+function initialise(parameters, requestor, alert) {
 
     const apiKeys = [parameters.apiKey].flat()
 
@@ -15,15 +15,21 @@ function initialise(parameters, requestor, alert, die) {
         limit: apiKeys.length * 2,
         messages: e => {
             const company = e.config.passthrough.companyNumber
-            if (e.response.status === 429) die('The rate limit has been reached')
-            if (e.response.status === 401) die(`API key ${e.config.auth.username} is invalid`)
+            if (e.response.status === 429) throw new Error('The rate limit has been reached')
+            if (e.response.status === 401) throw new Error(`API key ${e.config.auth.username} is invalid`)
             if (e.response.status >= 400) return `Received code ${e.response.status} for company ${company}`
         }
     })
 
     function locate(entry) {
         const companyNumber = entry.data[parameters.companyNumberField]
-        if (!companyNumber || companyNumber.match(/^0+$/)) throw new Error(`No company number found on line ${entry.line}`)
+        if (!companyNumber || companyNumber.match(/^0+$/)) {
+            alert({
+                message: `No company number found on line ${entry.line}`,
+                importance: 'error'
+            })
+            return
+        }
         return { // note a 404 can just indicate no insolvency cases (as well as company not found)
             url: `https://api.company-information.service.gov.uk/company/${companyNumber.padStart(8, '0').toUpperCase()}/insolvency`,
             auth: {
@@ -69,7 +75,7 @@ function initialise(parameters, requestor, alert, die) {
                     const address = [practitioner.address.address_line_1, practitioner.address.address_line_2, practitioner.address.locality, practitioner.address.region, practitioner.address.postal_code, practitioner.address.country].filter(x => x).join(', ')
                     return `${practitioner.name}, ${practitioner.role}${date} (${address})`
                 }).join('; '),
-                companyInsolvencyCaseNotes: insolvencyCase.notes
+                companyInsolvencyCaseNotes: insolvencyCase.notes || null
             }
         })
     }

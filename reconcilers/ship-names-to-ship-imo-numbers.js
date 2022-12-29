@@ -2,12 +2,12 @@ import Axios from 'axios'
 import Querystring from 'querystring'
 import Cheerio from 'cheerio'
 
-function initialise(parameters, requestor, alert, die) {
+function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         messages: e => {
             const ship = e.config.passthrough.shipName
-            if (e.response.headers.connection === 'close') die('The rate limit has been reached (Equasis allows about 500 per day)')
+            if (e.response.headers.connection === 'close') throw new Error('The rate limit has been reached (Equasis allows about 500 per day)')
             if (e.response.status >= 400) return `Received code ${e.response.status} for ship ${ship}`
         }
     })
@@ -34,7 +34,13 @@ function initialise(parameters, requestor, alert, die) {
 
     function locate(entry, key) {
         const shipName = entry.data[parameters.shipNameField]
-        if (!shipName) throw new Error(`No ship name found on line ${entry.line}`)
+        if (!shipName) {
+            alert({
+                message: `No ship name found on line ${entry.line}`,
+                importance: 'error'
+            })
+            return
+        }
         return {
             url: 'http://www.equasis.org/EquasisWeb/restricted/Search',
             method: 'POST',
@@ -54,6 +60,7 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     async function paginate(response) {
+        if (!response) return
         const document = Cheerio.load(response.data)
         const hasMorePages = document('.pagination').length
         if (hasMorePages) {
@@ -84,6 +91,7 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     function parse(response) {
+        if (!response) return
         const document = Cheerio.load(response.data)
         const ships = document('[name=formShip] table tr.hidden-sm').get()
         return ships.map(ship => {

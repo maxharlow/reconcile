@@ -58,6 +58,7 @@ function requestify(retries, cache, alert) {
         })
         let cacheChecked = false
         return async location => {
+            if (!location) return
             const hash = Crypto.createHash('sha1').update(JSON.stringify(typeof location === 'string' ? location : { ...location, auth: null })).digest('hex')
             const locationName = toLocationName(location)
             if (cache) {
@@ -123,9 +124,6 @@ function requestify(retries, cache, alert) {
 }
 
 async function load(command, filename, parameters = {}, retries = 5, cache = false, join = 'inner', verbose = false, alert = () => {}) {
-    const die = message => {
-        throw new Error(message)
-    }
     const requestor = requestify(retries, cache, alert)
     const { default: reconciler } = await import(`./reconcilers/${command}.js`)
     Object.keys(parameters).forEach(parameter => {
@@ -135,10 +133,10 @@ async function load(command, filename, parameters = {}, retries = 5, cache = fal
         })
     })
     const batch = reconciler.details.batch || 1
-    const execute = reconciler.initialise(parameters, requestor, alert, die)
+    const execute = reconciler.initialise(parameters, requestor, alert)
     const source = () => {
         let line = 1
-        return Scramjet.StringStream.from(FSExtra.createReadStream(filename)).CSVParse({ header: true }).map(data => {
+        return Scramjet.StringStream.from(FSExtra.createReadStream(filename)).CSVParse({ header: true, delimiter: ',' }).map(data => {
             return {
                 line: line++,
                 data
@@ -160,38 +158,29 @@ async function load(command, filename, parameters = {}, retries = 5, cache = fal
         return [column, columnUnique()]
     })
     const columnMap = Object.fromEntries(columnMapEntries)
-    const blank = Object.fromEntries(Object.values(columnMap).map(key => [key]))
+    const blank = Object.fromEntries(Object.values(columnMap).map(key => [key, null]))
     const length = async () => {
         const entries = await source().reduce(a => a + 1, 0)
         return Math.ceil(entries / batch)
     }
     const run = async () => source().batch(batch).setOptions({ maxParallel: 1 }).map(async items => {
-        try {
-            const executed = await execute(batch === 1 ? items[0] : items)
-            return items.flatMap((item, i) => {
-                const results = batch > 1 && Array.isArray(executed[i]) ? executed[i] // batch mode, reconciler is one-to-many
-                    : batch > 1 ? [executed[i]] // batch mode, reconciler is one-to-one
-                    : Array.isArray(executed) ? executed // reconciler is one-to-many
-                    : [executed] // reconciler is one-to-one
-                if (join === 'outer' && results.length === 0) return [{ ...item.data, ...blank }]
-                return results.map(result => {
-                    const resultRemapped = result
-                        ? Object.fromEntries(Object.entries(result).map(([column, value]) => [columnMap[column], value]))
-                        : Object.fromEntries(Object.entries(columnMap).map(([column]) => [column, ''])) // if there is no result (eg. not found)
-                    return { ...item.data, ...resultRemapped }
-                })
-            })
-        }
-        catch (e) {
-            alert({
-                message: verbose ? e.stack : e.message,
-                importance: 'error'
-            })
-            if (join === 'outer') {
-                return items.map(item => ({ ...item, ...blank }))
-            }
+        const executed = await execute(batch === 1 ? items[0] : items)
+        if (executed === undefined) {
+            if (join === 'outer') return items.map(item => ({ ...item, ...blank }))
             else return []
         }
+        return items.flatMap((item, i) => {
+            const results = batch > 1 && Array.isArray(executed[i]) ? executed[i] // batch mode, reconciler is one-to-many
+                  : batch > 1 ? [executed[i]] // batch mode, reconciler is one-to-one
+                  : Array.isArray(executed) ? executed // reconciler is one-to-many
+                  : [executed] // reconciler is one-to-one
+            if (join === 'outer' && results.filter(x => x).length === 0) return [{ ...item.data, ...blank }]
+            return results.map(result => {
+                if (!result) return null // if there is no result (eg. not found)
+                const resultRemapped = Object.fromEntries(Object.entries(result).map(([column, value]) => [columnMap[column], value]))
+                return { ...item.data, ...resultRemapped }
+            }).filter(x => x)
+        })
     })
     return { run, length }
 }

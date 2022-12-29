@@ -1,19 +1,25 @@
-function initialise(parameters, requestor, alert, die) {
+function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         messages: e => {
             const name = e.config.passthrough.name
-            if (e.response.status === 403) die('The rate limit has been reached')
-            if (e.response.status === 401) die(`Invalid API token ${e.config.params.api_token}`)
+            if (e.response.status === 403) throw new Error('The rate limit has been reached')
+            if (e.response.status === 401) throw new Error(`Invalid API token ${e.config.params.api_token}`)
             if (e.response.status >= 400) return `Received code ${e.response.status} for name ${name} [page ${e.config.passthrough.page}]`
         }
     })
 
     function locate(entry) {
-        if (!parameters.apiToken) die('No API token found')
+        if (!parameters.apiToken) throw new Error('No API token found')
         const apiVersion = 'v0.4.8'
         const name = entry.data[parameters.nameField]
-        if (!name) throw new Error(`No name found on line ${entry.line}`)
+        if (!name) {
+            alert({
+                message: `No name found on line ${entry.line}`,
+                importance: 'error'
+            })
+            return
+        }
         return {
             url: `https://api.opencorporates.com/${apiVersion}/statements/control_statements/search`,
             params: {
@@ -29,6 +35,7 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     async function paginate(response) {
+        if (!response) return
         if (response.data.results.total_count > 100) {
             const pageTotal = response.data.results.total_pages
             const pageNumbers = Array.from(Array(pageTotal).keys()).slice(1) // slice off first page as we already have that
@@ -55,9 +62,14 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     function parse(response) {
+        if (!response) return
         if (response.data.results.statements.length === 0) {
             const name = response.passthrough.name
-            throw new Error(`Could not find name ${name}`)
+            alert({
+                message: `Could not find name ${name}`,
+                importance: 'error'
+            })
+            return
         }
         const companies = response.data.results.statements
         return companies.flatMap(company => {
@@ -83,6 +95,7 @@ function initialise(parameters, requestor, alert, die) {
         const dataLocated = locate(input)
         const dataLocatedRequested = await request(dataLocated)
         const dataLocatedPaginated = await paginate(dataLocatedRequested)
+        if (!dataLocatedPaginated) return
         const dataParsed = dataLocatedPaginated.flatMap(parse)
         return dataParsed
     }

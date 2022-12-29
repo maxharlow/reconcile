@@ -1,11 +1,11 @@
-function initialise(parameters, requestor, alert, die) {
+function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         messages: e => {
             const company = `${e.config.passthrough.companyNumber} (${e.config.passthrough.companyJurisdiction.toUpperCase()})`
             if (e.response.status === 404) return `Could not find company ${company}`
-            if (e.response.status === 403) die('The rate limit has been reached' + (e.config.params.api_token ? '' : ' -- try using an API token'))
-            if (e.response.status === 401) die(`Invalid API token ${e.config.params.api_token || ''}`)
+            if (e.response.status === 403) throw new Error('The rate limit has been reached' + (e.config.params.api_token ? '' : ' -- try using an API token'))
+            if (e.response.status === 401) throw new Error(`Invalid API token ${e.config.params.api_token || ''}`)
             if (e.response.status >= 400) return `Received code ${e.response.status} for company ${company}`
         }
     })
@@ -14,8 +14,20 @@ function initialise(parameters, requestor, alert, die) {
         const apiVersion = 'v0.4.8'
         const companyNumber = entry.data[parameters.companyNumberField]
         const companyJurisdiction = parameters.jurisdiction || entry.data[parameters.companyJurisdictionField]
-        if (!companyNumber || companyNumber.match(/^0+$/)) throw new Error(`No company number found on line ${entry.line}`)
-        if (!companyJurisdiction) throw new Error(`No jurisdiction found for company ${companyNumber}`)
+        if (!companyNumber || companyNumber.match(/^0+$/)) {
+            alert({
+                message: `No company number found on line ${entry.line}`,
+                importance: 'error'
+            })
+            return
+        }
+        if (!companyJurisdiction) {
+            alert({
+                message: `No jurisdiction found for company ${companyNumber}`,
+                importance: 'error'
+            })
+            return
+        }
         return {
             url: `https://api.opencorporates.com/${apiVersion}/companies/${companyJurisdiction}/${companyNumber}`,
             params: {
@@ -29,6 +41,7 @@ function initialise(parameters, requestor, alert, die) {
     }
 
     function parse(response) {
+        if (!response) return
         const company = response.data.results.company
         return {
             companyJurisdiction: company.jurisdiction_code,
