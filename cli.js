@@ -82,11 +82,21 @@ async function setup() {
         if (filename === '-') throw new Error('reading from standard input not supported')
         const exists = await FSExtra.pathExists(filename)
         if (!exists) throw new Error(`${filename}: could not find file`)
-        console.error('Starting up...')
+        alert({
+            message: 'Starting up...',
+            importance: 'info'
+        })
         const reconcillation = await reconcile(command, filename, parametersParsed, retries, cache, join, verbose, alert)
         const total = await reconcillation.length()
         const processing = await reconcillation.run()
         await processing
+            .catch(async e => {
+                alert({
+                    message: instructions.argv.verbose ? e.stack : e.message,
+                    importance: 'error'
+                })
+                await finalise('error')
+            })
             .each(progress('Working...', total))
             .flatten()
             .CSVStringify()
@@ -95,7 +105,10 @@ async function setup() {
         await finalise('complete')
     }
     catch (e) {
-        console.error(instructions.argv.verbose ? e.stack : e.message)
+        alert({
+            message: instructions.argv.verbose ? e.stack : e.message,
+            importance: 'error'
+        })
         await finalise('error')
         Process.exit(1)
     }

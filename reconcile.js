@@ -151,7 +151,7 @@ async function load(command, filename, parameters = {}, retries = 5, cache = fal
             if (columnsSource.find(name => name === attempt)) return columnUnique(Number(i) + 1)
             if (i) alert({
                 message: `Column '${column}' from the reconciler has been renamed '${attempt}' so it does not overwrite the source`,
-                importance: 'warning'
+                importance: 'info'
             })
             return attempt
         }

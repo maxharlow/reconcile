@@ -38,6 +38,7 @@ function formatDuration(milliseconds, prefix = '', suffix = '') {
 function formatFinalisation(mode) {
     if (mode === 'complete') return ['Completed!']
     else if (mode === 'interrupt') return ['Interrupted!']
+    else if (mode === 'error') return ['Failed!']
     else return []
 }
 
@@ -74,7 +75,7 @@ function draw(linesDrawn) {
                 sourceTruncated ? ' ' : '',
                 details.importance === 'error' ? Chalk.chalkStderr.red.bold(details.message)
                     : details.importance === 'warning' ? Chalk.chalkStderr.magenta.bold(details.message)
-                    : details.message.endsWith('...') ? Chalk.chalkStderr.yellow(details.message)
+                    : details.message.endsWith('...') && details.source ? Chalk.chalkStderr.yellow(details.message)
                     : details.message.toLowerCase().startsWith('done') ? Chalk.chalkStderr.green(details.message)
                     : details.source ? Chalk.chalkStderr.magenta(details.message)
                     : details.message
