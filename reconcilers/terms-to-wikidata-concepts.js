@@ -3,7 +3,8 @@ function initialise(parameters, requestor, alert) {
     const request = requestor({
         messages: e => {
             const term = e.config.passthrough.term
-            if (e.response.status >= 400) return `Received code ${e.response.status} for term "${term}"`
+            const page = e.config.passthrough.page
+            if (e.response.status >= 400) return `Received code ${e.response.status} for term "${term}" on page ${page}`
         }
     })
 
@@ -34,7 +35,8 @@ function initialise(parameters, requestor, alert) {
                 search: term
             },
             passthrough: {
-                term
+                term,
+                page: 1
             }
         }
     }
@@ -43,6 +45,7 @@ function initialise(parameters, requestor, alert) {
         if (!response) return
         const hasMorePages = response.data.search.length === 50
         if (parameters.includeAll && hasMorePages) {
+            const page = responses.length
             const query = {
                 url: response.url,
                 params: {
@@ -52,10 +55,11 @@ function initialise(parameters, requestor, alert) {
                     limit: 50,
                     format: 'json',
                     search: response.passthrough.term,
-                    continue: (responses.length + 1) * 50
+                    continue: (page + 1) * 50
                 },
                 passthrough: {
-                    term: response.passthrough.term
+                    term: response.passthrough.term,
+                    page: page + 1
                 }
             }
             return paginate(await request(query), responses.concat(response))

@@ -6,8 +6,9 @@ function initialise(parameters, requestor, alert) {
         limit: 1,
         messages: e => {
             const term = e.config.passthrough.term
+            const page = e.config.passthrough.page
             if (e.response.status === 429) throw new Error('The rate limit has been reached')
-            if (e.response.status >= 400) return `Received code ${e.response.status} for term "${term}"`
+            if (e.response.status >= 400) return `Received code ${e.response.status} for term "${term}" on page ${page}`
         }
     })
 
@@ -29,7 +30,8 @@ function initialise(parameters, requestor, alert) {
                 q: parameters.supplement ? `${parameters.supplement} ${term}` : term
             },
             passthrough: {
-                term
+                term,
+                page: 1
             }
         }
     }
@@ -39,6 +41,7 @@ function initialise(parameters, requestor, alert) {
         const document = Cheerio.load(response.data)
         const hasMorePages = document('[aria-label="Next page"]').length
         if (parameters.includeAll && hasMorePages) {
+            const page = responses.length
             const query = {
                 url: response.url,
                 headers: {
@@ -46,10 +49,11 @@ function initialise(parameters, requestor, alert) {
                 },
                 params: {
                     q: parameters.supplement ? `${parameters.supplement} ${term}` : response.passthrough.term,
-                    start: (responses.length + 1) * 10
+                    start: (page + 1) * 10
                 },
                 passthrough: {
-                    term: response.passthrough.term
+                    term: response.passthrough.term,
+                    page: page + 1
                 }
             }
             return paginate(await request(query), responses.concat(response))

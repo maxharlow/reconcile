@@ -7,8 +7,9 @@ function initialise(parameters, requestor, alert) {
     const request = requestor({
         messages: e => {
             const ship = e.config.passthrough.shipName
+            const page = e.config.passthrough.page
             if (e.response.headers.connection === 'close') throw new Error('The rate limit has been reached (Equasis allows about 500 per day)')
-            if (e.response.status >= 400) return `Received code ${e.response.status} for ship ${ship}`
+            if (e.response.status >= 400) return `Received code ${e.response.status} for ship ${ship} on page ${page}`
         }
     })
 
@@ -54,7 +55,8 @@ function initialise(parameters, requestor, alert) {
             },
             passthrough: {
                 shipName,
-                key
+                key,
+                page: 1
             }
         }
     }
@@ -79,7 +81,8 @@ function initialise(parameters, requestor, alert) {
                         cookie: response.passthrough.key
                     },
                     passthrough: {
-                        shipName: response.passthrough.shipName
+                        shipName: response.passthrough.shipName,
+                        page: page
                     }
                 }
                 return request(query)
