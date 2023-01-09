@@ -7,6 +7,18 @@ import AxiosRateLimit from 'axios-rate-limit'
 import FormData from 'form-data'
 import Querystring from 'querystring'
 
+function enhash(location) {
+    const contents = structuredClone(location)
+    delete contents.auth
+    delete contents.headers?.cookie
+    delete contents.hashOmit
+    if (location.hashOmit) location.hashOmit.forEach(entry => {
+        const [topKey, subKey] = entry.split('.')
+        delete contents[topKey][subKey]
+    })
+    return Crypto.createHash('sha1').update(JSON.stringify(contents)).digest('hex')
+}
+
 function requestify(retries, cache, alert) {
     return config => {
         const limit = config.limit || Infinity
@@ -59,7 +71,7 @@ function requestify(retries, cache, alert) {
         let cacheChecked = false
         return async location => {
             if (!location) return
-            const hash = Crypto.createHash('sha1').update(JSON.stringify(typeof location === 'string' ? location : { ...location, auth: null })).digest('hex')
+            const hash = enhash(location)
             const locationName = toLocationName(location)
             if (cache) {
                 if (!cacheChecked) {

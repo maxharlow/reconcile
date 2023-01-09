@@ -28,7 +28,7 @@ function initialise(parameters, requestor, alert) {
             url: 'https://www.igpandi.org/ship-search/',
             method: 'POST',
             dataQuery: {
-                csrfmiddlewaretoken: token, // note this breaks caching! should be omitted
+                csrfmiddlewaretoken: token,
                 q: shipIMONumber
             },
             headers: {
@@ -37,7 +37,10 @@ function initialise(parameters, requestor, alert) {
             },
             passthrough: {
                 shipIMONumber
-            }
+            },
+            hashOmit: [
+                'dataQuery.csrfmiddlewaretoken'
+            ]
         }
     }
 
