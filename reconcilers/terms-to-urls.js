@@ -24,7 +24,7 @@ function initialise(parameters, requestor, alert) {
         return {
             url: 'https://www.google.com/search',
             headers: {
-                'User-Agent': 'Reconcile'
+                'user-agent': 'Reconcile'
             },
             params: {
                 q: parameters.supplement ? `${parameters.supplement} ${term}` : term
@@ -45,7 +45,7 @@ function initialise(parameters, requestor, alert) {
             const query = {
                 url: response.url,
                 headers: {
-                    'User-Agent': 'Reconcile'
+                    'user-agent': 'Reconcile'
                 },
                 params: {
                     q: parameters.supplement ? `${parameters.supplement} ${term}` : response.passthrough.term,
