@@ -65,8 +65,7 @@ function requestify(retries, cache, alert) {
             }
         })
         AxiosRateLimit(instance, {
-            maxRequests: limit, // so limit is number of requests per second
-            perMilliseconds: 1 * 1000
+            maxRPS: limit // per seconds
         })
         let cacheChecked = false
         return async location => {
