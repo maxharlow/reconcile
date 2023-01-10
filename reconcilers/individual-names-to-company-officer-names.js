@@ -5,7 +5,7 @@ function initialise(parameters, requestor, alert) {
             const individual = e.config.passthrough.individualName + (e.config.passthrough.individualJurisdiction ? ` (${e.config.passthrough.individualJurisdiction.toUpperCase()})` : '')
             const page = e.config.passthrough.page
             if (e.response.status === 403) throw new Error('The rate limit has been reached')
-            if (e.response.status === 401) throw new Error(`Invalid API token ${e.config.params.api_token}`)
+            if (e.response.status === 401) throw new Error(`API token ${e.config.params.api_token} is invalid`)
             if (e.response.status >= 400) return `Received code ${e.response.status} for individual ${individual} on page ${page}`
         }
     })
@@ -121,6 +121,8 @@ const details = {
     columns: [
         { name: 'officerName' },
         { name: 'officerPosition' },
+        { name: 'officerStartDate' },
+        { name: 'officerEndDate' },
         { name: 'officerNationality' },
         { name: 'officerOccupation' },
         { name: 'officerAddress' },

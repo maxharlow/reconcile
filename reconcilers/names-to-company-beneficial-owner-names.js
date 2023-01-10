@@ -5,7 +5,7 @@ function initialise(parameters, requestor, alert) {
             const name = e.config.passthrough.name
             const page = e.config.passthrough.page
             if (e.response.status === 403) throw new Error('The rate limit has been reached')
-            if (e.response.status === 401) throw new Error(`Invalid API token ${e.config.params.api_token}`)
+            if (e.response.status === 401) throw new Error(`API token ${e.config.params.api_token} is invalid`)
             if (e.response.status >= 400) return `Received code ${e.response.status} for name ${name} on page ${page}`
         }
     })
@@ -76,17 +76,17 @@ function initialise(parameters, requestor, alert) {
         return companies.flatMap(company => {
             return company.statement.controlling_entities.map(owner => {
                 return {
-                    beneficialOwnerName: (owner.person && owner.person.name) || (owner.company && owner.company.name),
-                    beneficialOwnerCompanyNumber: owner.company && owner.company.company_number,
-                    beneficialOwnerCompanyJurisdiction: owner.company && owner.company.jurisdiction_code,
-                    beneficialOwnerBirthDate: owner.person && [owner.person.date_of_birth.month && owner.person.date_of_birth.month.toString().padStart(2, '0'), owner.person.date_of_birth.year].join('-'),
-                    beneficialOwnerNationality: owner.person && owner.person.nationality,
-                    beneficialOwnerCountryOfResidence: owner.person && owner.person.country_of_residence,
-                    beneficialOwnerAddress: owner.person && [owner.person.registered_address.street_address, owner.person.registered_address.locality, owner.person.registered_address.region, owner.person.registered_address.postal_code].filter(x => x).join(', ').replace(/\n/g, ', '),
+                    beneficialOwnerName: owner.person?.name || owner.company?.name,
+                    beneficialOwnerCompanyNumber: owner.company?.company_number || null,
+                    beneficialOwnerCompanyJurisdiction: owner.company?.jurisdiction_code || null,
+                    beneficialOwnerBirthDate: [owner.person?.date_of_birth.month && owner.person?.date_of_birth.month.toString().padStart(2, '0'), owner.person?.date_of_birth.year].filter(x => x).join('-') || null,
+                    beneficialOwnerNationality: owner.person?.nationality || null,
+                    beneficialOwnerCountryOfResidence: owner.person?.country_of_residence || null,
+                    beneficialOwnerAddress: [owner.person?.registered_address.street_address, owner.person?.registered_address.locality, owner.person?.registered_address.region, owner.person?.registered_address.postal_code].filter(x => x).join(', ').replace(/\n/g, ', ') || null,
                     beneficialOwnerControlMechanisms: company.statement.control_mechanisms.map(mechanism => mechanism.source_description).join('; '),
-                    companyName: company.statement.controlled_entity.company.name,
+                    companyName: company.statement.controlled_entity.company.name || null,
                     companyNumber: company.statement.controlled_entity.company.company_number,
-                    companyJurisdiction: company.statement.controlled_entity.company.jurisdiction_code
+                    companyJurisdiction: company.statement.controlled_entity.company.jurisdiction_code || null
                 }
             })
         })

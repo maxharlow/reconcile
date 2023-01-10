@@ -4,13 +4,14 @@ function initialise(parameters, requestor, alert) {
         messages: e => {
             const company = `${e.config.passthrough.companyNumber} (${e.config.passthrough.companyJurisdiction.toUpperCase()})`
             if (e.response.status === 404) return `Could not find company ${company}`
-            if (e.response.status === 403) throw new Error('The rate limit has been reached' + (e.config.params.api_token ? '' : ' -- try using an API token'))
-            if (e.response.status === 401) throw new Error(`Invalid API token ${e.config.params.api_token || ''}`)
+            if (e.response.status === 403) throw new Error('The rate limit has been reached')
+            if (e.response.status === 401) throw new Error(`API token ${e.config.params.api_token} is invalid`)
             if (e.response.status >= 400) return `Received code ${e.response.status} for company ${company}`
         }
     })
 
     function locate(entry) {
+        if (!parameters.apiToken) throw new Error('No API token found')
         const apiVersion = 'v0.4.8'
         const companyNumber = entry.data[parameters.companyNumberField]
         const companyJurisdiction = parameters.jurisdiction || entry.data[parameters.companyJurisdictionField]
@@ -31,7 +32,7 @@ function initialise(parameters, requestor, alert) {
         return {
             url: `https://api.opencorporates.com/${apiVersion}/companies/${companyJurisdiction}/${companyNumber}`,
             params: {
-                ...(parameters.apiToken ? { api_token: parameters.apiToken } : {})
+                api_token: parameters.apiToken
             },
             passthrough: {
                 companyNumber,
@@ -41,6 +42,7 @@ function initialise(parameters, requestor, alert) {
     }
 
     function parse(response) {
+        if (!response) return
         const officers = response.data.results.company.officers
         return officers.map(officer => {
             return {
@@ -51,8 +53,8 @@ function initialise(parameters, requestor, alert) {
                 officerEndDate: officer.officer.end_date,
                 officerNationality: officer.officer.nationality,
                 officerOccupation: officer.officer.occupation,
-                officerAddress: officer.officer.address ? officer.officer.address.replace(/\n/g, ', ') : null, // only if API token sent
-                officerDateOfBirth: officer.officer.date_of_birth // only if API token sent
+                officerAddress: officer.officer.address.replace(/\n/g, ', '),
+                officerDateOfBirth: officer.officer.date_of_birth
             }
         })
     }
@@ -70,7 +72,7 @@ function initialise(parameters, requestor, alert) {
 
 const details = {
     parameters: [
-        { name: 'apiToken', description: 'An OpenCorporates API token. You are limited to 500 requests per month otherwise. [optional]' },
+        { name: 'apiToken', description: 'An OpenCorporates API token.' },
         { name: 'jurisdiction', description: 'If all companies have the same jurisdiction you can specify it here instead of in a column. Use ISO 3166-2 format. Required unless companyJurisdictionField is specified.' },
         { name: 'companyNumberField', description: 'Company number column.' },
         { name: 'companyJurisdictionField', description: 'Jurisdiction code column, if any. It should use ISO 3166-2 format. Required unless jurisdiction is specified.' }
@@ -83,8 +85,8 @@ const details = {
         { name: 'officerEndDate' },
         { name: 'officerNationality' },
         { name: 'officerOccupation' },
-        { name: 'officerAddress', description: 'Only if an API token is sent.' },
-        { name: 'officerDateOfBirth', description: 'Only if an API token is sent.' }
+        { name: 'officerAddress' },
+        { name: 'officerDateOfBirth' }
     ]
 }
 

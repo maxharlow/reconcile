@@ -48,7 +48,7 @@ Double-press the tab key to autocomplete these names from the command line.
 Use [OpenCorporates](https://opencorporates.com/) to look up a list of company numbers and jurisdiction codes, and retrieve various details for each.
 
 Parameters:
-* `apiToken` An OpenCorporates API token. You are [limited to 200 requests per month and 50 per day](https://api.opencorporates.com/documentation/API-Reference#usage-limits) otherwise. Optional.
+* `apiToken` An OpenCorporates API token.
 * `jurisdiction` If all companies have the same jurisdiction you can specify it here instead of in a column. Required unless `companyJurisdictionField` is specified.
 * `companyNumberField` Company number column.
 * `companyJurisdictionField` Jurisdiction code column. It should use [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes). Required unless `jurisdiction` is specified.
@@ -75,7 +75,7 @@ Produces a CSV including columns:
 Use [OpenCorporates](https://opencorporates.com/) to look up a list of company numbers and jurisdiction codes, and retrieve the names of their officers.
 
 Parameters:
-* `apiToken` An OpenCorporates API token. You are [limited to 200 requests per month and 50 per day](https://api.opencorporates.com/documentation/API-Reference#usage-limits) otherwise. Optional.
+* `apiToken` An OpenCorporates API token.
 * `jurisdiction` If all companies have the same jurisdiction you can specify it here instead of in a column. Required unless `companyJurisdictionField` is specified.
 * `companyNumberField` Company number column.
 * `companyJurisdictionField` Jurisdiction code column, if any. It should use [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes). Required unless `jurisdiction` is specified.
@@ -88,8 +88,8 @@ Produces a CSV including columns:
 * `officerEndDate`
 * `officerNationality`
 * `officerOccupation`
-* `officerAddress` (only if an API token is sent)
-* `officerDateOfBirth` (only if an API token is sent)
+* `officerAddress`
+* `officerDateOfBirth`
 
 <hr>
 
@@ -124,6 +124,8 @@ Parameters:
 Produces a CSV including columns:
 * `officerName`
 * `officerPosition`
+* `officerStartDate`
+* `officerEndDate`
 * `officerNationality`
 * `officerOccupation`
 * `officerAddress`
