@@ -50,6 +50,7 @@ function initialise(parameters, requestor, alert) {
     }
 
     async function paginate(response) {
+        if (!response) return
         if (response.data.hits > 5000) { // also if there are over 10,000 we can't get them because of the two-page limit
             const pageTotal = Math.ceil(response.data.hits / 5000)
             const pageNumbers = Array.from(Array(pageTotal).keys()).slice(1, 2) // slice off first page as we already have that, also you get an error beyond two pages
@@ -79,6 +80,7 @@ function initialise(parameters, requestor, alert) {
     }
 
     function parse(response) {
+        if (!response) return
         const companies = response?.data.items
         return companies.map(company => {
             const fields = {
@@ -89,7 +91,7 @@ function initialise(parameters, requestor, alert) {
                 companyCreationDate: company.date_of_creation,
                 companyCessationDate: company.date_of_cessation || null,
                 companyPostcode: company.registered_office_address?.postal_code || null,
-                companyAddress: [company.registered_office_address?.care_of, company.registered_office_address?.premises, company.registered_office_address?.po_box, company.registered_office_address?.address_line_1, company.registered_office_address?.address_line_2, company.registered_office_address?.locality, company.registered_office_address?.region, company.registered_office_address?.postal_code, company.registered_office_address?.country].filter(x => x).join(', ')
+                companyAddress: [company.registered_office_address?.care_of, company.registered_office_address?.premises, company.registered_office_address?.po_box, company.registered_office_address?.address_line_1, company.registered_office_address?.address_line_2, company.registered_office_address?.locality, company.registered_office_address?.region, company.registered_office_address?.postal_code, company.registered_office_address?.country].filter(x => x).join(', ') || null
             }
             return fields
         })
@@ -99,6 +101,7 @@ function initialise(parameters, requestor, alert) {
         const dataLocated = locate(input)
         const dataLocatedRequested = await request(dataLocated)
         const dataLocatedPaginated = await paginate(dataLocatedRequested)
+        if (!dataLocatedPaginated) return
         const dataParsed = dataLocatedPaginated.flatMap(parse)
         return dataParsed
     }

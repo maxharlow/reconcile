@@ -107,7 +107,7 @@ function initialise(parameters, requestor, alert) {
             const fields = {
                 officerID: individual.links.self.split('/')[2],
                 officerName: individual.title,
-                officerDateOfBirth: individual.date_of_birth ? [individual.date_of_birth.year, individual.date_of_birth.month, individual.date_of_birth.day].filter(x => x).join('-') : null,
+                officerDateOfBirth: [individual.date_of_birth?.year, individual.date_of_birth?.month, individual.date_of_birth?.day].filter(x => x).join('-') || null,
                 officerAddress: individual.address_snippet
             }
             return fields
