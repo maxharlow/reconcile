@@ -49,9 +49,9 @@ Use [OpenCorporates](https://opencorporates.com/) to look up a list of company n
 
 Parameters:
 * `apiToken` An OpenCorporates API token.
-* `jurisdiction` If all companies have the same jurisdiction you can specify it here instead of in a column. Required unless `companyJurisdictionField` is specified.
 * `companyNumberField` Company number column.
 * `companyJurisdictionField` Jurisdiction code column. It should use [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes). Required unless `jurisdiction` is specified.
+* `jurisdiction` If all companies have the same jurisdiction you can specify it here instead of in a column. Required unless `companyJurisdictionField` is specified.
 
 Produces a CSV including columns:
 * `companyJurisdiction`
@@ -76,9 +76,9 @@ Use [OpenCorporates](https://opencorporates.com/) to look up a list of company n
 
 Parameters:
 * `apiToken` An OpenCorporates API token.
-* `jurisdiction` If all companies have the same jurisdiction you can specify it here instead of in a column. Required unless `companyJurisdictionField` is specified.
 * `companyNumberField` Company number column.
 * `companyJurisdictionField` Jurisdiction code column, if any. It should use [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes). Required unless `jurisdiction` is specified.
+* `jurisdiction` If all companies have the same jurisdiction you can specify it here instead of in a column. Required unless `companyJurisdictionField` is specified.
 
 Produces a CSV including columns:
 * `companyName`
@@ -98,9 +98,9 @@ Produces a CSV including columns:
 Use [OpenCorporates](https://opencorporates.com/) to look up a list of company names and find the most likely registration number for each. Beware incorrect matches! Company names are terrible unique identifiers.
 
 Parameters:
-* `jurisdiction` If all companies have the same jurisdiction you can specify it here instead of in a column. Optional.
 * `companyNameField` Company name column.
-* `companyJurisdictionField` Jurisdiction code column, if any. It should use [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes). Optional.
+* `companyJurisdictionField` Jurisdiction code column, if any. It should use [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes). Required unless jurisdiction is specified.
+* `jurisdiction` If all companies have the same jurisdiction you can specify it here instead of in a column. Required unless companyJurisdictionField is specified.
 * `maximumResults` Maximum number of results to include for each name. Optional. Default is 1.
 
 Produces a CSV including columns:
@@ -116,10 +116,10 @@ Use [OpenCorporates](https://opencorporates.com/) to look up a list of individua
 
 Parameters:
 * `apiToken` An OpenCorporates API token.
-* `jurisdiction` If all individuals have the same jurisdiction you can specify it here instead of in a column. Optional.
 * `individualNameField` Individual name column.
 * `individualDateOfBirthField` Individual birth date column. It should use [ISO 8601 format](https://en.wikipedia.org/wiki/ISO_8601). For a range the two dates should be separated with a colon. Optional.
-* `individualJurisdictionField` Jurisdiction code column, if any. It should use [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes). Optional.
+* `individualJurisdictionField` Jurisdiction code column, if any. It should use [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes). Required unless jurisdiction is specified.
+* `jurisdiction` If all individuals have the same jurisdiction you can specify it here instead of in a column. Required unless individualJurisdictionField is specified.
 
 Produces a CSV including columns:
 * `officerName`

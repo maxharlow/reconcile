@@ -64,10 +64,24 @@ function initialise(parameters, requestor, alert) {
 const details = {
     batch: 10,
     parameters: [
-        { name: 'jurisdiction', description: 'If all companies have the same jurisdiction you can specify it here instead of in a column. Use ISO 3166-2 format. [optional]' },
-        { name: 'companyNameField', description: 'Company name column.' },
-        { name: 'companyJurisdictionField', description: 'Jurisdiction code column, if any. It should use ISO 3166-2 format. [optional]' },
-        { name: 'maximumResults', description: 'Maximum number of results to include for each name. [optional, default: 1]' }
+        {
+            name: 'companyNameField',
+            description: 'Company name column.',
+            required: true
+        },
+        {
+            name: 'companyJurisdictionField',
+            description: 'Jurisdiction code column, if any. It should use ISO 3166-2 format. Required unless jurisdiction is specified.'
+        },
+        {
+            name: 'jurisdiction',
+            description: 'If all companies have the same jurisdiction you can specify it here instead of in a column. Required unless companyJurisdictionField is specified.'
+        },
+        {
+            name: 'maximumResults',
+            description: 'Maximum number of results to include for each name.',
+            defaults: '1'
+        }
     ],
     columns: [
         { name: 'companyJurisdiction' },

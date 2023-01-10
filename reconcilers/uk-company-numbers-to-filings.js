@@ -129,11 +129,31 @@ function initialise(parameters, requestor, alert) {
 
 const details = {
     parameters: [
-        { name: 'apiKey', description: 'A Companies House API key.' },
-        { name: 'companyNumberField', description: 'Company number column.' },
-        { name: 'filingCategory', description: 'Category of filings to include, eg. "accounts" [optional, default is all filings, can be: accounts, address, annual-return, capital, change-of-name, incorporation, liquidation, miscellaneous, mortgage, officers, resolution, confirmation-statement]' },
-        { name: 'filingDescriptionMatch', description: 'Filter filing descriptions to only those matching [optional]' },
-        { name: 'includeAll', description: 'Set true to include all filed documents, instead of just the first [optional, default is first only]' }
+        {
+            name: 'apiKey',
+            description: 'A Companies House API key.',
+            required: true
+        },
+        {
+            name: 'companyNumberField',
+            description: 'Company number column.',
+            required: true
+        },
+        {
+            name: 'filingCategory',
+            description: 'Category of filings to include, eg. "accounts".',
+            defaults: 'all',
+            choices: '"accounts", "address", "annual-return", "capital", "change-of-name", "incorporation", "liquidation", "miscellaneous", "mortgage", "officers", "resolution", "confirmation-statement"'
+        },
+        {
+            name: 'filingDescriptionMatch',
+            description: 'Filter filing descriptions to only those matching.'
+        },
+        {
+            name: 'includeAll',
+            description: 'Set true to include all filed documents, instead of just the first.',
+            defaults: 'first only'
+        }
     ],
     columns: [
         { name: 'filingDate' },

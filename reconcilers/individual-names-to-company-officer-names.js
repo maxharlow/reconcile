@@ -112,11 +112,28 @@ function initialise(parameters, requestor, alert) {
 
 const details = {
     parameters: [
-        { name: 'apiToken', description: 'An OpenCorporates API token.' },
-        { name: 'jurisdiction', description: 'If all individuals have the same jurisdiction you can specify it here instead of in a column. Use ISO 3166-2 format. [optional]' },
-        { name: 'individualNameField', description: 'Individual name column.' },
-        { name: 'individualDateOfBirthField', description: 'Individual birth date column. It should use ISO 8601 format. For a range the two dates should be separated with a colon. [optional]' },
-        { name: 'individualJurisdictionField', description: 'Jurisdiction code column, if any. It should use ISO 3166-2 format. [optional]' }
+        {
+            name: 'apiToken',
+            description: 'An OpenCorporates API token.',
+            required: true
+        },
+        {
+            name: 'individualNameField',
+            description: 'Individual name column.',
+            required: true
+        },
+        {
+            name: 'individualDateOfBirthField',
+            description: 'Individual birth date column. It should use ISO 8601 format. For a range the two dates should be separated with a colon.'
+        },
+        {
+            name: 'individualJurisdictionField',
+            description: 'Jurisdiction code column, if any. It should use ISO 3166-2 format. Required unless jurisdiction is specified.'
+        },
+        {
+            name: 'jurisdiction',
+            description: 'If all individuals have the same jurisdiction you can specify it here instead of in a column. Required unless individualJurisdictionField is specified.'
+        }
     ],
     columns: [
         { name: 'officerName' },

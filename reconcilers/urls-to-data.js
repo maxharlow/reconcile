@@ -60,8 +60,16 @@ function initialise(parameters, requestor, alert) {
 
 const details = {
     parameters: [
-        { name: 'urlField', description: 'URL column.' },
-        { name: 'elements', description: 'Array of objects containing two fields, key and selector.' }
+        {
+            name: 'urlField',
+            description: 'URL column.',
+            required: true
+        },
+        {
+            name: 'elements',
+            description: 'Array of objects containing two fields, key and selector.',
+            required: true
+        }
     ],
     columns: [
         { name: 'key' },

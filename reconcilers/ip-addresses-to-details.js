@@ -9,13 +9,6 @@ function initialise(parameters, requestor, alert) {
     })
 
     function locate(entries) {
-        if (!parameters.ipAddressField) {
-            alert({
-                message: 'No IP address field found',
-                importance: 'error'
-            })
-            return
-        }
         const queries = entries.map(entry => {
             return entry.data[parameters.ipAddressField]
         })
@@ -62,7 +55,11 @@ function initialise(parameters, requestor, alert) {
 const details = {
     batch: 100,
     parameters: [
-        { name: 'ipAddressField', description: 'IP address column.' }
+        {
+            name: 'ipAddressField',
+            description: 'IP address column.',
+            required: true
+        }
     ],
     columns: [
         { name: 'country' },

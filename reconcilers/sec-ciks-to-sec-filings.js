@@ -113,9 +113,21 @@ function initialise(parameters, requestor, alert) {
 
 const details = {
     parameters: [
-        { name: 'cikField', description: 'CIK or ticker column.' },
-        { name: 'filingType', description: 'Type of filings to include, eg. 10-K [optional, default is all filings]' },
-        { name: 'includeAll', description: 'Set true to include all filed documents, instead of just the first [optional, default is first only]' }
+        {
+            name: 'cikField',
+            description: 'CIK or ticker column.',
+            required: true
+        },
+        {
+            name: 'filingType',
+            description: 'Type of filings to include, eg. 10-K.',
+            defaults: 'all'
+        },
+        {
+            name: 'includeAll',
+            description: 'Set true to include all filed documents, instead of just the first.',
+            defaults: 'first only'
+        }
     ],
     columns: [
         { name: 'filingDate' },

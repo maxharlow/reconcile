@@ -72,10 +72,24 @@ function initialise(parameters, requestor, alert) {
 
 const details = {
     parameters: [
-        { name: 'apiToken', description: 'An OpenCorporates API token.' },
-        { name: 'jurisdiction', description: 'If all companies have the same jurisdiction you can specify it here instead of in a column. Use ISO 3166-2 format. Required unless companyJurisdictionField is specified.' },
-        { name: 'companyNumberField', description: 'Company number column.' },
-        { name: 'companyJurisdictionField', description: 'Jurisdiction code column, if any. It should use ISO 3166-2 format. Required unless jurisdiction is specified.' }
+        {
+            name: 'apiToken',
+            description: 'An OpenCorporates API token.',
+            required: true
+        },
+        {
+            name: 'companyNumberField',
+            description: 'Company number column.',
+            required: true
+        },
+        {
+            name: 'companyJurisdictionField',
+            description: 'Jurisdiction code column, if any. It should use ISO 3166-2 format. Required unless jurisdiction is specified.'
+        },
+        {
+            name: 'jurisdiction',
+            description: 'If all companies have the same jurisdiction you can specify it here instead of in a column. Required unless companyJurisdictionField is specified.'
+        }
     ],
     columns: [
         { name: 'companyName' },

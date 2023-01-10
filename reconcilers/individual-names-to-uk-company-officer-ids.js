@@ -82,7 +82,7 @@ function initialise(parameters, requestor, alert) {
         if (!response) return
         const individuals = response.data.items
         const byDateOfBirth = individual => {
-            if (!parameters.dateOfBirthField || !entry.data[parameters.dateOfBirthField]) return true // field not specified or field for this row is blank
+            if (!entry.data[parameters.dateOfBirthField]) return true // column for this row is blank
             if (!individual.date_of_birth?.year || !individual.date_of_birth?.month) return false // date of birth specified in source, but no date of birth listed in this search result
             return individual.date_of_birth.year.toString() === entry.data[parameters.dateOfBirthField].slice(0, 4)
                 && individual.date_of_birth.month.toString().padStart(2, '0') === entry.data[parameters.dateOfBirthField].slice(5, 7)
@@ -129,11 +129,28 @@ function initialise(parameters, requestor, alert) {
 
 const details = {
     parameters: [
-        { name: 'apiKey', description: 'A Companies House API key.' },
-        { name: 'individualNameField', description: 'Individual name column.' },
-        { name: 'dateOfBirthField', description: 'Date of birth column, in ISO 8601 format. If given will use the month and year to filter results. [optional]' },
-        { name: 'nonMiddleNameMatch', description: 'Match individual name only based on the first and last names. Ignores non-alphabetical differences and titles. [optional]' },
-        { name: 'preciseMatch', description: 'Match individual name precisely. Ignores non-alphabetical differences and titles. [optional]' }
+        {
+            name: 'apiKey',
+            description: 'A Companies House API key.',
+            required: true
+        },
+        {
+            name: 'individualNameField',
+            description: 'Individual name column.',
+            required: true
+        },
+        {
+            name: 'dateOfBirthField',
+            description: 'Date of birth column, in ISO 8601 format. If given will use the month and year to filter results.'
+        },
+        {
+            name: 'nonMiddleNameMatch',
+            description: 'Match individual name only based on the first and last names. Ignores non-alphabetical differences and titles.'
+        },
+        {
+            name: 'preciseMatch',
+            description: 'Match individual name precisely. Ignores non-alphabetical differences and titles.'
+        }
     ],
     columns: [
         { name: 'officerID' },

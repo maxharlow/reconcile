@@ -58,8 +58,16 @@ function initialise(parameters, requestor, alert) {
 const details = {
     batch: 50,
     parameters: [
-        { name: 'wikidataConceptIDField', description: 'Concept ID column.' },
-        { name: 'wikidataProperty', description: 'Wikidata property to extract.' }
+        {
+            name: 'wikidataConceptIDField',
+            description: 'Concept ID column.',
+            required: true
+        },
+        {
+            name: 'wikidataProperty',
+            description: 'Wikidata property to extract.',
+            required: true
+        }
     ],
     columns: [
         { name: 'value' }

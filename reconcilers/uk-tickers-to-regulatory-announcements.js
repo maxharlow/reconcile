@@ -135,10 +135,27 @@ function initialise(parameters, requestor, alert) {
 
 const details = {
     parameters: [
-        { name: 'tickerField', description: 'Ticker column.' },
-        { name: 'category', description: 'Only include annoucements in this category. [optional, default: all, can be: m-and-a, results, dividends, exec-changes, director-dealings, advance-results]' },
-        { name: 'maximumResults', description: 'Maximum number of results to include for each ticker. [optional, default: all]' },
-        { name: 'maximumDate', description: 'Maximum announcement date for announcements from each ticker, in ISO 8601 format. [optional, default: no limit]' }
+        {
+            name: 'tickerField',
+            description: 'Ticker column.',
+            required: true
+        },
+        {
+            name: 'category',
+            description: 'Only include annoucements in this category.',
+            defaults: 'all',
+            choices: '"m-and-a", "results", "dividends", "exec-changes", "director-dealings", "advance-results"'
+        },
+        {
+            name: 'maximumResults',
+            description: 'Maximum number of results to include for each ticker.',
+            defaults: 'all'
+        },
+        {
+            name: 'maximumDate',
+            description: 'Maximum announcement date for announcements from each ticker, in ISO 8601 format.',
+            defaults: 'no limit'
+        }
     ],
     columns: [
         { name: 'announcementDate' },

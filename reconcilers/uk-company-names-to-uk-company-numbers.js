@@ -52,7 +52,7 @@ function initialise(parameters, requestor, alert) {
         const maximumResults = parameters.maximumResults || 1
         const companies = response?.data.items
         const byPostcode = company => {
-            if (!parameters.postcodeField || !entry.data[parameters.postcodeField]) return true // field not specified or field for this row is blank
+            if (!entry.data[parameters.postcodeField]) return true // column for this row is blank
             if (!company.address?.postal_code) return false // postcode specified in source, but no postcode listed in this search result
             return company.address.postal_code.replace(/ /g, '').toLowerCase() === entry.data[parameters.postcodeField].replace(/ /g, '').toLowerCase()
         }
@@ -94,11 +94,29 @@ function initialise(parameters, requestor, alert) {
 
 const details = {
     parameters: [
-        { name: 'apiKey', description: 'A Companies House API key.' },
-        { name: 'companyNameField', description: 'Company name column.' },
-        { name: 'postcodeField', description: 'Postcode column. If given will use it to filter results. Only looks at the current company postcode. [optional]' },
-        { name: 'preciseMatch', description: 'Match company name precisely. Ignores non-alphanumeric differences. [optional]' },
-        { name: 'maximumResults', description: 'Maximum number of results to include for each name. [optional, default: 1, maximum 100]' }
+        {
+            name: 'apiKey',
+            description: 'A Companies House API key.',
+            required: true
+        },
+        {
+            name: 'companyNameField',
+            description: 'Company name column.',
+            required: true
+        },
+        {
+            name: 'postcodeField',
+            description: 'Postcode column. If given will use it to filter results. Only looks at the current company postcode.'
+        },
+        {
+            name: 'preciseMatch',
+            description: 'Match company name precisely. Ignores non-alphanumeric differences.'
+        },
+        {
+            name: 'maximumResults',
+            description: 'Maximum number of results to include for each name.',
+            defaults: '1, maximum 100'
+        }
     ],
     columns: [
         { name: 'companyNumber' },

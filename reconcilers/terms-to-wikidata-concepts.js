@@ -9,13 +9,6 @@ function initialise(parameters, requestor, alert) {
     })
 
     function locate(entry) {
-        if (!parameters.termField) {
-            alert({
-                message: 'No term field found!',
-                importance: 'error'
-            })
-            return
-        }
         const term = entry.data[parameters.termField]
         if (!term) {
             alert({
@@ -92,8 +85,16 @@ function initialise(parameters, requestor, alert) {
 
 const details = {
     parameters: [
-        { name: 'termField', description: 'Term column.' },
-        { name: 'includeAll', description: 'Set true to include all URLs, instead of just the first. [optional, default is first 50 only]' }
+        {
+            name: 'termField',
+            description: 'Term column.',
+            required: true
+        },
+        {
+            name: 'includeAll',
+            description: 'Set true to include all URLs, instead of just the first.',
+            defaults: 'first 50 only'
+        }
     ],
     columns: [
         { name: 'wikidataConceptID' },

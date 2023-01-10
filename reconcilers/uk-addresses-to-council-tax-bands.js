@@ -123,10 +123,22 @@ function initialise(parameters, requestor, alert) {
 
 const details = {
     parameters: [
-        { name: 'addressNumberField', description: 'Property number (or name) column. [optional]' },
-        { name: 'addressStreetField', description: 'Property street column. [optional]' },
-        { name: 'addressCityField', description: 'Property city column. [optional]' },
-        { name: 'addressPostcodeField', description: 'Property postcode column. [optional]' }
+        {
+            name: 'addressNumberField',
+            description: 'Property number (or name) column.'
+        },
+        {
+            name: 'addressStreetField',
+            description: 'Property street column.'
+        },
+        {
+            name: 'addressCityField',
+            description: 'Property city column.'
+        },
+        {
+            name: 'addressPostcodeField',
+            description: 'Property postcode column.'
+        }
     ],
     columns: [
         { name: 'address' },

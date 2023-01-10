@@ -112,8 +112,16 @@ function initialise(parameters, requestor, alert) {
 
 const details = {
     parameters: [
-        { name: 'apiKey', description: 'A Companies House API key.' },
-        { name: 'companyTypeField', description: 'Company type column.' }
+        {
+            name: 'apiKey',
+            description: 'A Companies House API key.',
+            required: true
+        },
+        {
+            name: 'companyTypeField',
+            description: 'Company type column.',
+            required: true
+        }
     ],
     columns: [
         { name: 'companyNumber' },

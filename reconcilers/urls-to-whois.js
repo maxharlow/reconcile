@@ -72,8 +72,15 @@ function initialise(parameters, _, alert) {
 
 const details = {
     parameters: [
-        { name: 'urlField', description: 'URL column.' },
-        { name: 'lineMatch', description: 'Filter lines to only those matching [optional]' }
+        {
+            name: 'urlField',
+            description: 'URL column.',
+            required: true
+        },
+        {
+            name: 'lineMatch',
+            description: 'Filter lines to only those matching.'
+        }
     ],
     columns: [
         { name: 'data' }

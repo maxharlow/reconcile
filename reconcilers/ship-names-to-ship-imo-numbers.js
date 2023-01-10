@@ -125,9 +125,21 @@ function initialise(parameters, requestor, alert) {
 
 const details = {
     parameters: [
-        { name: 'email', description: 'The email address for a registered Equasis account.' },
-        { name: 'password', description: 'The password for a registered Equasis account' },
-        { name: 'shipNameField', description: 'Ship name column.' }
+        {
+            name: 'email',
+            description: 'The email address for a registered Equasis account.',
+            required: true
+        },
+        {
+            name: 'password',
+            description: 'The password for a registered Equasis account',
+            required: true
+        },
+        {
+            name: 'shipNameField',
+            description: 'Ship name column.',
+            required: true
+        }
     ],
     columns: [
         { name: 'shipIMONumber' },

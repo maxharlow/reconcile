@@ -54,7 +54,11 @@ function initialise(parameters, requestor, alert) {
 
 const details = {
     parameters: [
-        { name: 'urlField', description: 'URL column.' }
+        {
+            name: 'urlField',
+            description: 'URL column.',
+            required: true
+        }
     ],
     columns: [
         { name: 'googleAnalyticsID' }

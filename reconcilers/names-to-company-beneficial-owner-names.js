@@ -107,8 +107,16 @@ function initialise(parameters, requestor, alert) {
 
 const details = {
     parameters: [
-        { name: 'apiToken', description: 'An OpenCorporates API token.' },
-        { name: 'nameField', description: 'Name column.' }
+        {
+            name: 'apiToken',
+            description: 'An OpenCorporates API token.',
+            required: true
+        },
+        {
+            name: 'nameField',
+            description: 'Name column.',
+            required: true
+        }
     ],
     columns: [
         { name: 'beneficialOwnerName' },

@@ -49,8 +49,16 @@ function initialise(parameters, _, alert) {
 
 const details = {
     parameters: [
-        { name: 'urlField', description: 'URL column.' },
-        { name: 'recordType', description: 'Type of records to retrieve [optional, default: A]' }
+        {
+            name: 'urlField',
+            description: 'URL column.',
+            required: true
+        },
+        {
+            name: 'recordType',
+            description: 'Type of records to retrieve.',
+            defaults: 'A'
+        }
     ],
     columns: [
         { name: 'record' }

@@ -113,9 +113,21 @@ function initialise(parameters, requestor, alert) {
 
 const details = {
     parameters: [
-        { name: 'apiKey', description: 'A Companies House API key.' },
-        { name: 'placeNameField', description: 'Place name column.' },
-        { name: 'maximumResults', description: 'Maximum number of results to include for each name. [optional, default: all, maximum: 10000]' }
+        {
+            name: 'apiKey',
+            description: 'A Companies House API key.',
+            required: true
+        },
+        {
+            name: 'placeNameField',
+            description: 'Place name column.',
+            required: true
+        },
+        {
+            name: 'maximumResults',
+            description: 'Maximum number of results to include for each name.',
+            defaults: 'all, maximum 10000'
+        }
     ],
     columns: [
         { name: 'companyNumber' },

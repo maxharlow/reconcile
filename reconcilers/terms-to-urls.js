@@ -98,9 +98,20 @@ function initialise(parameters, requestor, alert) {
 
 const details = {
     parameters: [
-        { name: 'termField', description: 'Term column.' },
-        { name: 'supplement', description: 'Extra terms to be included with the search. [optional]' },
-        { name: 'includeAll', description: 'Set true to include all URLs, instead of just the first. [optional, default is first page only]' }
+        {
+            name: 'termField',
+            description: 'Term column.',
+            required: true
+        },
+        {
+            name: 'supplement',
+            description: 'Extra terms to be included with the search.'
+        },
+        {
+            name: 'includeAll',
+            description: 'Set true to include all URLs, instead of just the first.',
+            defaults: 'first page only'
+        }
     ],
     columns: [
         { name: 'resultTitle' },

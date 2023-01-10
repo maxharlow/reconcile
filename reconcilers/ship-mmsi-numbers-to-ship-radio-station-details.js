@@ -82,7 +82,11 @@ function initialise(parameters, requestor, alert) {
 
 const details = {
     parameters: [
-        { name: 'shipMMSINumberField', description: 'Ship MMSI number column.' }
+        {
+            name: 'shipMMSINumberField',
+            description: 'Ship MMSI number column.',
+            required: true
+        }
     ],
     columns: [
         { name: 'shipName' },

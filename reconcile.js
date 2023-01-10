@@ -139,9 +139,12 @@ async function load(command, filename, parameters = {}, retries = 5, cache = fal
     const { default: reconciler } = await import(`./reconcilers/${command}.js`)
     Object.keys(parameters).forEach(parameter => {
         if (!reconciler.details.parameters.find(p => p.name === parameter)) alert({
-            message: `Ignoring unexpected parameter '${parameter}'`,
+            message: `${parameter}: unexpected parameter will be ignored`,
             importance: 'warning'
         })
+    })
+    reconciler.details.parameters.filter(parameter => parameter.required).forEach(parameter => {
+        if (!parameters[parameter.name]) throw new Error(`${parameter.name}: parameter is required but was not found`)
     })
     const batch = reconciler.details.batch || 1
     const execute = reconciler.initialise(parameters, requestor, alert)

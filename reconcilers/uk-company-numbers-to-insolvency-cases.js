@@ -93,8 +93,16 @@ function initialise(parameters, requestor, alert) {
 
 const details = {
     parameters: [
-        { name: 'apiKey', description: 'A Companies House API key.' },
-        { name: 'companyNumberField', description: 'Company number column.' }
+        {
+            name: 'apiKey',
+            description: 'A Companies House API key.',
+            required: true
+        },
+        {
+            name: 'companyNumberField',
+            description: 'Company number column.',
+            required: true
+        }
     ],
     columns: [
         { name: 'companyInsolvencyStatus' },

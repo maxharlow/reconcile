@@ -36,9 +36,14 @@ function display(details) {
         })
         return rows.join('\n')
     }
-    return 'Parameters:\n' + align(details.parameters)
-        + '\n\n'
-        + 'Columns:\n' + align(details.columns)
+    const detailsParameters = details.parameters.map(item => {
+        const restrictions = `${item.required ? '' : '[optional]'}${item.choices ? ' [choices: ' + item.choices + ']' : ''}${item.defaults ? ' [default: ' + item.defaults + ']' : ''}`
+        return {
+            name: item.name,
+            description: `${item.description || ''}${restrictions ? '  ' + restrictions : ''}`
+        }
+    })
+    return `Parameters:\n${align(detailsParameters)}\n\nColumns:\n${align(details.columns)}`
 }
 
 async function setup() {

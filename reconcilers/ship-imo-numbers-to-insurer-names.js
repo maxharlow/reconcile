@@ -77,7 +77,11 @@ function initialise(parameters, requestor, alert) {
 
 const details = {
     parameters: [
-        { name: 'shipIMONumberField', description: 'Ship IMO number (or name) column.' }
+        {
+            name: 'shipIMONumberField',
+            description: 'Ship IMO number (or name) column.',
+            required: true
+        }
     ],
     columns: [
         { name: 'shipIMONumber' },

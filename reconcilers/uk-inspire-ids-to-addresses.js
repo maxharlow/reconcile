@@ -93,7 +93,11 @@ function initialise(parameters, requestor, alert) {
 
 const details = {
     parameters: [
-        { name: 'inspireIDField', description: 'Inspire ID column.' }
+        {
+            name: 'inspireIDField',
+            description: 'Inspire ID column.',
+            required: true
+        }
     ],
     columns: [
         { name: 'titleAddress' },

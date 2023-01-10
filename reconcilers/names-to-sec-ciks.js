@@ -70,8 +70,16 @@ function initialise(parameters, requestor, alert) {
 
 const details = {
     parameters: [
-        { name: 'nameField', description: 'Name column.' },
-        { name: 'maximumResults', description: 'Maximum number of results to include for each name. [optional, default: 1, maximum 100]' }
+        {
+            name: 'nameField',
+            description: 'Name column.',
+            required: true
+        },
+        {
+            name: 'maximumResults',
+            description: 'Maximum number of results to include for each name.',
+            defaults: '1, maximum 100'
+        }
     ],
     columns: [
         { name: 'name' },
