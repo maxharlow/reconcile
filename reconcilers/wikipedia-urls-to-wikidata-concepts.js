@@ -4,25 +4,24 @@ function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         messages: e => {
-            const url = e.config.passthrough.url
-            if (e.response.status >= 400) return `Received code ${e.response.status} for URL "${url}"`
+            const wikipediaURL = e.config.passthrough.wikipediaURL
+            if (e.response.status >= 400) return `Received code ${e.response.status} for Wikipedia URL "${wikipediaURL}"`
         }
     })
 
     function locate(entry) {
-        if (!parameters.urlField) throw new Error('No URL field found!')
-        const url = entry.data[parameters.urlField]
-        if (!url) {
+        const wikipediaURL = entry.data[parameters.wikipediaURLField]
+        if (!wikipediaURL) {
             alert({
-                message: `No URL found on line ${entry.line}`,
+                message: `No Wikipedia URL found on line ${entry.line}`,
                 importance: 'error'
             })
             return
         }
         return {
-            url,
+            url: wikipediaURL,
             passthrough: {
-                url
+                wikipediaURL
             }
         }
     }
@@ -33,7 +32,7 @@ function initialise(parameters, requestor, alert) {
         const wikidataConcept = document('#t-wikibase a').attr('href')
         if (!wikidataConcept) {
             alert({
-                message: `No Wikidata concept found for URL: "${response.passthrough.url}"`,
+                message: `No Wikidata concept found for Wikipedia URL: "${response.passthrough.wikipediaURL}"`,
                 importance: 'error'
             })
             return
@@ -56,7 +55,10 @@ function initialise(parameters, requestor, alert) {
 
 const details = {
     parameters: [
-        { name: 'urlField', description: 'URL column.' }
+        {
+            name: 'wikipediaURLField',
+            description: 'Wikipedia URL column.'
+        }
     ],
     columns: [
         { name: 'wikidataConceptID' }

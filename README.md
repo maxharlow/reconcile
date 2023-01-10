@@ -593,7 +593,7 @@ Produces a CSV including columns:
 Use Wikipedia to take a list of URLs, and extract out the Wikidata concept IDs for each.
 
 Parameters:
-* `urlField` URL column.
+* `wikipediaURLField` URL column.
 
 Produces a CSV including columns:
 * `wikidataConceptID`
