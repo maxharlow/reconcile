@@ -25,10 +25,14 @@
         "yaml": "2.2.x",
         "yargs": "17.6.x"
     },
+    "devDependencies": {
+        "ava": "5.1.x"
+    },
     "bin": {
         "reconcile": "./bin.js"
     },
     "scripts": {
+        "test": "ava",
         "postinstall": "(reconcile completion > /etc/bash_completion.d/reconcile || reconcile completion > /usr/local/etc/bash_completion.d/reconcile || true) 2> /dev/null",
         "postuninstall": "(rm /etc/bash_completion.d/reconcile || rm /usr/local/etc/bash_completion.d/reconcile || true) 2> /dev/null"
     }
