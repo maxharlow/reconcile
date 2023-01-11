@@ -14,12 +14,10 @@ function initialise(parameters, requestor, alert) {
     const request = requestor({
         limit: apiKeys.length * 2,
         messages: e => {
-            const type = e.config.passthrough.companyType
-            const page = e.config.passthrough.page
-            if (e.response.status === 404) return `Could not find any companies of type "${type}"`
-            if (e.response.status === 429) throw new Error('The rate limit has been reached')
+            if (e.response.status === 404) return 'could not find any companies'
+            if (e.response.status === 429) throw new Error('the rate limit has been reached')
             if (e.response.status === 401) throw new Error(`API key ${e.config.auth.username} is invalid`)
-            if (e.response.status >= 400) return `Received code ${e.response.status} for "${type}" on page ${page}`
+            if (e.response.status >= 400) return `received code ${e.response.status} on page ${e.config.passthrough.page}`
         }
     })
 
@@ -27,12 +25,14 @@ function initialise(parameters, requestor, alert) {
         const companyType = entry.data[parameters.companyTypeField]
         if (!companyType) {
             alert({
-                message: `No company type found on line ${entry.line}`,
+                identifier: `Line ${entry.line}`,
+                message: 'no company type found',
                 importance: 'error'
             })
             return
         }
         return {
+            identifier: companyType,
             url: 'https://api.company-information.service.gov.uk/advanced-search/companies',
             auth: {
                 username: apiKeysRotated(),
@@ -56,6 +56,7 @@ function initialise(parameters, requestor, alert) {
             const pageNumbers = Array.from(Array(pageTotal).keys()).slice(1, 2) // slice off first page as we already have that, also you get an error beyond two pages
             const pageRequests = pageNumbers.map(async page => {
                 const query = {
+                    identifier: response.passthrough.companyType,
                     url: response.url,
                     auth: {
                         username: apiKeysRotated(),

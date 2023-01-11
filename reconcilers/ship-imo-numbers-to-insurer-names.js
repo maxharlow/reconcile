@@ -7,8 +7,7 @@ function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         messages: e => {
-            const ship = e.config.passthrough.shipIMONumber
-            if (e.response.status >= 400) return `Received code ${e.response.status} for ship ${ship}`
+            if (e.response.status >= 400) return `received code ${e.response.status}`
         }
     })
 
@@ -16,7 +15,8 @@ function initialise(parameters, requestor, alert) {
         const shipIMONumber = entry.data[parameters.shipIMONumberField]
         if (!shipIMONumber) {
             alert({
-                message: `No ship IMO number/name found on line ${entry.line}`,
+                identifier: `Line ${entry.line}`,
+                message: 'no ship IMO number/name found',
                 importance: 'error'
             })
             return
@@ -25,6 +25,7 @@ function initialise(parameters, requestor, alert) {
         const tokenDocument = Cheerio.load(tokenResponse.data)
         const token = tokenDocument('[name=csrfmiddlewaretoken]').attr('value')
         return {
+            identifier: `Ship ${shipIMONumber}`,
             url: 'https://www.igpandi.org/ship-search/',
             method: 'POST',
             dataQuery: {
@@ -48,7 +49,8 @@ function initialise(parameters, requestor, alert) {
         if (!response) return
         const document = Cheerio.load(response.data)
         if (document('.alert-info').text().trim().includes('search returned more than 20 results')) alert({
-            message: `More than 20 results were found for "${response.passthrough.shipIMONumber}" -- subsequent results are omitted`,
+            identifier: `Ship ${response.passthrough.shipIMONumber}`,
+            message: 'more than 20 results were found -- subsequent results are omitted',
             importance: 'warning'
         })
         const ships = document('.result-box').get()

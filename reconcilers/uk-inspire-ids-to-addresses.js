@@ -5,7 +5,7 @@ function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         messages: e => {
-            if (e.response.status >= 400) return `Received code ${e.response.status} for ID ${e.config.passthrough.inspireID}`
+            if (e.response.status >= 400) return `received code ${e.response.status}`
         },
         validator: async location => {
             const browser = await Puppeteer.launch({
@@ -42,12 +42,14 @@ function initialise(parameters, requestor, alert) {
         const inspireID = entry.data[parameters.inspireIDField]
         if (!inspireID) {
             alert({
-                message: `No title number found on line ${entry.line}`,
+                identifier: `Line ${entry.line}`,
+                message: 'no title number found',
                 importance: 'error'
             })
             return
         }
         return {
+            identifier: inspireID,
             url: 'https://search-property-information.service.gov.uk/search/search-by-inspire-id',
             method: 'POST',
             dataQuery: {
@@ -69,7 +71,8 @@ function initialise(parameters, requestor, alert) {
         const failure = document('.govuk-error-summary__list').get().length > 0
         if (failure) {
             alert({
-                message: `Could not find ID ${response.passthrough.inspireID}`,
+                identifier: response.passthrough.inspireID,
+                message: 'could not find ID',
                 importance: 'error'
             })
             return

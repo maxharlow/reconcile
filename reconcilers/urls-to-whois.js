@@ -30,7 +30,8 @@ function initialise(parameters, _, alert) {
         const url = entry.data[parameters.urlField]
         if (!url) {
             alert({
-                message: `No URL found on line ${entry.line}`,
+                identifier: `Line ${entry.line}`,
+                message: 'no URL found',
                 importance: 'error'
             })
             return
@@ -42,7 +43,8 @@ function initialise(parameters, _, alert) {
         if (!response) return
         if (!response.data) {
             alert({
-                message: `No response for URL ${response.passthrough.url}`,
+                identifier: response.passthrough.url,
+                message: 'no response',
                 importance: 'error'
             })
             return
@@ -51,7 +53,8 @@ function initialise(parameters, _, alert) {
         const data = response.data.split('\n').filter(line => line.match(parameters.lineMatch)).map(line => line.trim()).join('\n')
         if (!data) {
             alert({
-                message: `No line matches for URL ${response.passthrough.url}`,
+                identifier: response.passthrough.url,
+                message: 'no line matches',
                 importance: 'error'
             })
             return

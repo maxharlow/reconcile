@@ -4,8 +4,7 @@ function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         messages: e => {
-            const url = e.config.passthrough.url
-            if (e.response.status >= 400) return `Received code ${e.response.status} for URL "${url}"`
+            if (e.response.status >= 400) return `received code ${e.response.status}`
         }
     })
 
@@ -13,12 +12,14 @@ function initialise(parameters, requestor, alert) {
         const url = entry.data[parameters.urlField]
         if (!url) {
             alert({
-                message: `No URL found on line ${entry.line}`,
+                identifier: `Line ${entry.line}`,
+                message: 'no URL found',
                 importance: 'error'
             })
             return
         }
         return {
+            identifier: url,
             url,
             passthrough: {
                 url
@@ -30,12 +31,13 @@ function initialise(parameters, requestor, alert) {
         if (!response) return
         const document = Cheerio.load(response.data)
         return parameters.elements.map(element => {
-            if (!element.key) throw new Error(`Element has no key: ${JSON.stringify(element)}`)
-            if (!element.selector) throw new Error(`Element has no selector: ${JSON.stringify(element)}`)
+            if (!element.key) throw new Error(`element has no key: ${JSON.stringify(element)}`)
+            if (!element.selector) throw new Error(`element has no selector: ${JSON.stringify(element)}`)
             const selection = document(element.selector)
             if (!selection) {
                 alert({
-                    message: `Could not select "${element.selector}"`,
+                    identifier: response.passthrough.url,
+                    message: `could not select "${element.selector}"`,
                     importance: 'error'
                 })
                 return

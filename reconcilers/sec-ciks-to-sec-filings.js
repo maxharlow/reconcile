@@ -5,9 +5,8 @@ function initialise(parameters, requestor, alert) {
     const request = requestor({
         limit: 10,
         messages: e => {
-            const cik = e.config.passthrough.cik
-            if (e.response.status === 429) throw new Error('The rate limit has been reached')
-            if (e.response.status >= 400) return `Received code ${e.response.status} for CIK ${cik}`
+            if (e.response.status === 429) throw new Error('the rate limit has been reached')
+            if (e.response.status >= 400) return `received code ${e.response.status}`
         }
     })
 
@@ -15,12 +14,14 @@ function initialise(parameters, requestor, alert) {
         const cik = entry.data[parameters.cikField]
         if (!cik) {
             alert({
-                message: `No CIK found on line ${entry.line}`,
+                identifier: `Line ${entry.line}`,
+                message: 'no CIK found',
                 importance: 'error'
             })
             return
         }
         return {
+            identifier: `CIK ${cik}`,
             url: 'https://www.sec.gov/cgi-bin/browse-edgar',
             params: {
                 action: 'getcompany',
@@ -41,7 +42,8 @@ function initialise(parameters, requestor, alert) {
         if (table.length === 0) {
             const cik = response.passthrough.cik
             alert({
-                message: `Could not find CIK ${cik}`,
+                identifier: `CIK ${cik}`,
+                message: 'could not find CIK',
                 importance: 'error'
             })
             return
@@ -51,7 +53,8 @@ function initialise(parameters, requestor, alert) {
             const filings = parameters.filingType ? `${parameters.filingType} filings` : 'filings'
             const cik = response.passthrough.cik
             alert({
-                message: `No ${filings} found for CIK ${cik}`,
+                identifier: `CIK ${cik}`,
+                message: `no ${filings} found`,
                 importance: 'error'
             })
             return

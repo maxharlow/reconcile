@@ -4,8 +4,7 @@ function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         messages: e => {
-            const wikipediaURL = e.config.passthrough.wikipediaURL
-            if (e.response.status >= 400) return `Received code ${e.response.status} for Wikipedia URL "${wikipediaURL}"`
+            if (e.response.status >= 400) return `received code ${e.response.status}`
         }
     })
 
@@ -13,12 +12,14 @@ function initialise(parameters, requestor, alert) {
         const wikipediaURL = entry.data[parameters.wikipediaURLField]
         if (!wikipediaURL) {
             alert({
-                message: `No Wikipedia URL found on line ${entry.line}`,
+                identifier: `Line ${entry.line}`,
+                message: 'no Wikipedia URL found',
                 importance: 'error'
             })
             return
         }
         return {
+            identifier: wikidataURL,
             url: wikipediaURL,
             passthrough: {
                 wikipediaURL
@@ -32,7 +33,8 @@ function initialise(parameters, requestor, alert) {
         const wikidataConcept = document('#t-wikibase a').attr('href')
         if (!wikidataConcept) {
             alert({
-                message: `No Wikidata concept found for Wikipedia URL: "${response.passthrough.wikipediaURL}"`,
+                identifier: response.passthrough.wikipediaURL,
+                message: 'no Wikidata concept found',
                 importance: 'error'
             })
             return

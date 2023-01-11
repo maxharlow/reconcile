@@ -3,8 +3,8 @@ function initialise(parameters, requestor, alert) {
     const request = requestor({
         limit: 0.24,
         messages: e => {
-            if (e.response.status === 429) throw new Error('The rate limit has been reached')
-            if (e.response.status >= 400) return `Received code ${e.response.status}`
+            if (e.response.status === 429) throw new Error('the rate limit has been reached')
+            if (e.response.status >= 400) return `received code ${e.response.status}`
         }
     })
 
@@ -13,6 +13,7 @@ function initialise(parameters, requestor, alert) {
             return entry.data[parameters.ipAddressField]
         })
         return {
+            identifier: queries.join(', '),
             url: 'http://ip-api.com/batch',
             method: 'POST',
             headers: {

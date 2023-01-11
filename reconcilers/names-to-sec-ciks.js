@@ -6,8 +6,8 @@ function initialise(parameters, requestor, alert) {
         limit: 10,
         messages: e => {
             const name = e.config.passthrough.name
-            if (e.response.status === 429) throw new Error('The rate limit has been reached')
-            if (e.response.status >= 400) return `Received code ${e.response.status} for name ${name}`
+            if (e.response.status === 429) throw new Error('the rate limit has been reached')
+            if (e.response.status >= 400) return `received code ${e.response.status}`
         }
     })
 
@@ -15,12 +15,14 @@ function initialise(parameters, requestor, alert) {
         const name = entry.data[parameters.nameField]
         if (!name) {
             alert({
-                message: `No name found on line ${entry.line}`,
+                identifier: `Line ${entry.line}`,
+                message: 'no name found',
                 importance: 'error'
             })
             return
         }
         return {
+            identifier: `"${name}"`,
             url: 'https://www.sec.gov/cgi-bin/cik_lookup',
             method: 'POST',
             headers: {
@@ -42,7 +44,8 @@ function initialise(parameters, requestor, alert) {
         if (results === null) {
             const name = response.passthrough.name
             alert({
-                message: `Could not find name ${name}`,
+                identifier: `"${name}"`,
+                message: 'could not find name',
                 importance: 'error'
             })
             return

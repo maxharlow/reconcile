@@ -6,9 +6,8 @@ function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         messages: e => {
-            const ship = e.config.passthrough.shipMMSINumber
-            if (e.response.headers.connection === 'close') throw new Error('The rate limit has been reached (Equasis allows about 500 per day)')
-            if (e.response.status >= 400) return `Received code ${e.response.status} for ship ${ship}`
+            if (e.response.headers.connection === 'close') throw new Error('the rate limit has been reached (Equasis allows about 500 per day)')
+            if (e.response.status >= 400) return `received code ${e.response.status}`
         }
     })
 
@@ -23,12 +22,12 @@ function initialise(parameters, requestor, alert) {
                     j_password: parameters.password
                 })
             })
-            if (response.status === 404) throw new Error('Credentials are incorrect')
+            if (response.status === 404) throw new Error('Equasis credentials are incorrect')
             const value = response.headers['set-cookie'][0].split(';')[0]
             return value
         }
         catch (e) {
-            throw new Error(`Could not log in! ${e.message}`)
+            throw new Error(`could not log in! ${e.message}`)
         }
     }
 
@@ -36,12 +35,14 @@ function initialise(parameters, requestor, alert) {
         const shipMMSINumber = entry.data[parameters.shipMMSINumberField]
         if (!shipMMSINumber) {
             alert({
-                message: `No ship MMSI number found on line ${entry.line}`,
+                identifier: `Line ${entry.line}`,
+                message: 'no ship MMSI number found',
                 importance: 'error'
             })
             return
         }
         return {
+            identifier: `MMSI ${shipMMSINumber}`,
             url: 'http://www.equasis.org/EquasisWeb/restricted/Search',
             method: 'POST',
             dataQuery: {
@@ -63,7 +64,8 @@ function initialise(parameters, requestor, alert) {
         const document = Cheerio.load(response.data)
         if (document('.modal-body').text().trim() === 'No result has been found with your criteria.') {
             alert({
-                message: `No results found for MMSI ${response.passthrough.shipMMSINumber}`,
+                identifier: `MMSI ${response.passthrough.shipMMSINumber}`,
+                message: 'no results found',
                 importance: 'error'
             })
             return

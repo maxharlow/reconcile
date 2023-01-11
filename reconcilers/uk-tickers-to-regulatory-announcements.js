@@ -6,14 +6,20 @@ function initialise(parameters, requestor, alert) {
     const request = requestor({
         limit: 10,
         messages: e => {
-            const ticker = e.config.passthrough.ticker
-            if (e.response.status >= 400) return `Received code ${e.response.status} for ticker ${ticker}`
+            if (e.response.status >= 400) return 'received code ${e.response.status}'
         }
     })
 
     function locate(entry) {
         const ticker = entry.data[parameters.tickerField]
-        if (!ticker) throw new Error(`No ticker found on line ${entry.line}`)
+        if (!ticker) {
+            alert({
+                identifier: `Line ${entry.line}`,
+                message: 'no ticker found',
+                importance: 'error'
+            })
+            return
+        }
         const categories = {
             'm-and-a': 1,
             'results': 2,
@@ -23,8 +29,16 @@ function initialise(parameters, requestor, alert) {
             'advance-results': 32
         }
         const category = categories[parameters.category]
-        if (parameters.category && !Object.keys(categories).includes(parameters.category)) throw new Error(`Invalid category: ${parameters.category}`)
+        if (parameters.category && !Object.keys(categories).includes(parameters.category)) {
+            alert({
+                identifier: ticker,
+                message: `invalid category: ${category}`,
+                importance: 'error'
+            })
+            return
+        }
         return {
+            identifier: ticker,
             url: 'https://www.investegate.co.uk/AdvancedSearch.aspx',
             params: {
                 qsArticleType: 'ann', // search announcements
@@ -49,6 +63,7 @@ function initialise(parameters, requestor, alert) {
         const hasMorePages = document('.navBottom').length
         if (hasMorePages && totalResults < maximumResults && lastDate >= maximumDate) {
             const query = {
+                identifier: response.passthrough.ticker,
                 url: response.url,
                 params: {
                     qsArticleType: 'ann',
@@ -73,7 +88,8 @@ function initialise(parameters, requestor, alert) {
         if (results.length === 0) {
             const ticker = response.passthrough.ticker
             alert({
-                message: `Could not find ticker ${ticker}`,
+                identifier: ticker,
+                message: 'could not find ticker',
                 importance: 'error'
             })
             return
@@ -94,6 +110,7 @@ function initialise(parameters, requestor, alert) {
                 announcementURL: 'https://www.investegate.co.uk' + row('td:nth-of-type(7) a').attr('href')
             }
             return {
+                identifier: response.passthrough.ticker,
                 url: fields.announcementURL,
                 passthrough: {
                     announcementDate: dateFor(i),

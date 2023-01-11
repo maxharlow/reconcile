@@ -4,9 +4,8 @@ function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         messages: e => {
-            const address = [e.config.passthrough.addressNumber, e.config.passthrough.addressStreet, e.config.passthrough.addressCity, e.config.passthrough.addressPostcode].filter(x => x).join(', ')
-            if (e.response.status === 403) throw new Error('The rate limit has been reached')
-            if (e.response.status >= 400) return `Received code ${e.response.status} for address ${address}`
+            if (e.response.status === 403) throw new Error('the rate limit has been reached')
+            if (e.response.status >= 400) return `received code ${e.response.status}`
         }
     })
 
@@ -15,7 +14,9 @@ function initialise(parameters, requestor, alert) {
         const addressStreet = entry.data[parameters.addressStreetField]
         const addressCity = entry.data[parameters.addressCityField]
         const addressPostcode = entry.data[parameters.addressPostcodeField]
+        const address = [addressNumber, addressStreet, addressCity, addressPostcode].filter(x => x).join(', ')
         return {
+            identifier: address || 'all',
             url: 'https://www.tax.service.gov.uk/check-council-tax-band/search-council-tax-advanced',
             method: 'POST',
             headers: {
@@ -38,6 +39,7 @@ function initialise(parameters, requestor, alert) {
     }
 
     async function paginate(response) {
+        const address = [response.passthrough.addressNumber, response.passthrough.addressStreet, response.passthrough.addressCity, response.passthrough.addressPostcode].filter(x => x).join(', ')
         const document = Cheerio.load(response.data)
         const hasMorePages = document('.voa-pagination__item').length
         if (hasMorePages) {
@@ -45,6 +47,7 @@ function initialise(parameters, requestor, alert) {
             const pageNumbers = Array.from(Array(pageTotal).keys()).slice(1) // slice off first page as we already have that
             const pageRequests = pageNumbers.map(async page => {
                 const query = {
+                    identifier: address || 'all',
                     url: response.url,
                     method: 'POST',
                     headers: {
@@ -75,7 +78,8 @@ function initialise(parameters, requestor, alert) {
         if (results.length === 0) {
             const address = [response.passthrough.addressNumber, response.passthrough.addressStreet, response.passthrough.addressCity, response.passthrough.addressPostcode].filter(x => x).join(', ')
             alert({
-                message: `Could not find any council tax registrations for address ${address}`,
+                identifier: address || 'all',
+                message: 'could not find any council tax registrations',
                 importance: 'error'
             })
             return []
@@ -83,6 +87,7 @@ function initialise(parameters, requestor, alert) {
         return results.map(element => {
             const row = Cheerio.load(element)
             return {
+                identifier: address || 'all',
                 url: 'https://www.tax.service.gov.uk' + row('td:first-of-type a').attr('href'),
                 passthrough: {
                     ...response.passthrough,

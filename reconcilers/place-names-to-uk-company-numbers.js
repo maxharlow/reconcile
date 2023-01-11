@@ -14,12 +14,10 @@ function initialise(parameters, requestor, alert) {
     const request = requestor({
         limit: apiKeys.length * 2,
         messages: e => {
-            const place = e.config.passthrough.placeName
-            const page = e.config.passthrough.page
-            if (e.response.status === 404) return `Could not find any companies registered at "${place}"`
-            if (e.response.status === 429) throw new Error('The rate limit has been reached')
+            if (e.response.status === 404) return 'could not find any companies registered'
+            if (e.response.status === 429) throw new Error('the rate limit has been reached')
             if (e.response.status === 401) throw new Error(`API key ${e.config.auth.username} is invalid`)
-            if (e.response.status >= 400) return `Received code ${e.response.status} for "${place}" on page ${page}`
+            if (e.response.status >= 400) return `received code ${e.response.status} on page ${e.config.passthrough.page}`
         }
     })
 
@@ -27,12 +25,14 @@ function initialise(parameters, requestor, alert) {
         const placeName = entry.data[parameters.placeNameField]
         if (!placeName) {
             alert({
-                message: `No place name found on line ${entry.line}`,
+                identifier: `Line ${entry.line}`,
+                message: 'no place name found',
                 importance: 'error'
             })
             return
         }
         return {
+            identifier: `"${placeName}"`,
             url: 'https://api.company-information.service.gov.uk/advanced-search/companies',
             auth: {
                 username: apiKeysRotated(),
@@ -56,6 +56,7 @@ function initialise(parameters, requestor, alert) {
             const pageNumbers = Array.from(Array(pageTotal).keys()).slice(1, 2) // slice off first page as we already have that, also you get an error beyond two pages
             const pageRequests = pageNumbers.map(async page => {
                 const query = {
+                    identifier: `"${response.passthrough.placeName}"`,
                     url: response.url,
                     auth: {
                         username: apiKeysRotated(),

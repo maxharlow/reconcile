@@ -4,8 +4,7 @@ function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         messages: e => {
-            const url = e.config.passthrough.url
-            if (e.response.status >= 400) return `Received code ${e.response.status} for URL "${url}"`
+            if (e.response.status >= 400) return `received code ${e.response.status}`
         }
     })
 
@@ -13,12 +12,14 @@ function initialise(parameters, requestor, alert) {
         const url = entry.data[parameters.urlField]
         if (!url) {
             alert({
-                message: `No URL found on line ${entry.line}`,
+                identifier: `Line ${entry.line}`,
+                message: 'no URL found',
                 importance: 'error'
             })
             return
         }
         return {
+            identifier: url,
             url,
             passthrough: {
                 url

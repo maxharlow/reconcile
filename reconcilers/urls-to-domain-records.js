@@ -13,7 +13,8 @@ function initialise(parameters, _, alert) {
         }
         catch (e) {
             alert({
-                message: `No domain record found for URL: ${url}`,
+                identifier: url,
+                message: 'no domain record found',
                 importance: 'error'
             })
             return
@@ -24,7 +25,8 @@ function initialise(parameters, _, alert) {
         const url = entry.data[parameters.urlField]
         if (!url) {
             alert({
-                message: `No URL found on line ${entry.line}`,
+                identifier: `Line ${entry.line}`,
+                message: 'no URL found',
                 importance: 'error'
             })
             return

@@ -2,18 +2,18 @@ function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         messages: e => {
-            const concepts = e.config.passthrough.wikidataConceptIDs
-            if (e.response.status >= 400) return `Received code ${e.response.status} for concepts: ${concepts}`
+            if (e.response.status >= 400) return `received code ${e.response.status}`
         }
     })
 
     function locate(entries) {
         const wikidataConceptIDs = entries.map(entry => {
             const wikidataConceptID = entry.data[parameters.wikidataConceptIDField]
-            if (!wikidataConceptID) throw new Error(`No Wikidata concept ID field found on line ${entry.line}`)
+            if (!wikidataConceptID) throw new Error(`Line ${entry.line}: no Wikidata concept ID found`)
             return wikidataConceptID
         })
         return {
+            identifier: wikidataConceptIDs.join(', '),
             url: 'https://www.wikidata.org/w/api.php',
             params: {
                 action: 'wbgetentities',
@@ -29,6 +29,14 @@ function initialise(parameters, requestor, alert) {
     }
 
     function parse(response) {
+        if (response.data.error) {
+            alert({
+                identifier: response.passthrough.wikidataConceptIDs.join(', '),
+                message: response.data.error.info.charAt(0).toLowerCase() + response.data.error.info.slice(1),
+                importance: 'error'
+            })
+            return null
+        }
         return Object.values(response.data.entities).map(entity => {
             const claim = entity.claims[parameters.wikidataProperty]
             if (!claim) return {

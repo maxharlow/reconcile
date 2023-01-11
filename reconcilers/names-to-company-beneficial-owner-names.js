@@ -2,26 +2,25 @@ function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         messages: e => {
-            const name = e.config.passthrough.name
-            const page = e.config.passthrough.page
-            if (e.response.status === 403) throw new Error('The rate limit has been reached')
+            if (e.response.status === 403) throw new Error('the rate limit has been reached')
             if (e.response.status === 401) throw new Error(`API token ${e.config.params.api_token} is invalid`)
-            if (e.response.status >= 400) return `Received code ${e.response.status} for name ${name} on page ${page}`
+            if (e.response.status >= 400) return `received code ${e.response.status} on page ${e.config.passthrough.page}`
         }
     })
 
     function locate(entry) {
-        if (!parameters.apiToken) throw new Error('No API token found')
         const apiVersion = 'v0.4.8'
         const name = entry.data[parameters.nameField]
         if (!name) {
             alert({
-                message: `No name found on line ${entry.line}`,
+                identifier: `Line ${entry.line}`,
+                message: 'no name found',
                 importance: 'error'
             })
             return
         }
         return {
+            identifier: `"${name}"`,
             url: `https://api.opencorporates.com/${apiVersion}/statements/control_statements/search`,
             params: {
                 controlling_entities_name: name,
@@ -42,6 +41,7 @@ function initialise(parameters, requestor, alert) {
             const pageNumbers = Array.from(Array(pageTotal).keys()).slice(1) // slice off first page as we already have that
             const pageRequests = pageNumbers.map(async page => {
                 const query = {
+                    identifier: `"${response.passthrough.name}"`,
                     url: response.url,
                     params: {
                         controlling_entities_name: response.passthrough.name.trim(),
@@ -65,9 +65,9 @@ function initialise(parameters, requestor, alert) {
     function parse(response) {
         if (!response) return
         if (response.data.results.statements.length === 0) {
-            const name = response.passthrough.name
             alert({
-                message: `Could not find name ${name}`,
+                identifier: `"${response.passthrough.name}"`,
+                message: 'could not find name',
                 importance: 'error'
             })
             return

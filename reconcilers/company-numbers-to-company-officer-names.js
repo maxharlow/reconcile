@@ -2,34 +2,35 @@ function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         messages: e => {
-            const company = `${e.config.passthrough.companyNumber} (${e.config.passthrough.companyJurisdiction.toUpperCase()})`
-            if (e.response.status === 404) return `Could not find company ${company}`
-            if (e.response.status === 403) throw new Error('The rate limit has been reached')
+            if (e.response.status === 404) return 'could not find company'
+            if (e.response.status === 403) throw new Error('the rate limit has been reached')
             if (e.response.status === 401) throw new Error(`API token ${e.config.params.api_token} is invalid`)
-            if (e.response.status >= 400) return `Received code ${e.response.status} for company ${company}`
+            if (e.response.status >= 400) return `received code ${e.response.status}`
         }
     })
 
     function locate(entry) {
-        if (!parameters.apiToken) throw new Error('No API token found')
         const apiVersion = 'v0.4.8'
         const companyNumber = entry.data[parameters.companyNumberField]
         const companyJurisdiction = parameters.jurisdiction || entry.data[parameters.companyJurisdictionField]
         if (!companyNumber || companyNumber.match(/^0+$/)) {
             alert({
-                message: `No company number found on line ${entry.line}`,
+                identifier: `Line ${entry.line}`,
+                message: 'no company number found',
                 importance: 'error'
             })
             return
         }
         if (!companyJurisdiction) {
             alert({
+                identifier: `Company ${companyNumber}`,
                 message: `No jurisdiction found for company ${companyNumber}`,
                 importance: 'error'
             })
             return
         }
         return {
+            identifier: `Company ${companyNumber} (${companyJurisdiction})`,
             url: `https://api.opencorporates.com/${apiVersion}/companies/${companyJurisdiction}/${companyNumber}`,
             params: {
                 api_token: parameters.apiToken

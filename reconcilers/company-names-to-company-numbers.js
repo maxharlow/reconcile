@@ -2,7 +2,7 @@ function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         messages: e => {
-            if (e.response.status >= 400) return `Received code ${e.response.status}`
+            if (e.response.status >= 400) return `received code ${e.response.status}`
         }
     })
 
@@ -12,7 +12,8 @@ function initialise(parameters, requestor, alert) {
             const companyName = entry.data[parameters.companyNameField]
             if (!companyName) {
                 alert({
-                    message: `No company name found on line ${entry.line}`,
+                    identifier: `Line ${entry.line}`,
+                    message: 'no company name found',
                     importance: 'error'
                 })
                 return
@@ -25,6 +26,7 @@ function initialise(parameters, requestor, alert) {
             }]
         })
         return {
+            identifier: '"' + queries.join('", "') + '"',
             url: 'https://opencorporates.com/reconcile',
             method: 'POST',
             dataForm: {

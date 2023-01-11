@@ -14,11 +14,9 @@ function initialise(parameters, requestor, alert) {
     const request = requestor({
         limit: apiKeys.length * 2,
         messages: e => {
-            const individual = e.config.passthrough.individualName
-            const page = e.config.passthrough.page
-            if (e.response.status === 429) throw new Error('The rate limit has been reached')
+            if (e.response.status === 429) throw new Error('the rate limit has been reached')
             if (e.response.status === 401) throw new Error(`API key ${e.config.auth.username} is invalid`)
-            if (e.response.status >= 400) return `Received code ${e.response.status} for individual ${individual} on page ${page}`
+            if (e.response.status >= 400) return `received code ${e.response.status} on page ${e.config.passthrough.page}`
         }
     })
 
@@ -26,12 +24,14 @@ function initialise(parameters, requestor, alert) {
         const individualName = entry.data[parameters.individualNameField]
         if (!individualName) {
             alert({
-                message: `No individual name found on line ${entry.line}`,
+                identifier: `Line ${entry.line}`,
+                message: 'no individual name found',
                 importance: 'error'
             })
             return
         }
         return {
+            identifier: `"${individualName}"`,
             url: 'https://api.company-information.service.gov.uk/search/officers',
             auth: {
                 username: apiKeysRotated(),
@@ -55,6 +55,7 @@ function initialise(parameters, requestor, alert) {
             const pageNumbers = Array.from(Array(pageTotal).keys()).slice(1, 10) // slice off first page as we already have that, and pages over 10 as the API responds with a HTTP 416
             const pageRequests = pageNumbers.map(async page => {
                 const query = {
+                    identifier: `"${response.passthrough.individualName}"`,
                     url: response.url,
                     auth: {
                         username: apiKeysRotated(),

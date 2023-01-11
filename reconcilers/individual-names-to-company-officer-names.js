@@ -2,28 +2,27 @@ function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         messages: e => {
-            const individual = e.config.passthrough.individualName + (e.config.passthrough.individualJurisdiction ? ` (${e.config.passthrough.individualJurisdiction.toUpperCase()})` : '')
-            const page = e.config.passthrough.page
-            if (e.response.status === 403) throw new Error('The rate limit has been reached')
+            if (e.response.status === 403) throw new Error('the rate limit has been reached')
             if (e.response.status === 401) throw new Error(`API token ${e.config.params.api_token} is invalid`)
-            if (e.response.status >= 400) return `Received code ${e.response.status} for individual ${individual} on page ${page}`
+            if (e.response.status >= 400) return `received code ${e.response.status} on page ${e.config.passthrough.page}`
         }
     })
 
     function locate(entry) {
-        if (!parameters.apiToken) throw new Error('No API token found')
         const apiVersion = 'v0.4.8'
         const individualName = entry.data[parameters.individualNameField]
         const individualDateOfBirth = entry.data[parameters.individualDateOfBirthField]
         const individualJurisdiction = parameters.jurisdiction || entry.data[parameters.individualJurisdictionField]
         if (!individualName) {
             alert({
-                message: `No individual name found on line ${entry.line}`,
+                identifier: `Line ${entry.line}`,
+                message: 'no individual name found',
                 importance: 'error'
             })
             return
         }
         return {
+            identifier: `"${individualName}"` + (individualJurisdiction ? ` (${individualJurisdiction})` : ''),
             url: `https://api.opencorporates.com/${apiVersion}/officers/search`,
             params: {
                 q: individualName.trim(),
@@ -47,6 +46,7 @@ function initialise(parameters, requestor, alert) {
             const pageNumbers = Array.from(Array(pageTotal).keys()).slice(1) // slice off first page as we already have that
             const pageRequests = pageNumbers.map(async page => {
                 const query = {
+                    identifier: `"${response.passthrough.individualName}"` + (response.passthrough.individualJurisdiction ? ` (${response.passthrough.individualJurisdiction})` : ''),
                     url: response.url,
                     params: {
                         q: response.passthrough.individualName.trim(),
@@ -73,9 +73,9 @@ function initialise(parameters, requestor, alert) {
 
     function parse(response) {
         if (response.data.results.officers.length === 0) {
-            const individual = response.passthrough.individualName + (response.passthrough.individualJurisdiction ? ` (${response.passthrough.individualJurisdiction.toUpperCase()})` : '')
             alert({
-                message: `Could not find individual ${individual}`,
+                identifier: `"${individualName}"` + (individualJurisdiction ? ` (${individualJurisdiction})` : ''),
+                message: 'could not find individual',
                 importance: 'error'
             })
             return

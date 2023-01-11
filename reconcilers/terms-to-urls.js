@@ -5,10 +5,8 @@ function initialise(parameters, requestor, alert) {
     const request = requestor({
         limit: 1,
         messages: e => {
-            const term = e.config.passthrough.term
-            const page = e.config.passthrough.page
-            if (e.response.status === 429) throw new Error('The rate limit has been reached')
-            if (e.response.status >= 400) return `Received code ${e.response.status} for term "${term}" on page ${page}`
+            if (e.response.status === 429) throw new Error('the rate limit has been reached')
+            if (e.response.status >= 400) return `received code ${e.response.status} on page ${e.config.passthrough.page}`
         }
     })
 
@@ -16,12 +14,14 @@ function initialise(parameters, requestor, alert) {
         const term = entry.data[parameters.termField]
         if (!term) {
             alert({
-                message: `No term found on line ${entry.line}`,
+                identifier: `Line ${entry.line}`,
+                message: 'no term found',
                 importance: 'error'
             })
             return
         }
         return {
+            identifier: `"${term}"`,
             url: 'https://www.google.com/search',
             headers: {
                 'user-agent': 'Reconcile'
@@ -43,6 +43,7 @@ function initialise(parameters, requestor, alert) {
         if (parameters.includeAll && hasMorePages) {
             const page = responses.length
             const query = {
+                identifier: `"${response.passthrough.term}"`,
                 url: response.url,
                 headers: {
                     'user-agent': 'Reconcile'
@@ -68,7 +69,8 @@ function initialise(parameters, requestor, alert) {
         if (results.length === 0) {
             const term = parameters.supplement ? `${parameters.supplement} ${term}` : response.passthrough.term
             alert({
-                message: `Could not find term "${term}"`,
+                identifier: `"${term}"`,
+                message: 'could not find term',
                 importance: 'error'
             })
             return []

@@ -6,10 +6,8 @@ function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         messages: e => {
-            const ship = e.config.passthrough.shipName
-            const page = e.config.passthrough.page
-            if (e.response.headers.connection === 'close') throw new Error('The rate limit has been reached (Equasis allows about 500 per day)')
-            if (e.response.status >= 400) return `Received code ${e.response.status} for ship ${ship} on page ${page}`
+            if (e.response.headers.connection === 'close') throw new Error('the rate limit has been reached (Equasis allows about 500 per day)')
+            if (e.response.status >= 400) return `received code ${e.response.status} on page ${e.config.passthrough.page}`
         }
     })
 
@@ -24,12 +22,12 @@ function initialise(parameters, requestor, alert) {
                     j_password: parameters.password
                 })
             })
-            if (response.status === 404) throw new Error('Credentials are incorrect')
+            if (response.status === 404) throw new Error('Equasis credentials are incorrect')
             const value = response.headers['set-cookie'][0].split(';')[0]
             return value
         }
         catch (e) {
-            throw new Error(`Could not log in! ${e.message}`)
+            throw new Error(`could not log in! ${e.message}`)
         }
     }
 
@@ -37,12 +35,14 @@ function initialise(parameters, requestor, alert) {
         const shipName = entry.data[parameters.shipNameField]
         if (!shipName) {
             alert({
-                message: `No ship name found on line ${entry.line}`,
+                identifier: `Line ${entry.line}`,
+                message: 'no ship name found',
                 importance: 'error'
             })
             return
         }
         return {
+            identifier: `"${shipName}"`,
             url: 'http://www.equasis.org/EquasisWeb/restricted/Search',
             method: 'POST',
             dataQuery: {
@@ -70,6 +70,7 @@ function initialise(parameters, requestor, alert) {
             const pageNumbers = Array.from(Array(pageTotal).keys()).map(i => i + 1).slice(1) // slice off first page as we already have that
             const pageRequests = pageNumbers.map(async page => {
                 const query = {
+                    identifier: `"${response.passthrough.shipName}"`,
                     url: response.url,
                     method: 'POST',
                     dataQuery: {

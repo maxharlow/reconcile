@@ -14,11 +14,9 @@ function initialise(parameters, requestor, alert) {
     const request = requestor({
         limit: apiKeys.length * 2,
         messages: e => {
-            const company = e.config.passthrough.companyNumber
-            const page = e.config.passthrough.page
-            if (e.response.status === 429) throw new Error('The rate limit has been reached')
+            if (e.response.status === 429) throw new Error('the rate limit has been reached')
             if (e.response.status === 401) throw new Error(`API key ${e.config.auth.username} is invalid`)
-            if (e.response.status >= 400) return `Received code ${e.response.status} for company ${company} on page ${page}`
+            if (e.response.status >= 400) return `received code ${e.response.status} on page ${e.config.passthrough.page}`
         }
     })
 
@@ -26,7 +24,8 @@ function initialise(parameters, requestor, alert) {
         const companyNumber = entry.data[parameters.companyNumberField]
         if (!companyNumber || companyNumber.match(/^0+$/)) {
             alert({
-                message: `No company number found on line ${entry.line}`,
+                identifier: `Line ${entry.line}`,
+                message: 'no company number found',
                 importance: 'error'
             })
             return
@@ -60,6 +59,7 @@ function initialise(parameters, requestor, alert) {
             const pageNumbers = Array.from(Array(pageTotal).keys()).slice(1) // slice off first page as we already have that
             const pageRequests = pageNumbers.map(async page => {
                 const query = {
+                    identifier: `Company ${response.passthrough.companyNumber}`,
                     url: response.url,
                     auth: {
                         username: apiKeysRotated(),
@@ -86,7 +86,8 @@ function initialise(parameters, requestor, alert) {
     function parse(response) {
         if (response?.data.filing_history_status === 'filing-history-not-available-invalid-format') {
             alert({
-                message: `Filings not available for company ${response.passthrough.companyNumber}, perhaps company number is invalid?`,
+                identifier: `Company ${response.passthrough.companyNumber}`,
+                message: `filings not available, perhaps company number is invalid?`,
                 importance: 'error'
             })
             return

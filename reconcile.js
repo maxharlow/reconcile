@@ -54,10 +54,12 @@ function requestify(retries, cache, alert) {
                 const message = toErrorMessage(e)
                 const attempt = number > 0 && number <= retries && retries > 1 ? ' (retrying' + (number > 1 ? `, attempt ${number}` : '') + '...)' : ''
                 if (number === 1) alert({
+                    identifier: e.config.identifier,
                     source: toLocationName(e.config),
                     message: `${message}${attempt}`
                 })
                 else alert({
+                    identifier: e.config.identifier,
                     source: toLocationName(e.config),
                     message: `${message}${attempt}`
                 })
@@ -82,6 +84,7 @@ function requestify(retries, cache, alert) {
                 const isCached = await FSExtra.pathExists(`${cacheDirectory}/${hash}`)
                 if (isCached) {
                     alert({
+                        identifier: location.identifier,
                         source: locationName,
                         message: `cached @ ${hash}`
                     })
@@ -105,6 +108,7 @@ function requestify(retries, cache, alert) {
             }
             try {
                 alert({
+                    identifier: location.identifier,
                     source: locationName,
                     message: 'requesting...'
                 })
@@ -114,6 +118,7 @@ function requestify(retries, cache, alert) {
                     await FSExtra.writeJson(`${cacheDirectory}/${hash}`, response.data)
                 }
                 alert({
+                    identifier: location.identifier,
                     source: locationName,
                     message: 'done'
                 })
@@ -125,6 +130,7 @@ function requestify(retries, cache, alert) {
             }
             catch (e) {
                 alert({
+                    identifier: location.identifier,
                     source: locationName,
                     message: toErrorMessage(e),
                     importance: 'error'

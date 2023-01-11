@@ -14,12 +14,10 @@ function initialise(parameters, requestor, alert) {
     const request = requestor({
         limit: apiKeys.length * 2,
         messages: e => {
-            const officerID = e.config.passthrough.officerID
-            const page = e.config.passthrough.page
-            if (e.response.status === 404) return `Could not find officer ID ${officerID}`
-            if (e.response.status === 429) throw new Error('The rate limit has been reached')
+            if (e.response.status === 404) return 'could not find officer'
+            if (e.response.status === 429) throw new Error('the rate limit has been reached')
             if (e.response.status === 401) throw new Error(`API key ${e.config.auth.username} is invalid`)
-            if (e.response.status >= 400) return `Received code ${e.response.status} for officer ID ${officerID} on page ${page}`
+            if (e.response.status >= 400) return `received code ${e.response.status} on page ${e.config.passthrough.page}`
         }
     })
 
@@ -27,12 +25,14 @@ function initialise(parameters, requestor, alert) {
         const officerID = entry.data[parameters.officerIDField]
         if (!officerID) {
             alert({
-                message: `No officer ID found on line ${entry.line}`,
+                identifier: `Line ${entry.line}`,
+                message: 'no officer ID found',
                 importance: 'error'
             })
             return
         }
         return {
+            identifier: officerID,
             url: `https://api.company-information.service.gov.uk/officers/${officerID}/appointments`,
             auth: {
                 username: apiKeysRotated(),
@@ -55,6 +55,7 @@ function initialise(parameters, requestor, alert) {
             const pageNumbers = Array.from(Array(pageTotal).keys()).slice(1) // slice off first page as we already have that
             const pageRequests = pageNumbers.map(async page => {
                 const query = {
+                    identifier: response.passthrough.officerID,
                     url: response.url,
                     auth: {
                         username: apiKeysRotated(),

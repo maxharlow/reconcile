@@ -14,11 +14,10 @@ function initialise(parameters, requestor, alert) {
     const request = requestor({
         limit: apiKeys.length * 2,
         messages: e => {
-            const company = e.config.passthrough.companyNumber
-            if (e.response.status === 404) return `Could not find company ${company}`
-            if (e.response.status === 429) throw new Error('The rate limit has been reached')
+            if (e.response.status === 404) return `could not find company`
+            if (e.response.status === 429) throw new Error('the rate limit has been reached')
             if (e.response.status === 401) throw new Error(`API key ${e.config.auth.username} is invalid`)
-            if (e.response.status >= 400) return `Received code ${e.response.status} for company ${company}`
+            if (e.response.status >= 400) return `received code ${e.response.status}`
         }
     })
 
@@ -26,12 +25,14 @@ function initialise(parameters, requestor, alert) {
         const companyNumber = entry.data[parameters.companyNumberField]
         if (!companyNumber || companyNumber.match(/^0+$/)) {
             alert({
-                message: `No company number found on line ${entry.line}`,
+                identifier: `Line ${entry.line}`,
+                message: 'no company number found',
                 importance: 'error'
             })
             return
         }
         return {
+            identifier: `Company ${companyNumber}`,
             url: `https://api.company-information.service.gov.uk/company/${companyNumber.padStart(8, '0').toUpperCase()}`,
             auth: {
                 username: apiKeysRotated(),

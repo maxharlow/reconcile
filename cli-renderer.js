@@ -68,9 +68,11 @@ function draw(linesDrawn) {
     }
     const linesFull = [
         ...Object.values(alerts).map(details => {
-            const width = Process.stderr.columns - (details.message.length + 1)
+            const width = Process.stderr.columns - (details.identifier ? details.identifier.length + 2 : 0) - (details.message.length + 1)
             const sourceTruncated = details.source ? truncate(width, details.source) : null
             const elements = [
+                details.identifier ? Chalk.chalkStderr.blue(details.identifier) : '',
+                details.identifier ? ' ': '',
                 sourceTruncated,
                 sourceTruncated ? ' ' : '',
                 details.importance === 'error' ? Chalk.chalkStderr.red.bold(details.message)
@@ -132,8 +134,8 @@ function setup(verbose) {
     const alert = details => {
         if (finalisation) return
         if (!verbose && !details.importance) return
-        if (!doRedisplay) console.error([details.source, details.message].filter(x => x).join(' '))
-        const key = details.source || details.message
+        if (!doRedisplay) console.error([(details.identifier && `${details.identifier}:`), details.source, details.message].filter(x => x).join(' '))
+        const key = details.identifier + details.source || details.message
         alerts[key] = details
         isDirty = true
     }

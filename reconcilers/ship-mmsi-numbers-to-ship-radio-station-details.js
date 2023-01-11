@@ -4,8 +4,7 @@ function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         messages: e => {
-            const ship = e.config.passthrough.shipMMSINumber
-            if (e.response.status >= 400) return `Received code ${e.response.status} for ship ${ship}`
+            if (e.response.status >= 400) return `received code ${e.response.status}`
         }
     })
 
@@ -13,12 +12,14 @@ function initialise(parameters, requestor, alert) {
         const shipMMSINumber = entry.data[parameters.shipMMSINumberField]
         if (!shipMMSINumber) {
             alert({
-                message: `No ship MMSI number found on line ${entry.line}`,
+                identifier: `Line ${entry.line}`,
+                message: 'no ship MMSI number found',
                 importance: 'error'
             })
             return
         }
         return {
+            identifier: `MMSI ${shipMMSINumber}`,
             url: 'https://www.itu.int/mmsapp/ShipStation/list',
             method: 'POST',
             dataQuery: {
@@ -36,12 +37,14 @@ function initialise(parameters, requestor, alert) {
         const document = Cheerio.load(response.data)
         if (document('.label-danger').text().trim() === 'No record found!') {
             alert({
-                message: `No record found for MMSI ${response.passthrough.shipMMSINumber}`,
+                identifier: `MMSI ${shipMMSINumber}`,
+                message: 'no record found',
                 importance: 'error'
             })
             return
         }
         return {
+            identifier: `MMSI ${response.passthrough.shipMMSINumber}`,
             url: 'https://www.itu.int/mmsapp/ShipStation/list',
             method: 'POST',
             dataQuery: {
