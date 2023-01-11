@@ -179,8 +179,8 @@ async function load(command, filename, parameters = {}, retries = 5, cache = fal
     }
     const run = async () => source().batch(batch).setOptions({ maxParallel: 1 }).map(async items => {
         const executed = await execute(batch === 1 ? items[0] : items)
-        if (executed === undefined) {
-            if (join === 'outer') return items.map(item => ({ ...item, ...blank }))
+        if (executed === null) {
+            if (join === 'outer') return items.map(item => ({ ...item.data, ...blank }))
             else return []
         }
         return items.flatMap((item, i) => {
