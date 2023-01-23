@@ -51,7 +51,12 @@ function initialise(parameters, requestor, alert) {
 
     async function paginate(response) {
         if (!response) return
-        if (response.data.hits > 5000) { // also if there are over 10,000 we can't get them because of the two-page limit
+        if (response.data.hits > 10000) alert({
+            identifier: response.passthrough.companyType,
+            message: `there are ${response.data.hits.toLocaleString()} results but the API will only let you retrieve the first 10,000`,
+            importance: 'warning'
+        })
+        if (response.data.hits > 5000) {
             const pageTotal = Math.ceil(response.data.hits / 5000)
             const pageNumbers = Array.from(Array(pageTotal).keys()).slice(1, 2) // slice off first page as we already have that, also you get an error beyond two pages
             const pageRequests = pageNumbers.map(async page => {
