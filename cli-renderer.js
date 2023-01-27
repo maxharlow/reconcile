@@ -68,19 +68,20 @@ function draw(linesDrawn) {
     }
     const linesFull = [
         ...Object.values(alerts).map(details => {
-            const width = Process.stderr.columns - (details.identifier ? details.identifier.length + 2 : 0) - (details.message.length + 1)
-            const sourceTruncated = details.source ? truncate(width, details.source) : null
+            const width = Process.stderr.columns - (details.identifier ? details.identifier.length + 2 : 0)
+            const messageTruncated = truncate(width, details.message)
+            const sourceTruncated = details.source ? truncate(width - messageTruncated.length, details.source) : null
             const elements = [
                 details.identifier ? Chalk.chalkStderr.blue(details.identifier) : '',
                 details.identifier ? ' ': '',
                 sourceTruncated,
                 sourceTruncated ? ' ' : '',
-                details.importance === 'error' ? Chalk.chalkStderr.red.bold(details.message)
-                    : details.importance === 'warning' ? Chalk.chalkStderr.magenta.bold(details.message)
-                    : details.message.endsWith('...') && details.source ? Chalk.chalkStderr.yellow(details.message)
-                    : details.message.toLowerCase().startsWith('done') ? Chalk.chalkStderr.green(details.message)
-                    : details.source ? Chalk.chalkStderr.magenta(details.message)
-                    : details.message
+                details.importance === 'error' ? Chalk.chalkStderr.red.bold(messageTruncated)
+                    : details.importance === 'warning' ? Chalk.chalkStderr.magenta.bold(messageTruncated)
+                    : details.message.endsWith('...') && details.source ? Chalk.chalkStderr.yellow(messageTruncated)
+                    : details.message.toLowerCase().startsWith('done') ? Chalk.chalkStderr.green(messageTruncated)
+                    : details.source ? Chalk.chalkStderr.magenta(messageTruncated)
+                    : messageTruncated
             ]
             return elements.filter(x => x).join('').slice(0, Process.stderr.cols)
         }),
