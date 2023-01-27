@@ -83,7 +83,7 @@ function initialise(parameters, requestor, alert) {
     function parse(response) {
         if (!response) return
         const maximumResults = parameters.maximumResults || Infinity
-        const companies = response?.data.items
+        const companies = response.data.items
         return companies.slice(0, maximumResults).map(company => {
             const fields = {
                 companyNumber: company.company_number,

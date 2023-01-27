@@ -87,7 +87,7 @@ function initialise(parameters, requestor, alert) {
 
     function parse(response) {
         if (!response) return
-        const companies = response?.data.items
+        const companies = response.data.items
         return companies.map(company => {
             const fields = {
                 companyNumber: company.company_number,

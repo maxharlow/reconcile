@@ -80,7 +80,7 @@ function initialise(parameters, requestor, alert) {
 
     function parse(response) {
         if (!response) return
-        const appointments = response?.data.items
+        const appointments = response.data.items
         return appointments.map(appointment => {
             const fields = {
                 companyNumber: appointment.appointed_to.company_number,

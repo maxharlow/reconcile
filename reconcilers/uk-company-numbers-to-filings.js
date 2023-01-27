@@ -84,7 +84,8 @@ function initialise(parameters, requestor, alert) {
     }
 
     function parse(response) {
-        if (response?.data.filing_history_status === 'filing-history-not-available-invalid-format') {
+        if (!response) return
+        if (response.data.filing_history_status === 'filing-history-not-available-invalid-format') {
             alert({
                 identifier: `Company ${response.passthrough.companyNumber}`,
                 message: `filings not available, perhaps company number is invalid?`,
@@ -92,7 +93,7 @@ function initialise(parameters, requestor, alert) {
             })
             return
         }
-        const filings = response?.data.items || []
+        const filings = response.data.items || []
         const filingsFiltered = parameters.filingDescriptionMatch ? filings.filter(filing => filing.description?.match(parameters.filingDescriptionMatch)) : filings
         return filingsFiltered.map(filing => {
             const filingID = filing.links?.document_metadata?.split('document/')[1] || null

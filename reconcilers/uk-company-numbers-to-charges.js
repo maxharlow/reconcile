@@ -15,6 +15,7 @@ function initialise(parameters, requestor, alert) {
         limit: apiKeys.length * 2,
         messages: e => {
             if (e.response.status === 429) throw new Error('the rate limit has been reached')
+            if (e.response.status === 404) return 'no charges or company not found'
             if (e.response.status === 401) throw new Error(`API key ${e.config.auth.username} is invalid`)
             if (e.response.status >= 400) return `received code ${e.response.status} on page ${e.config.passthrough.page}`
         }
@@ -40,7 +41,6 @@ function initialise(parameters, requestor, alert) {
             params: {
                 items_per_page: 100
             },
-            validateStatus: status => status === 200 || status === 404, // as a 404 can just indicate no charges (as well as company not found)
             passthrough: {
                 companyNumber,
                 page: 1
@@ -80,7 +80,7 @@ function initialise(parameters, requestor, alert) {
 
     function parse(response) {
         if (!response) return
-        const charges = response?.data.items || []
+        const charges = response.data.items || []
         return charges.map(charge => {
             const fields = {
                 chargeCode: charge.charge_code || null,
