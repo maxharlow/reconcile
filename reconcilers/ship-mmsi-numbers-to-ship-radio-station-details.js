@@ -37,7 +37,7 @@ function initialise(parameters, requestor, alert) {
         const document = Cheerio.load(response.data)
         if (document('.label-danger').text().trim() === 'No record found!') {
             alert({
-                identifier: `MMSI ${shipMMSINumber}`,
+                identifier: `MMSI ${response.passthrough.shipMMSINumber}`,
                 message: 'no record found',
                 importance: 'error'
             })

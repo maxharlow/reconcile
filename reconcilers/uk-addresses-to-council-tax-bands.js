@@ -47,7 +47,7 @@ function initialise(parameters, requestor, alert) {
             const pageNumbers = Array.from(Array(pageTotal).keys()).slice(1) // slice off first page as we already have that
             const pageRequests = pageNumbers.map(async page => {
                 const query = {
-                    identifier: address || 'all',
+                    identifier: response.passthrough.address || 'all',
                     url: response.url,
                     method: 'POST',
                     headers: {
@@ -75,8 +75,8 @@ function initialise(parameters, requestor, alert) {
     function details(response) {
         const document = Cheerio.load(response.data)
         const results = document('#search-results-table tbody tr').get()
+        const address = [response.passthrough.addressNumber, response.passthrough.addressStreet, response.passthrough.addressCity, response.passthrough.addressPostcode].filter(x => x).join(', ')
         if (results.length === 0) {
-            const address = [response.passthrough.addressNumber, response.passthrough.addressStreet, response.passthrough.addressCity, response.passthrough.addressPostcode].filter(x => x).join(', ')
             alert({
                 identifier: address || 'all',
                 message: 'could not find any council tax registrations',
