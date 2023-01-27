@@ -19,7 +19,7 @@ function initialise(parameters, requestor, alert) {
             return
         }
         return {
-            identifier: wikidataURL,
+            identifier: wikipediaURL,
             url: wikipediaURL,
             passthrough: {
                 wikipediaURL
