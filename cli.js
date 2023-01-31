@@ -60,7 +60,8 @@ async function setup() {
         .option('V', { alias: 'verbose', type: 'boolean', describe: 'Print every request made', default: false })
         .help('?').alias('?', 'help')
         .version().alias('v', 'version')
-    const instructionsCommands = reconcilers.map(async command => {
+    await reconcilers.reduce(async (previous, command) => {
+        await previous
         const { default: reconciler } = await import(`./reconcilers/${command}.js`)
         const commandArgs = args => args
             .usage(`Usage: reconcile ${command} <filename>`)
@@ -68,8 +69,7 @@ async function setup() {
             .positional('filename', { type: 'string', describe: 'The input file to process' })
             .epilog(display(reconciler.details))
         return instructions.command(command, '', commandArgs)
-    })
-    await Promise.all(instructionsCommands)
+    }, Promise.resolve())
     if (instructions.argv['get-yargs-completions']) Process.exit(0)
     if (instructions.argv._.length === 0) instructions.showHelp().exit(0)
     const { alert, progress, finalise } = cliRenderer(instructions.argv.verbose)
