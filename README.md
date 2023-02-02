@@ -257,6 +257,21 @@ Produces a CSV including columns:
 
 <hr>
 
+#### `uk-company-numbers-to-company-beneficial-ownership-statements`
+
+Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of company numbers, and retrieve their beneficial ownership statements.
+
+Parameters:
+* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications).
+* `companyNumberField` Company number column.
+
+Produces a CSV including columns:
+* `beneficialOwnershipStatement`
+* `beneficialOwnershipStatementNotifiedDate`
+* `beneficialOwnershipStatementCeasedDate`
+
+<hr>
+
 #### `uk-company-numbers-to-uk-company-officer-ids`
 
 Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of company numbers, and retrieve the IDs and names of their officers.
