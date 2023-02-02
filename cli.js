@@ -52,7 +52,7 @@ async function setup() {
     const instructions = Yargs(Process.argv.slice(2))
         .usage('Usage: reconcile <command> <filename>')
         .wrap(null)
-        .completion('completion', false, () => reconcilers)
+        .completion('completion', false)
         .option('p', { alias: 'parameters', type: 'string', describe: 'Parameters to be passed to the reconciler, either in Json or Yaml' })
         .option('r', { alias: 'retries', type: 'number', nargs: 1, describe: 'Number of times a request should be retried', default: 5 })
         .option('c', { alias: 'cache', type: 'boolean', describe: 'Whether to cache HTTP requests', default: false })
