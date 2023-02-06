@@ -33,7 +33,7 @@
     },
     "scripts": {
         "test": "ava",
-        "postinstall": "[[ $SHELL == *zsh ]] && reconcile completion > /usr/local/share/zsh/site-functions/_reconcile",
-        "postuninstall": "[[ $SHELL == *zsh ]] && rm -f /usr/local/share/zsh/site-functions/_reconcile"
+        "postinstall": "(reconcile completion > /usr/local/share/zsh/site-functions/_reconcile) 2> /dev/null",
+        "postuninstall": "rm -f /usr/local/share/zsh/site-functions/_reconcile"
     }
 }
