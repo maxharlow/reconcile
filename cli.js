@@ -97,7 +97,7 @@ async function setup() {
         await processing
             .catch(async e => {
                 alert({
-                    message: instructions.argv.verbose ? e.stack : e.message,
+                    message: instructions.argv.verbose ? e.stack : `Fatal error: ${e.message}`,
                     importance: 'error'
                 })
                 await finalise('error')
