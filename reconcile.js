@@ -1,5 +1,6 @@
 import Crypto from 'crypto'
 import FSExtra from 'fs-extra'
+import Papaparse from 'papaparse'
 import Scramjet from 'scramjet'
 import Axios from 'axios'
 import AxiosRetry from 'axios-retry'
@@ -155,8 +156,9 @@ async function load(command, filename, parameters = {}, retries = 5, cache = fal
     const batch = reconciler.details.batch || 1
     const execute = reconciler.initialise(parameters, requestor, alert)
     const source = () => {
+        const origin = FSExtra.createReadStream(filename).pipe(Papaparse.parse(Papaparse.NODE_STREAM_INPUT, { header: true }))
         let line = 1
-        return Scramjet.StringStream.from(FSExtra.createReadStream(filename)).CSVParse({ header: true, delimiter: ',' }).map(data => {
+        return Scramjet.DataStream.from(origin).map(data => {
             return {
                 line: line++,
                 data

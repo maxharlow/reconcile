@@ -19,6 +19,7 @@
         "fs-extra": "11.1.x",
         "html-entities": "2.3.x",
         "luxon": "3.2.x",
+        "papaparse": "5.4.x",
         "puppeteer": "19.5.x",
         "scramjet": "4.36.x",
         "simple-wcswidth": "1.0.x",
