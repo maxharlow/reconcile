@@ -69,7 +69,7 @@ function draw(linesDrawn) {
     const linesFull = [
         ...Object.values(alerts).map(details => {
             const width = Process.stderr.columns - (details.identifier ? details.identifier.length + 2 : 0)
-            const messageTruncated = truncate(width, details.message)
+            const messageTruncated = truncate(width, details.message.replaceAll('\n', ' '))
             const sourceTruncated = details.source ? truncate(width - messageTruncated.length, details.source) : null
             const elements = [
                 details.identifier ? Chalk.chalkStderr.blue(details.identifier) : '',
@@ -83,7 +83,7 @@ function draw(linesDrawn) {
                     : details.source ? Chalk.chalkStderr.magenta(messageTruncated)
                     : messageTruncated
             ]
-            return elements.filter(x => x).join('').slice(0, Process.stderr.cols)
+            return elements.filter(x => x).join('')
         }),
         ...Object.entries(tickers).map(([operation, { proportion, prediction }]) => {
             const width = Process.stderr.columns - (operation.length + 20)
