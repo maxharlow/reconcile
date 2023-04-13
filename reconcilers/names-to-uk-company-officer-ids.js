@@ -21,28 +21,28 @@ function initialise(parameters, requestor, alert) {
     })
 
     function locate(entry) {
-        const individualName = entry.data[parameters.individualNameField]
-        if (!individualName) {
+        const name = entry.data[parameters.nameField]
+        if (!name) {
             alert({
                 identifier: `Line ${entry.line}`,
-                message: 'no individual name found',
+                message: 'no name found',
                 importance: 'error'
             })
             return
         }
         return {
-            identifier: `"${individualName}"`,
+            identifier: `"${name}"`,
             url: 'https://api.company-information.service.gov.uk/search/officers',
             auth: {
                 username: apiKeysRotated(),
                 password: ''
             },
             params: {
-                q: individualName.trim(),
+                q: name.trim(),
                 items_per_page: 100
             },
             passthrough: {
-                individualName,
+                name,
                 page: 1
             }
         }
@@ -55,19 +55,19 @@ function initialise(parameters, requestor, alert) {
             const pageNumbers = Array.from(Array(pageTotal).keys()).slice(1, 10) // slice off first page as we already have that, and pages over 10 as the API responds with a HTTP 416
             const pageRequests = pageNumbers.map(async page => {
                 const query = {
-                    identifier: `"${response.passthrough.individualName}"`,
+                    identifier: `"${response.passthrough.name}"`,
                     url: response.url,
                     auth: {
                         username: apiKeysRotated(),
                         password: ''
                     },
                     params: {
-                        q: response.passthrough.individualName.trim(),
+                        q: response.passthrough.name.trim(),
                         items_per_page: 100,
                         start_index: page * 100
                     },
                     passthrough: {
-                        individualName: response.passthrough.individualName,
+                        name: response.passthrough.name,
                         page: page + 1
                     }
                 }
@@ -81,35 +81,36 @@ function initialise(parameters, requestor, alert) {
 
     function parse(response, entry) {
         if (!response) return
-        const individuals = response.data.items
-        const byDateOfBirth = individual => {
+        const officers = response.data.items
+        const byDateOfBirth = officer => {
             if (!entry.data[parameters.dateOfBirthField]) return true // column for this row is blank
-            if (!individual.date_of_birth?.year || !individual.date_of_birth?.month) return false // date of birth specified in source, but no date of birth listed in this search result
-            return individual.date_of_birth.year.toString() === entry.data[parameters.dateOfBirthField].slice(0, 4)
-                && individual.date_of_birth.month.toString().padStart(2, '0') === entry.data[parameters.dateOfBirthField].slice(5, 7)
+            if (!officer.date_of_birth?.year || !officer.date_of_birth?.month) return false // date of birth specified in source, but no date of birth listed in this search result
+            return officer.date_of_birth.year.toString() === entry.data[parameters.dateOfBirthField].slice(0, 4)
+                && officer.date_of_birth.month.toString().padStart(2, '0') === entry.data[parameters.dateOfBirthField].slice(5, 7)
         }
         const normalised = name => {
             return name?.toLowerCase()
                 .replace(/[^a-z ]/g, '')
                 .replace(/^(mr|ms|mrs|miss|dr|sir)\.? /, '')
+                .replace(/,? (qc|cbe|obe|mbe|bem|rvo)$/, '')
         }
-        const byPreciseMatch = individual => {
+        const byPreciseMatch = officer => {
             if (!parameters.preciseMatch) return true
-            return normalised(individual.title) === normalised(entry.data[parameters.individualNameField])
+            return normalised(officer.title) === normalised(entry.data[parameters.nameField])
         }
-        const byNonMiddleNameMatch = individual => {
+        const byNonMiddleNameMatch = officer => {
             if (!parameters.nonMiddleNameMatch) return true
-            const entryIndividualName = normalised(entry.data[parameters.individualNameField])
-            const resultIndividualName = normalised(individual.title)
-            return resultIndividualName.split(' ')[0] === entryIndividualName.split(' ')[0]
-                && resultIndividualName.split(' ').pop() === entryIndividualName.split(' ').pop()
+            const entryName = normalised(entry.data[parameters.nameField])
+            const resultName = normalised(officer.title)
+            return resultName.split(' ')[0] === entryName.split(' ')[0]
+                && resultName.split(' ').pop() === entryName.split(' ').pop()
         }
-        return individuals.filter(byDateOfBirth).filter(byPreciseMatch).filter(byNonMiddleNameMatch).map(individual => {
+        return officers.filter(byDateOfBirth).filter(byPreciseMatch).filter(byNonMiddleNameMatch).map(officer => {
             const fields = {
-                officerID: individual.links.self.split('/')[2],
-                officerName: individual.title,
-                officerDateOfBirth: [individual.date_of_birth?.year, individual.date_of_birth?.month, individual.date_of_birth?.day].filter(x => x).join('-') || null,
-                officerAddress: individual.address_snippet
+                officerID: officer.links.self.split('/')[2],
+                officerName: officer.title,
+                officerDateOfBirth: [officer.date_of_birth?.year, officer.date_of_birth?.month, officer.date_of_birth?.day].filter(x => x).join('-') || null,
+                officerAddress: officer.address_snippet
             }
             return fields
         })
@@ -136,8 +137,8 @@ const details = {
             required: true
         },
         {
-            name: 'individualNameField',
-            description: 'Individual name column.',
+            name: 'nameField',
+            description: 'Name column.',
             required: true
         },
         {
@@ -146,11 +147,11 @@ const details = {
         },
         {
             name: 'nonMiddleNameMatch',
-            description: 'Match individual name only based on the first and last names. Ignores non-alphabetical differences and titles.'
+            description: 'Match name only based on the first and last names. Ignores non-alphabetical differences and titles.'
         },
         {
             name: 'preciseMatch',
-            description: 'Match individual name precisely. Ignores non-alphabetical differences and titles.'
+            description: 'Match name precisely. Ignores non-alphabetical differences and titles.'
         }
     ],
     columns: [

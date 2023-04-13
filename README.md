@@ -110,16 +110,16 @@ Produces a CSV including columns:
 
 <hr>
 
-#### `individual-names-to-company-officer-names`
+#### `names-to-company-officer-names`
 
-Use [OpenCorporates](https://opencorporates.com/) to look up a list of individual names and find which companies they are officers of (typically either as directors or secretaries).
+Use [OpenCorporates](https://opencorporates.com/) to look up a list of names and find which companies they are officers of (typically either as directors or secretaries).
 
 Parameters:
 * `apiToken` An OpenCorporates API token.
-* `individualNameField` Individual name column.
-* `individualDateOfBirthField` Individual birth date column. It should use [ISO 8601 format](https://en.wikipedia.org/wiki/ISO_8601). For a range the two dates should be separated with a colon. Optional.
-* `individualJurisdictionField` Jurisdiction code column, if any. It should use [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes). Required unless jurisdiction is specified.
-* `jurisdiction` If all individuals have the same jurisdiction you can specify it here instead of in a column. Required unless individualJurisdictionField is specified.
+* `nameField` Name column.
+* `dateOfBirthField` Birth date column. It should use [ISO 8601 format](https://en.wikipedia.org/wiki/ISO_8601). For a range the two dates should be separated with a colon. Optional.
+* `jurisdictionField` Jurisdiction code column, if any. It should use [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes). Required unless jurisdiction is specified.
+* `jurisdiction` If all officers have the same jurisdiction you can specify it here instead of in a column. Required unless jurisdictionField is specified.
 
 Produces a CSV including columns:
 * `officerName`
@@ -143,16 +143,26 @@ Use [OpenCorporates](https://opencorporates.com/) to look up a list of names of 
 Parameters:
 * `apiToken` An OpenCorporates API token.
 * `nameField` Name column.
+* `dateOfBirthField` Date of birth column, in ISO 8601 format. If given will use the month and year to filter results. Optional.
+* `nonMiddleNameMatch` Match name only based on the first and last names. Ignores non-alphabetical differences and titles. Optional.
+* `preciseMatch` Match name precisely. Ignores non-alphabetical differences and titles. Optional.
 
 Produces a CSV including columns:
-* `ownerName`
-* `ownerCompanyNumber`
-* `ownerCompanyJurisdiction`
-* `ownerBirthDate`
-* `ownerNationality`
-* `ownerCountryOfResidence`
-* `ownerAddress`
-* `ownerControlMechanisms`
+* `beneficialOwnerName`
+* `beneficialOwnerTitle`
+* `beneficialOwnerFirstName`
+* `beneficialOwnerMiddleNames`
+* `beneficialOwnerLastName`
+* `beneficialOwnerKind`
+* `beneficialOwnerControlMechanisms`
+* `beneficialOwnerNotifiedDate`
+* `beneficialOwnerCeasedDate`
+* `beneficialOwnerNationality`
+* `beneficialOwnerAddress`
+* `beneficialOwnerDateOfBirth`
+* `beneficialOwnerCountryOfResidence`
+* `beneficialOwnerCompanyNumber`
+* `beneficialOwnerCompanyJurisdiction`
 * `companyName`
 * `companyNumber`
 * `companyJurisdiction`
@@ -430,16 +440,16 @@ Produces a CSV including columns:
 
 <hr>
 
-#### `individual-names-to-uk-company-officer-ids`
+#### `names-to-uk-company-officer-ids`
 
-Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of individual names and find the ID numbers for each. Many officers will have multiple IDs associated with them. This is limited to bringing back the first 10 pages of matches.
+Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of names of companies or individuals and find the ID numbers for each. Many officers will have multiple IDs associated with them. This is limited to bringing back the first 10 pages of matches.
 
 Parameters:
 * `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications).
-* `individualNameField` Individual name column.
+* `nameField` Name column.
 * `dateOfBirthField` Date of birth column, in ISO 8601 format. If given will use the month and year to filter results. Optional.
-* `nonMiddleNameMatch` Match individual name only based on the first and last names. Ignores non-alphabetical differences and titles. Optional.
-* `preciseMatch` Match individual name precisely. Ignores non-alphabetical differences and titles. Optional.
+* `nonMiddleNameMatch` Match name only based on the first and last names. Ignores non-alphabetical differences and titles. Optional.
+* `preciseMatch` Match name precisely. Ignores non-alphabetical differences and titles. Optional.
 
 Produces a CSV including columns:
 * `officerID`

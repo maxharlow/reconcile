@@ -10,31 +10,31 @@ function initialise(parameters, requestor, alert) {
 
     function locate(entry) {
         const apiVersion = 'v0.4.8'
-        const individualName = entry.data[parameters.individualNameField]
-        const individualDateOfBirth = entry.data[parameters.individualDateOfBirthField]
-        const individualJurisdiction = parameters.jurisdiction || entry.data[parameters.individualJurisdictionField]
-        if (!individualName) {
+        const name = entry.data[parameters.nameField]
+        const dateOfBirth = entry.data[parameters.dateOfBirthField]
+        const jurisdiction = parameters.jurisdiction || entry.data[parameters.jurisdictionField]
+        if (!name) {
             alert({
                 identifier: `Line ${entry.line}`,
-                message: 'no individual name found',
+                message: 'no name found',
                 importance: 'error'
             })
             return
         }
         return {
-            identifier: `"${individualName}"` + (individualJurisdiction ? ` (${individualJurisdiction})` : ''),
+            identifier: `"${name}"` + (jurisdiction ? ` (${jurisdiction})` : ''),
             url: `https://api.opencorporates.com/${apiVersion}/officers/search`,
             params: {
-                q: individualName.trim(),
-                ...(individualDateOfBirth ? { date_of_birth: individualDateOfBirth } : {}),
-                ...(individualJurisdiction ? { jurisdiction_code: individualJurisdiction.trim() } : {}),
+                q: name.trim(),
+                ...(dateOfBirth ? { date_of_birth: dateOfBirth } : {}),
+                ...(jurisdiction ? { jurisdiction_code: jurisdiction.trim() } : {}),
                 api_token: parameters.apiToken,
                 per_page: 100
             },
             passthrough: {
-                individualName,
-                individualDateOfBirth,
-                individualJurisdiction,
+                name,
+                dateOfBirth,
+                jurisdiction,
                 page: 1
             }
         }
@@ -46,20 +46,20 @@ function initialise(parameters, requestor, alert) {
             const pageNumbers = Array.from(Array(pageTotal).keys()).slice(1) // slice off first page as we already have that
             const pageRequests = pageNumbers.map(async page => {
                 const query = {
-                    identifier: `"${response.passthrough.individualName}"` + (response.passthrough.individualJurisdiction ? ` (${response.passthrough.individualJurisdiction})` : ''),
+                    identifier: `"${response.passthrough.name}"` + (response.passthrough.jurisdiction ? ` (${response.passthrough.jurisdiction})` : ''),
                     url: response.url,
                     params: {
-                        q: response.passthrough.individualName.trim(),
-                        date_of_birth: response.passthrough.individualDateOfBirth,
-                        jurisdiction_code: response.passthrough.individualJurisdiction ? response.passthrough.individualJurisdiction.trim() : undefined,
+                        q: response.passthrough.name.trim(),
+                        date_of_birth: response.passthrough.dateOfBirth,
+                        jurisdiction_code: response.passthrough.jurisdiction ? response.passthrough.jurisdiction.trim() : undefined,
                         api_token: parameters.apiToken,
                         per_page: 100,
                         page
                     },
                     passthrough: {
-                        individualName: response.passthrough.individualName,
-                        individualDateOfBirth: response.passthrough.individualDateOfBirth,
-                        individualJurisdiction: response.passthrough.individualJurisdiction,
+                        name: response.passthrough.name,
+                        dateOfBirth: response.passthrough.dateOfBirth,
+                        jurisdiction: response.passthrough.jurisdiction,
                         page
                     }
                 }
@@ -74,8 +74,8 @@ function initialise(parameters, requestor, alert) {
     function parse(response) {
         if (response.data.results.officers.length === 0) {
             alert({
-                identifier: `"${individualName}"` + (individualJurisdiction ? ` (${individualJurisdiction})` : ''),
-                message: 'could not find individual',
+                identifier: `"${response.passthrough.name}"` + (response.passthrough.jurisdiction ? ` (${response.passthrough.jurisdiction})` : ''),
+                message: 'could not find name',
                 importance: 'error'
             })
             return
@@ -118,21 +118,21 @@ const details = {
             required: true
         },
         {
-            name: 'individualNameField',
-            description: 'Individual name column.',
+            name: 'nameField',
+            description: 'Name column.',
             required: true
         },
         {
-            name: 'individualDateOfBirthField',
-            description: 'Individual birth date column. It should use ISO 8601 format. For a range the two dates should be separated with a colon.'
+            name: 'dateOfBirthField',
+            description: 'Birth date column. It should use ISO 8601 format. For a range the two dates should be separated with a colon.'
         },
         {
-            name: 'individualJurisdictionField',
+            name: 'jurisdictionField',
             description: 'Jurisdiction code column, if any. It should use ISO 3166-2 format. Required unless jurisdiction is specified.'
         },
         {
             name: 'jurisdiction',
-            description: 'If all individuals have the same jurisdiction you can specify it here instead of in a column. Required unless individualJurisdictionField is specified.'
+            description: 'If all officers have the same jurisdiction you can specify it here instead of in a column. Required unless jurisdictionField is specified.'
         }
     ],
     columns: [
