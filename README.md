@@ -138,7 +138,7 @@ Produces a CSV including columns:
 
 #### `names-to-company-beneficial-owner-names`
 
-Use [OpenCorporates](https://opencorporates.com/) to look up a list of names of companies or individuals and find which companies are their beneficial owners. Includes past beneficial owners.
+Use [OpenCorporates](https://opencorporates.com/) to look up a list of names of companies or individuals and find which companies they are beneficial owners of. Includes past beneficial owners.
 
 Parameters:
 * `apiToken` An OpenCorporates API token.
