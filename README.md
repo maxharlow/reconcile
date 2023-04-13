@@ -230,7 +230,7 @@ Produces a CSV including columns:
 * `filingPaperFiled`
 * `filingID`
 * `filingURL`
-* `filingAPIURL
+* `filingAPIURL`
 
 <hr>
 
