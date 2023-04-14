@@ -110,7 +110,7 @@ function initialise(parameters, requestor, alert) {
                 officerID: officer.links.self.split('/')[2],
                 officerName: officer.title,
                 officerDateOfBirth: [officer.date_of_birth?.year, officer.date_of_birth?.month, officer.date_of_birth?.day].filter(x => x).join('-') || null,
-                officerAddress: officer.address_snippet
+                officerAddress: officer.address ? [officer.address.care_of, officer.address.premises, officer.address.po_box, officer.address.address_line_1, officer.address.address_line_2, officer.address.locality, officer.address.region, officer.address.postal_code, officer.address.country].map(x => x?.trim()).filter(x => x).join(', ') : null
             }
             return fields
         })

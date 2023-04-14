@@ -93,7 +93,7 @@ function initialise(parameters, requestor, alert) {
                 officerResignedDate: appointment.resigned_on || null,
                 officerNationality: appointment.nationality || null,
                 officerOccupation: appointment.occupation || null,
-                officerAddress: [appointment.address.care_of, appointment.address.premises, appointment.address.po_box, appointment.address.address_line_1, appointment.address.address_line_2, appointment.address.locality, appointment.address.region, appointment.address.postal_code, appointment.address.country].filter(x => x).join(', '),
+                officerAddress: [appointment.address.care_of, appointment.address.premises, appointment.address.po_box, appointment.address.address_line_1, appointment.address.address_line_2, appointment.address.locality, appointment.address.region, appointment.address.postal_code, appointment.address.country].map(x => x?.trim()).filter(x => x).join(', '),
                 officerCountryOfResidence: appointment.country_of_residence || null
             }
             return fields

@@ -93,7 +93,7 @@ function initialise(parameters, requestor, alert) {
                 officerResignedDate: officer.resigned_on || null,
                 officerOccupation: officer.occupation || null,
                 officerPostcode: officer.address.postal_code,
-                officerAddress: officer.address ? [officer.address.care_of, officer.address.premises, officer.address.po_box, officer.address.address_line_1, officer.address.address_line_2, officer.address.locality, officer.address.region, officer.address.postal_code, officer.address.country].filter(x => x).join(', ') : null,
+                officerAddress: officer.address ? [officer.address.care_of, officer.address.premises, officer.address.po_box, officer.address.address_line_1, officer.address.address_line_2, officer.address.locality, officer.address.region, officer.address.postal_code, officer.address.country].map(x => x?.trim()).filter(x => x).join(', ') : null,
                 officerCountryOfResidence: officer.country_of_residence || null,
                 officerFormerNames: officer.former_names ? officer.former_names.map(name => [name.surname, name.forenames].filter(name => !['NONE', 'NONE NONE', 'N/A', 'N/A N/A', undefined].includes(name)).join(', ')).filter(x => x.length).join('; ') : null,
                 officerIdentificationType: officer.identification && officer.identification.identification_type ? officer.identification.identification_type : null,

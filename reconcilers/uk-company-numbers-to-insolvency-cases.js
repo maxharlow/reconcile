@@ -73,7 +73,7 @@ function initialise(parameters, requestor, alert) {
                     const dateFrom = practitioner.appointed_on ? ` from ${practitioner.appointed_on}` : ''
                     const dateTo = practitioner.ceased_to_act_on ? ` to ${practitioner.ceased_to_act_on}` : ''
                     const date = dateFrom + dateTo
-                    const address = [practitioner.address.address_line_1, practitioner.address.address_line_2, practitioner.address.locality, practitioner.address.region, practitioner.address.postal_code, practitioner.address.country].filter(x => x).join(', ')
+                    const address = [practitioner.address.address_line_1, practitioner.address.address_line_2, practitioner.address.locality, practitioner.address.region, practitioner.address.postal_code, practitioner.address.country].map(x => x?.trim()).filter(x => x).join(', ')
                     return `${practitioner.name}, ${practitioner.role}${date} (${address})`
                 }).join('; '),
                 companyInsolvencyCaseNotes: insolvencyCase.notes || null
