@@ -20,7 +20,7 @@
         "html-entities": "2.3.x",
         "luxon": "3.3.x",
         "papaparse": "5.3.x",
-        "puppeteer": "19.8.x",
+        "puppeteer": "19.9.x",
         "scramjet": "4.36.x",
         "simple-wcswidth": "1.0.x",
         "yaml": "2.2.x",
