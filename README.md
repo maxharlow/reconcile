@@ -664,7 +664,7 @@ Parameters:
 * `shipMMSINumberField` Ship MMSI number column.
 
 Produces a CSV including columns:
-* `shipIMONumber
+* `shipIMONumber`
 * `shipName`
 * `shipTonnage`
 * `shipType`
