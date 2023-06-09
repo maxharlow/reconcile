@@ -68,7 +68,7 @@ function draw(linesDrawn) {
     }
     const linesFull = [
         ...Object.values(alerts).map(details => {
-            const width = Process.stderr.columns - (details.identifier ? details.identifier.length + 2 : 0)
+            const width = Process.stderr.columns - (details.identifier ? SimpleWCSWidth.wcswidth(details.identifier) + 2 : 0)
             const messageTruncated = truncate(width, details.message.replaceAll('\n', ' '))
             const sourceTruncated = details.source ? truncate(width - messageTruncated.length, details.source) : null
             const elements = [
