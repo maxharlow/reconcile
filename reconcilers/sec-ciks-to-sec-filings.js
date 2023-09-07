@@ -35,6 +35,30 @@ function initialise(parameters, requestor, alert) {
         }
     }
 
+    async function paginate(response, responses = []) {
+        if (!response) return
+        const document = Cheerio.load(response.data)
+        const hasMorePages = document('[value="Next 100"]').length
+        if (hasMorePages) {
+            const query = {
+                identifier: `CIK ${response.passthrough.cik}`,
+                url: 'https://www.sec.gov/cgi-bin/browse-edgar',
+                params: {
+                    action: 'getcompany',
+                    CIK: response.passthrough.cik,
+                    type: parameters.filingType,
+                    count: 100,
+                    start: (responses.length + 1) * 100
+                },
+                passthrough: {
+                    ...response.passthrough
+                }
+            }
+            return paginate(await request(query), responses.concat(response))
+        }
+        return responses.concat(response)
+    }
+
     function details(response) {
         if (!response) return
         const document = Cheerio.load(response.data)
@@ -48,7 +72,7 @@ function initialise(parameters, requestor, alert) {
             })
             return
         }
-        const results = document('.tableFile2 tr:not(:first-of-type)').get() // note this will only get the first 100 results!
+        const results = document('.tableFile2 tr:not(:first-of-type)').get()
         if (results.length === 0) {
             const filings = parameters.filingType ? `${parameters.filingType} filings` : 'filings'
             const cik = response.passthrough.cik
@@ -62,11 +86,16 @@ function initialise(parameters, requestor, alert) {
         return results.map(result => {
             const element = Cheerio.load(result)
             const url = 'https://www.sec.gov' + element('td:nth-of-type(2) a').attr('href')
+            const description = element('td:nth-of-type(3)').text()
             return {
+                identifier: `CIK ${response.passthrough.cik}`,
                 url,
                 passthrough: {
+                    cik: response.passthrough.cik,
                     filingDate: element('td:nth-of-type(4)').text(),
                     filingType: element('td:nth-of-type(1)').text(),
+                    filingAccession: description.match(/Acc-no: ([0-9\-]+)/)[1],
+                    filingDescription: description.split('Acc-no:')[0],
                     filingDetail: url
                 }
             }
@@ -82,6 +111,8 @@ function initialise(parameters, requestor, alert) {
             return {
                 filingDate: response.passthrough.filingDate,
                 filingType: response.passthrough.filingType,
+                filingAccession: response.passthrough.filingAccession,
+                filingDescription: response.passthrough.filingDescription,
                 filingDetail: response.passthrough.filingDetail,
                 filingDocumentType: element('td:nth-of-type(4)').text(),
                 filingDocumentDescription: element('td:nth-of-type(2)').text(),
@@ -102,7 +133,9 @@ function initialise(parameters, requestor, alert) {
     async function run(input) {
         const dataLocated = locate(input)
         const dataLocatedRequested = await request(dataLocated)
-        const dataDetailed = details(dataLocatedRequested)
+        if (!dataLocatedRequested) return
+        const dataLocatedPaginated = await paginate(dataLocatedRequested)
+        const dataDetailed = await Promise.all(dataLocatedPaginated.flatMap(details))
         if (!dataDetailed) return
         const dataDetailedRequested = await Promise.all(dataDetailed.map(request))
         if (!dataDetailedRequested) return
@@ -135,6 +168,8 @@ const details = {
     columns: [
         { name: 'filingDate' },
         { name: 'filingType' },
+        { name: 'filingAccession' },
+        { name: 'filingDescription' },
         { name: 'filingDetail' },
         { name: 'filingDocumentType' },
         { name: 'filingDocumentDescription' },

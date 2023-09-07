@@ -563,6 +563,8 @@ Parameters:
 Produces a CSV including columns:
 * `filingDate`
 * `filingType`
+* `filingAccession`
+* `filingDescription`
 * `filingDetail`
 * `filingDocumentType`
 * `filingDocumentDescription`
