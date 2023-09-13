@@ -558,7 +558,8 @@ Use the [SEC Edgar company filings search](https://www.sec.gov/edgar/searchedgar
 Parameters:
 * `cikField` CIK column.
 * `filingType` Type of filings to include, eg. 10-K. Optional. Default is all filings.
-* `includeAll` Set true to include all filed documents, instead of just the first. Optional. Default is first only.
+* `maximumResults` Maximum number of results to include for each entity. Optional. Default is all.
+* `maximumDate` Maximum announcement date for announcements from each entity, in ISO 8601 format. Optional. Default is no limit.
 
 Produces a CSV including columns:
 * `filingDate`

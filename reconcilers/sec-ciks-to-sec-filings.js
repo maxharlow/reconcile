@@ -27,7 +27,8 @@ function initialise(parameters, requestor, alert) {
                 action: 'getcompany',
                 CIK: cik,
                 type: parameters.filingType,
-                count: 100
+                count: 100,
+                ...(parameters.maximumDate ? { datea: parameters.maximumDate } : {})
             },
             passthrough: {
                 cik
@@ -37,9 +38,10 @@ function initialise(parameters, requestor, alert) {
 
     async function paginate(response, responses = []) {
         if (!response) return
+        const maximumResults = parameters.maximumResults || Infinity
         const document = Cheerio.load(response.data)
         const hasMorePages = document('[value="Next 100"]').length
-        if (hasMorePages) {
+        if (hasMorePages && totalResults < maximumResults) {
             const query = {
                 identifier: `CIK ${response.passthrough.cik}`,
                 url: 'https://www.sec.gov/cgi-bin/browse-edgar',
@@ -48,7 +50,8 @@ function initialise(parameters, requestor, alert) {
                     CIK: response.passthrough.cik,
                     type: parameters.filingType,
                     count: 100,
-                    start: (responses.length + 1) * 100
+                    start: (responses.length + 1) * 100,
+                    ...(parameters.maximumDate ? { datea: parameters.maximumDate } : {})
                 },
                 passthrough: {
                     ...response.passthrough
@@ -81,7 +84,7 @@ function initialise(parameters, requestor, alert) {
                 message: `no ${filings} found`,
                 importance: 'error'
             })
-            return
+            return []
         }
         return results.map(result => {
             const element = Cheerio.load(result)
@@ -120,14 +123,12 @@ function initialise(parameters, requestor, alert) {
                 filingDocument: 'https://www.sec.gov' + element('td:nth-of-type(3) a').attr('href')
             }
         })
-        const limit = parameters.includeAll ? Infinity : 1
         return contents
             .filter(entry => entry.filingDocumentName !== '') // exclude documents with no name
             .map(entry => { // remove document name from entry
                 const { filingDocumentName, ...rest } = entry
                 return rest
             })
-            .slice(0, limit)
     }
 
     async function run(input) {
@@ -137,9 +138,10 @@ function initialise(parameters, requestor, alert) {
         const dataLocatedPaginated = await paginate(dataLocatedRequested)
         const dataDetailed = await Promise.all(dataLocatedPaginated.flatMap(details))
         if (!dataDetailed) return
-        const dataDetailedRequested = await Promise.all(dataDetailed.map(request))
-        if (!dataDetailedRequested) return
-        const dataParsed = dataDetailedRequested.flatMap(parse)
+        const dataDetailedFiltered = dataDetailed.slice(0, parameters.maximumResults || Infinity)
+        const dataDetailedFilteredRequested = await Promise.all(dataDetailedFiltered.map(request))
+        if (!dataDetailedFilteredRequested) return
+        const dataParsed = dataDetailedFilteredRequested.flatMap(parse)
         return dataParsed
     }
 
@@ -160,9 +162,14 @@ const details = {
             defaults: 'all'
         },
         {
-            name: 'includeAll',
-            description: 'Set true to include all filed documents, instead of just the first.',
-            defaults: 'first only'
+            name: 'maximumResults',
+            description: 'Maximum number of results to include for each entity.',
+            defaults: 'all'
+        },
+        {
+            name: 'maximumDate',
+            description: 'Maximum announcement date for announcements from each entity, in ISO 8601 format.',
+            defaults: 'no limit'
         }
     ],
     columns: [
