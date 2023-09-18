@@ -195,7 +195,7 @@ Produces a CSV including columns:
 * `companyAddressIsInDispute`
 * `companyAddressIsUndeliverable`
 * `companyPreviousNames`
-* `companySICs`
+* `companySICCodes`
 * `companyCanFile`
 * `companyHasInsolvencyHistory`
 * `companyHasCharges`
