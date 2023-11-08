@@ -4,6 +4,17 @@ import Cheerio from 'cheerio'
 
 function initialise(parameters, requestor, alert) {
 
+    const credentials = [parameters.credentials].flat()
+
+    const credentialsRotated = (() => {
+        let next = 0
+        return () => {
+            const credential = credentials[next]
+            next = (next + 1) % credentials.length
+            return credential
+        }
+    })()
+
     const request = requestor({
         messages: e => {
             if (e.response.headers.connection === 'close') throw new Error('the rate limit has been reached (Equasis allows about 500 per day)')
@@ -13,13 +24,14 @@ function initialise(parameters, requestor, alert) {
 
     async function login() {
         try {
+            const [email, password] = credentialsRotated().split(/:(.*)/)
             const response = await Axios({
                 method: 'POST',
                 url: 'http://www.equasis.org/EquasisWeb/authen/HomePage',
                 validateStatus: status => (status >= 200 && status < 300) || status === 404,
                 data: Querystring.stringify({
-                    j_email: parameters.email,
-                    j_password: parameters.password
+                    j_email: email,
+                    j_password: password
                 })
             })
             if (response.status === 404) throw new Error('Equasis credentials are incorrect')
@@ -112,13 +124,8 @@ function initialise(parameters, requestor, alert) {
 const details = {
     parameters: [
         {
-            name: 'email',
-            description: 'The email address for a registered Equasis account.',
-            required: true
-        },
-        {
-            name: 'password',
-            description: 'The password for a registered Equasis account.',
+            name: 'credentials',
+            description: 'A email address and password pair, separated by a colon, for a registered Equasis account.',
             required: true
         },
         {

@@ -635,8 +635,7 @@ Produces a CSV including columns:
 Use [Equasis](https://www.equasis.org/) to take a list of ship IMO numbers, and retrieve all their connected companies, as well as other details. Note Equasis only allows around 500 lookups per day. If you exceed that two days in a row you get blocked for seven days.
 
 Parameters:
-* `email` The email address for a registered Equasis account.
-* `password` The password for a registered Equasis account.
+* `credentials` A email address and password pair, separated by a colon, for a registered Equasis account.
 * `shipIMONumberField` Ship IMO number column.
 
 Produces a CSV including columns:
@@ -662,8 +661,7 @@ Produces a CSV including columns:
 Use [Equasis](https://www.equasis.org/) to take a list of ship MMSI numbers, and retrieve the IMO number for each. Note Equasis only allows around 500 lookups per day. If you exceed that two days in a row you get blocked for seven days.
 
 Parameters:
-* `email` The email address for a registered Equasis account.
-* `password` The password for a registered Equasis account.
+* `credentials` A email address and password pair, separated by a colon, for a registered Equasis account.
 * `shipMMSINumberField` Ship MMSI number column.
 
 Produces a CSV including columns:
@@ -681,8 +679,7 @@ Produces a CSV including columns:
 Use [Equasis](https://www.equasis.org/) to take a list of ship names, and retrieve their IMO numbers. Note Equasis only allows around 500 lookups per day. If you exceed that two days in a row you get blocked for seven days.
 
 Parameters:
-* `email` The email address for a registered Equasis account.
-* `password` The password for a registered Equasis account.
+* `credentials` A email address and password pair, separated by a colon, for a registered Equasis account.
 * `shipNameField` Ship name column.
 
 Produces a CSV including columns:

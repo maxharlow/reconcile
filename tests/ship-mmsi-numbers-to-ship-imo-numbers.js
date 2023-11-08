@@ -4,12 +4,10 @@ import Process from 'process'
 import Reconcile from '../reconcile.js'
 
 Ava('standard', async test => {
-    test.truthy(Process.env.EQUASIS_EMAIL)
-    test.truthy(Process.env.EQUASIS_PASSWORD)
+    test.truthy(Process.env.EQUASIS_CREDENTIALS)
     const filename = './tests/data/ship-mmsi-numbers.csv'
     const reconcillation = await Reconcile('ship-mmsi-numbers-to-ship-imo-numbers', filename, {
-        email: Process.env.EQUASIS_EMAIL,
-        password: Process.env.EQUASIS_PASSWORD,
+        credentials: Process.env.EQUASIS_CREDENTIALS,
         shipMMSINumberField: 'shipMMSINumber'
     })
     const processing = await reconcillation.run()
