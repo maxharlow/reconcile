@@ -145,7 +145,7 @@ function setup(verbose) {
         finalisation = mode
         return new Promise(resolve => events.on('finished', resolve))
     }
-    Process.stdin.setRawMode(true)
+    if (Process.stdin.isTTY) Process.stdin.setRawMode(true)
     Process.stdin.setEncoding('utf8')
     Process.stdin.on('data', async data => {
         if (data === '\u0003') {
