@@ -484,6 +484,29 @@ Produces a CSV including columns:
 <hr>
 
 
+### Using OpenSanctions
+
+#### `entities-to-targets`
+
+Use [OpenSanctions](https://www.opensanctions.org/) to look up a list of entities (which can be companies, individuals, or many other types), and retrieve matched target entities in their various databases.
+
+Parameters:
+* `apiKey` An OpenSanctions [API key](https://www.opensanctions.org/api/).
+* `entityFields` Mapping object from OpenSanctions schema properties to column names.
+* `entitySchemaField` Schema column, if any. It should be an [OpenSanctions schema](https://www.opensanctions.org/reference/#schema). Required unless `schema` is specified.
+* `schema` If all entities have the same schema type you can specify it here instead of in a column. Required unless `schemaField` is specified.
+* `dataset` An [OpenSanctions dataset](https://www.opensanctions.org/datasets) to match within. Optional. Defaults to the full OpenSanctions dataset, 'default'.
+* `maximumResults` Maximum number of results to include for each entity, up to 10. Optional. Defaults to 1.
+
+Produces a CSV including columns:
+* `targetID`
+* `targetCaption`
+* `targetFirstSeen`
+* `targetLastSeen`
+
+<hr>
+
+
 ### Using Land Registry (UK)
 
 #### `uk-inspire-ids-to-addresses`
