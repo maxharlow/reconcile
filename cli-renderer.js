@@ -143,7 +143,8 @@ function setup(verbose) {
     const finalise = mode => {
         if (!doRedisplay && !finalisation) formatFinalisation(mode).map(text => console.error(text))
         finalisation = mode
-        return new Promise(resolve => events.on('finished', resolve))
+        if (doRedisplay) return new Promise(resolve => events.on('finished', resolve))
+        else return Promise.resolve()
     }
     if (Process.stdin.isTTY) Process.stdin.setRawMode(true)
     Process.stdin.setEncoding('utf8')
