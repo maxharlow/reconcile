@@ -26,7 +26,7 @@ function initialise(parameters, requestor, alert) {
             }]
         })
         return {
-            identifier: '"' + queries.join('", "') + '"',
+            identifier: ('"' + queries[0][1].query + '"' + (queries.length > 1 ? ' to ' + '"' + queries[entries.length - 1][1].query + '"' : '')),
             url: 'https://opencorporates.com/reconcile',
             method: 'POST',
             dataForm: {
