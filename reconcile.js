@@ -49,6 +49,14 @@ function requestify(retries, cache, alert) {
             return e.message // request not made
         }
         const instance = Axios.create({ timeout })
+        instance.interceptors.request.use(location => {
+            alert({
+                identifier: location.identifier,
+                source: toLocationName(location),
+                message: 'requesting...'
+            })
+            return location
+        }, e => e)
         AxiosRetry(instance, {
             retries,
             shouldResetTimeout: true,
@@ -113,11 +121,6 @@ function requestify(retries, cache, alert) {
                 location.data = form
             }
             try {
-                alert({
-                    identifier: location.identifier,
-                    source: locationName,
-                    message: 'requesting...'
-                })
                 const response = await instance(location)
                 if (cache) {
                     await FSExtra.ensureDir(cacheDirectory)
