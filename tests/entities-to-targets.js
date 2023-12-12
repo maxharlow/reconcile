@@ -4,6 +4,7 @@ import Process from 'process'
 import Reconcile from '../reconcile.js'
 
 Ava('standard', async test => {
+    test.timeout(30 * 1000)
     test.truthy(Process.env.OPEN_SANCTIONS_API_KEY)
     const filename = './tests/data/entities.csv'
     const reconcillation = await Reconcile('entities-to-targets', filename, {

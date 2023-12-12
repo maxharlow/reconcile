@@ -3,6 +3,7 @@ import FSExtra from 'fs-extra'
 import Reconcile from '../reconcile.js'
 
 Ava('standard', async test => {
+    test.timeout(30 * 1000)
     const filename = './tests/data/ip-addresses.csv'
     const reconcillation = await Reconcile('ip-addresses-to-details', filename, {
         ipAddressField: 'ipAddress'
