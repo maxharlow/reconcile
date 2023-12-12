@@ -20,6 +20,11 @@ function enhash(location) {
     return Crypto.createHash('sha1').update(JSON.stringify(contents)).digest('hex')
 }
 
+function objectToString(object) {
+    if (typeof object === 'string') object = JSON.parse(object) // as Axios turns data arguments into strings
+    return Object.entries(object).map(([key, value]) => `${key}=${JSON.stringify(value)}`).join(' ')
+}
+
 function requestify(retries, cache, alert) {
     return config => {
         const limit = config.limit || Infinity
@@ -29,12 +34,11 @@ function requestify(retries, cache, alert) {
         const toUrl = location => typeof location === 'string' ? location : location.url
         const toLocationName = location => {
             const method = location.method?.toUpperCase() || 'GET'
-            const stringifyObject = object => Object.entries(object).map(([key, value]) => `${key}=${JSON.stringify(value)}`).join(' ')
             return `${method} ${toUrl(location)}`
                 + (location.params ? '?' + Querystring.stringify(location.params) : '')
                 + (location.dataQuery ? ' ' + Querystring.stringify(location.dataQuery) : '')
-                + (location.dataForm ? ' <' + stringifyObject(location.dataForm) + '>' : '')
-                + (location.data && !location.dataQuery && !location.dataForm ? ' [' + stringifyObject(location.data) + ']' : '')
+                + (location.dataForm ? ' <' + objectToString(location.dataForm) + '>' : '')
+                + (location.data ? ' [' + objectToString(location.data) + ']' : '')
         }
         const toErrorMessage = e => {
             const reconcilerError = e.response && messages(e)
