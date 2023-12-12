@@ -68,7 +68,8 @@ function requestify(retries, cache, alert) {
             }
         })
         AxiosRateLimit(instance, {
-            maxRPS: limit // per seconds
+            maxRequests: limit >= 1 ? limit : 1,
+            perMilliseconds: limit >= 1 ? 1000 : (1 / limit) * 1000
         })
         let cacheChecked = false
         return async location => {
