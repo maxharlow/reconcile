@@ -2,6 +2,7 @@ function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         errors: response => {
+            if (response.status === 403) throw new Error('the rate limit has been reached')
             if (response.status >= 400) return { message: `received code ${response.status}`, retry: true }
         }
     })
