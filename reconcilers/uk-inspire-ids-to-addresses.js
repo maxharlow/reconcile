@@ -4,8 +4,8 @@ import Puppeteer from 'puppeteer'
 function initialise(parameters, requestor, alert) {
 
     const request = requestor({
-        messages: e => {
-            if (e.response.status >= 400) return `received code ${e.response.status}`
+        errors: response => {
+            if (response.status >= 400) return { message: `received code ${response.status}`, retry: true }
         },
         validator: async location => {
             const browser = await Puppeteer.launch({
@@ -23,7 +23,7 @@ function initialise(parameters, requestor, alert) {
                 document.querySelectorAll('fieldset, .govuk-form-group:nth-of-type(1), button').forEach(element => element.remove())
                 document.querySelector('#inspire-id-search').style.cssText += 'display:grid;place-items:center;min-height:100vh;'
             })
-            await page.waitForFunction(() => grecaptcha.getResponse() !== '')
+            await page.waitForFunction(() => grecaptcha.getResponse() !== '', { timeout: 60 * 1000 })
             const info = await page.evaluate(() => {
                 return {
                     token: document.querySelector('#inspire-id-search [name=csrf_token]').value,
@@ -57,7 +57,7 @@ function initialise(parameters, requestor, alert) {
             },
             headers: {
                 referer: 'https://search-property-information.service.gov.uk/search/search-by-inspire-id',
-                'user-agent': 'reconcile'
+                'user-agent': 'Reconcile'
             },
             passthrough: {
                 inspireID

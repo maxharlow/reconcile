@@ -1,11 +1,11 @@
 function initialise(parameters, requestor, alert) {
 
     const request = requestor({
-        messages: e => {
-            if (e.response.status === 404) return 'could not find company'
-            if (e.response.status === 403) throw new Error('the rate limit has been reached')
-            if (e.response.status === 401) throw new Error(`API token ${e.config.params.api_token} is invalid`)
-            if (e.response.status >= 400) return `received code ${e.response.status}`
+        errors: response => {
+            if (response.status === 404) return { message: 'could not find company' }
+            if (response.status === 403) throw new Error('the rate limit has been reached')
+            if (response.status === 401) throw new Error(`API token ${response.config.params.api_token} is invalid`)
+            if (response.status >= 400) return { message: `received code ${response.status}`, retry: true }
         }
     })
 

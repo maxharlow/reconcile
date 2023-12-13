@@ -21,14 +21,13 @@ function enhash(location) {
 }
 
 function objectToString(object) {
-    if (typeof object === 'string') object = JSON.parse(object) // as Axios turns data arguments into strings
     return Object.entries(object).map(([key, value]) => `${key}=${JSON.stringify(value)}`).join(' ')
 }
 
 function requestify(retries, cache, alert) {
     return config => {
         const limit = config.limit || Infinity
-        const messages = config.messages || (() => {})
+        const errors = config.errors || (() => {})
         const cacheDirectory = '.reconcile-cache'
         const timeout = 45 * 1000
         const toUrl = location => typeof location === 'string' ? location : location.url
@@ -38,17 +37,20 @@ function requestify(retries, cache, alert) {
                 + (location.params ? '?' + Querystring.stringify(location.params) : '')
                 + (location.dataQuery ? ' ' + Querystring.stringify(location.dataQuery) : '')
                 + (location.dataForm ? ' <' + objectToString(location.dataForm) + '>' : '')
-                + (location.data ? ' [' + objectToString(location.data) + ']' : '')
+                + (location.dataRaw ? ' [' + objectToString(location.dataRaw) + ']' : '')
         }
         const toErrorMessage = e => {
-            const reconcilerError = e.response && messages(e)
-            if (reconcilerError) return reconcilerError // look for reconciler-specific errors first
-            if (e.response) return `received code ${e.response.status}` // response recieved, but non-2xx
+            if (!e.response) return e.message // request not made
+            const reconcilerError = errors(e.response)
+            if (reconcilerError) return reconcilerError.message // look for reconciler-specific errors
             if (e.code === 'ECONNABORTED') return `timed out after ${timeout / 1000}ms` // request timed out
             if (e.code) return `received ${e.code}` // request failed, with error code
-            return e.message // request not made
+            return `unexpected ${e.message}` // something else
         }
-        const instance = Axios.create({ timeout })
+        const instance = Axios.create({
+            timeout,
+            validateStatus: () => true // based on status only, overridden by response interceptor
+        })
         instance.interceptors.request.use(location => {
             alert({
                 identifier: location.identifier,
@@ -56,12 +58,19 @@ function requestify(retries, cache, alert) {
                 message: 'requesting...'
             })
             return location
-        }, e => e)
+        }, e => Promise.reject(e))
+        instance.interceptors.response.use(response => {
+            const error = config.errors(response)
+            if (!error) return response
+            const e = new Axios.AxiosError(error.message, Axios.AxiosError.ERR_BAD_RESPONSE, response.config, response.request, response)
+            return Promise.reject(e)
+        }, e => Promise.reject(e))
         AxiosRetry(instance, {
             retries,
             shouldResetTimeout: true,
             retryCondition: e => {
-                return !e.response || e.response.status >= 500 || e.response.status === 429 // no response, server error, or hit rate limit
+                const error = config.errors(e.response)
+                return error?.retry
             },
             retryDelay: (number, e) => {
                 const message = toErrorMessage(e)
@@ -119,6 +128,9 @@ function requestify(retries, cache, alert) {
                 location.headers = form.getHeaders()
                 Object.entries(location.dataForm).forEach(([key, value]) => form.append(key, JSON.stringify(value)))
                 location.data = form
+            }
+            if (location.dataRaw) {
+                location.data = location.dataRaw
             }
             try {
                 const response = await instance(location)
@@ -201,9 +213,9 @@ async function load(command, filename, parameters = {}, retries = 5, cache = fal
         }
         return items.flatMap((item, i) => {
             const results = batch > 1 && Array.isArray(executed[i]) ? executed[i] // batch mode, reconciler is one-to-many
-                  : batch > 1 ? [executed[i]] // batch mode, reconciler is one-to-one
-                  : Array.isArray(executed) ? executed // reconciler is one-to-many
-                  : [executed] // reconciler is one-to-one
+                : batch > 1 ? [executed[i]] // batch mode, reconciler is one-to-one
+                : Array.isArray(executed) ? executed // reconciler is one-to-many
+                : [executed] // reconciler is one-to-one
             if (join === 'outer' && results.filter(x => x).length === 0) return [{ ...item.data, ...blank }]
             return results.map(result => {
                 if (!result) return null // if there is no result (eg. not found)

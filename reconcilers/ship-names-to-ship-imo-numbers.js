@@ -16,9 +16,9 @@ function initialise(parameters, requestor, alert) {
     })()
 
     const request = requestor({
-        messages: e => {
-            if (e.response.headers.connection === 'close') throw new Error('the rate limit has been reached (Equasis allows about 500 per day)')
-            if (e.response.status >= 400) return `received code ${e.response.status} on page ${e.config.passthrough.page}`
+        errors: response => {
+            if (response.headers.connection === 'close') throw new Error('the rate limit has been reached (Equasis allows about 500 per day)')
+            if (response.status >= 400) return { message: `received code ${response.status} on page ${response.config.passthrough.page}`, retry: true }
         }
     })
 

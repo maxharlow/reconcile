@@ -2,9 +2,9 @@ function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         limit: 0.24,
-        messages: e => {
-            if (e.response.status === 429) throw new Error('the rate limit has been reached')
-            if (e.response.status >= 400) return `received code ${e.response.status}`
+        errors: response => {
+            if (response.status === 429) throw new Error('the rate limit has been reached')
+            if (response.status >= 400) return { message: `received code ${response.status}`, retry: true }
         }
     })
 
@@ -19,7 +19,7 @@ function initialise(parameters, requestor, alert) {
             headers: {
                 'content-type': 'application/x-www-form-urlencoded'
             },
-            data: JSON.stringify(queries),
+            dataRaw: JSON.stringify(queries),
             passthrough: {
                 entries
             }

@@ -13,11 +13,11 @@ function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         limit: apiKeys.length * 2,
-        messages: e => {
-            if (e.response.status === 404) return 'could not find company'
-            if (e.response.status === 429) throw new Error('the rate limit has been reached')
-            if (e.response.status === 401) throw new Error(`API key ${e.config.auth.username} is invalid`)
-            if (e.response.status >= 400) return `received code ${e.response.status}`
+        errors: response => {
+            if (response.status === 404) return { message: 'could not find company' }
+            if (response.status === 429) throw new Error('the rate limit has been reached')
+            if (response.status === 401) throw new Error(`API key ${response.config.auth.username} is invalid`)
+            if (response.status >= 400) return { message: `received code ${response.status}`, retry: true }
         }
     })
 

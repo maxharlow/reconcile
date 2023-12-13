@@ -6,8 +6,8 @@ import HTMLEntities from 'html-entities'
 function initialise(parameters, requestor, alert) {
 
     const request = requestor({
-        messages: e => {
-            if (e.response.status >= 400) return `received code ${e.response.status}`
+        errors: response => {
+            if (response.status >= 400) return { message: `received code ${response.status}`, retry: true }
         }
     })
 

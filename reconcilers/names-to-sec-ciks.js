@@ -4,10 +4,9 @@ function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         limit: 10,
-        messages: e => {
-            const name = e.config.passthrough.name
-            if (e.response.status === 429) throw new Error('the rate limit has been reached')
-            if (e.response.status >= 400) return `received code ${e.response.status}`
+        errors: response => {
+            if (response.status === 403) throw new Error('the rate limit has been reached')
+            if (response.status >= 400) return { message: `received code ${response.status}`, retry: true }
         }
     })
 

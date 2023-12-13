@@ -1,10 +1,10 @@
 function initialise(parameters, requestor, alert) {
 
     const request = requestor({
-        messages: e => {
-            if (e.response.status === 403) throw new Error('the rate limit has been reached')
-            if (e.response.status === 401) throw new Error(`API token ${e.config.params.api_token} is invalid`)
-            if (e.response.status >= 400) return `received code ${e.response.status} on page ${e.config.passthrough.page}`
+        errors: response => {
+            if (response.status === 403) throw new Error('the rate limit has been reached')
+            if (response.status === 401) throw new Error(`API token ${response.config.params.api_token} is invalid`)
+            if (response.status >= 400) return { message: `received code ${response.status} on page ${response.config.passthrough.page}`, retry: true }
         }
     })
 
