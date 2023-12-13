@@ -26,7 +26,10 @@ function initialise(parameters, requestor, alert) {
             url: 'https://www.sec.gov/cgi-bin/cik_lookup',
             method: 'POST',
             headers: {
-                'content-type': 'application/x-www-form-urlencoded'
+                'content-type': 'application/x-www-form-urlencoded',
+                'user-agent': 'Reconcile',
+                referer: 'https://www.sec.gov/edgar/searchedgar/cik',
+                cookie: 'x=x'
             },
             dataQuery: {
                 company: name
