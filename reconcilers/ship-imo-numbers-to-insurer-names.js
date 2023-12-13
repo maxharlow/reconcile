@@ -21,19 +21,19 @@ function initialise(parameters, requestor, alert) {
             })
             return
         }
-        const tokenResponse = await Axios('https://www.igpandi.org/ship-search/')
+        const tokenResponse = await Axios('https://www.igpandi.org/vessel-search/')
         const tokenDocument = Cheerio.load(tokenResponse.data)
         const token = tokenDocument('[name=csrfmiddlewaretoken]').attr('value')
         return {
             identifier: `Ship ${shipIMONumber}`,
-            url: 'https://www.igpandi.org/ship-search/',
+            url: 'https://www.igpandi.org/vessel-search/',
             method: 'POST',
             dataQuery: {
                 csrfmiddlewaretoken: token,
                 q: shipIMONumber
             },
             headers: {
-                referer: 'https://www.igpandi.org/ship-search/',
+                referer: 'https://www.igpandi.org/vessel-search/',
                 cookie: `csrftoken=${token}`
             },
             passthrough: {
