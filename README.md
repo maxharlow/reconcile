@@ -610,6 +610,25 @@ Produces a CSV including columns:
 
 <hr>
 
+
+### Using FTS 'Egrul' Business Registers (Russia)
+
+#### `ru-company-names-to-company-numbers`
+
+Use the [FTS Business Registers search](https://egrul.nalog.ru/) to take a list of company names (or OGRN company numbers), and retrieve all their company numbers (INN numbers) and names.
+
+Parameters:
+* `companyNameField` Company name (or OGRN company number) column.
+* `maximumResults` Maximum number of results to include for each entity. Optional. Default is all.
+
+Produces a CSV including columns:
+* `companyNumber` (INN)
+* `companyName`
+* `companyAddress`
+
+<hr>
+
+
 ### Using Wikipedia & Wikidata
 
 #### `terms-to-wikidata-concepts`
