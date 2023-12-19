@@ -9,21 +9,44 @@ function initialise(parameters, _, alert) {
         const server = domain.substring(domain.lastIndexOf('.') + 1) + '.whois-servers.net'
         const addresses = await Util.promisify(DNS.resolveCname)(server)
         const host = addresses[0] || server
-        let data = ''
-        const socket = Net.createConnection(43, host, () => {
-	        socket.write(`${domain}\r\n`, 'ascii')
+        alert({
+            identifier: url,
+            source: host,
+            message: 'requesting...'
         })
-        socket.setEncoding('ascii')
-        socket.on('data', chunk => data = data + chunk)
-        return new Promise((resolve, reject) => {
-            socket.on('error', e => reject(e))
-            socket.on('close', hadError => {
-	            if (!hadError) resolve({
-                    data,
-                    passthrough: { url }
+        try {
+            let data = ''
+            const socket = Net.createConnection(43, host, () => {
+	            socket.write(`${domain}\r\n`, 'ascii')
+            })
+            socket.setEncoding('ascii')
+            socket.on('data', chunk => data = data + chunk)
+            const output = await new Promise((resolve, reject) => {
+                socket.on('error', e => reject(e))
+                socket.on('close', hadError => {
+	                if (hadError) return
+                    alert({
+                        identifier: url,
+                        source: host,
+                        message: 'done'
+                    })
+                    resolve({
+                        data,
+                        passthrough: { url }
+                    })
                 })
             })
-        })
+            return output
+        }
+        catch (e) {
+            alert({
+                identifier: url,
+                source: host,
+                message: e.message,
+                importance: 'error'
+            })
+            return null
+        }
     }
 
     function locate(entry) {
