@@ -556,7 +556,7 @@ Use [Investegate](https://www.investegate.co.uk/) to take a list of tickers for 
 
 Parameters:
 * `tickerField` Ticker column.
-* `category` Only include annoucements in this category. Optional. Default: all. Can be: `m-and-a`, `results`, `dividends`, `exec-changes`, `director-dealings`, `advance-results`.
+* `category` Only include annoucements in this category. Optional. Default: all. Can be: `general`, `mergers-acquisitions-disposals`, `results-and-trading-reports`, `dividends`, `executive-changes`, `directors-dealings`, `advance-notice-of-results`.
 * `maximumResults` Maximum number of results to include for each ticker. Optional. Default is all.
 * `maximumDate` Maximum announcement date for announcements from each ticker, in ISO 8601 format. Optional. Default is no limit.
 

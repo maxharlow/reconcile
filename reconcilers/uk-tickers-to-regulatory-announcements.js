@@ -20,16 +20,17 @@ function initialise(parameters, requestor, alert) {
             })
             return
         }
-        const categories = {
-            'm-and-a': 1,
-            'results': 2,
+        const categoryIDs = {
+            'general': 0,
+            'mergers-acquisitions-disposals': 1,
+            'results-and-trading-reports': 2,
             'dividends': 4,
-            'exec-changes': 8,
-            'director-dealings': 16,
-            'advance-results': 32
+            'executive-changes': 8,
+            'directors-dealings': 16,
+            'advance-notice-of-results': 32
         }
-        const category = categories[parameters.category]
-        if (parameters.category && !Object.keys(categories).includes(parameters.category)) {
+        const category = categoryIDs[parameters.category]
+        if (parameters.category && !Object.keys(categoryIDs).includes(parameters.category)) {
             alert({
                 identifier: ticker,
                 message: `invalid category: ${category}`,
@@ -39,52 +40,61 @@ function initialise(parameters, requestor, alert) {
         }
         return {
             identifier: ticker,
-            url: 'https://www.investegate.co.uk/AdvancedSearch.aspx',
+            url: 'https://www.investegate.co.uk/advanced-search/draw',
             params: {
-                qsArticleType: 'ann', // search announcements
-                qsSearchFor: 'S2', // via ticker
-                qsContains: ticker,
-                qsSpan: '120', // all time
-                ...(category ? { qsCategory: category } : {})
+                search_for: 2, // via ticker
+                search_word: ticker,
+                ...(parameters.maximumDate ? { date_from: Luxon.DateTime.fromISO(parameters.maximumDate).toFormat('d MMMM yyyy') } : {}),
+                ...(category ? { 'categories[]': [category] } : {}),
+                exclude_navs: false
             },
             passthrough: {
                 ticker,
-                category
+                category,
+                page: 1
             }
         }
     }
 
-    async function paginate(response, responses = [], results = 0) {
+    async function paginate(response) {
+        if (!response) return
         const maximumResults = parameters.maximumResults || Infinity
-        const maximumDate = Luxon.DateTime.fromISO(parameters.maximumDate || '0000-01-01')
         const document = Cheerio.load(response.data)
-        const totalResults = results + document('#announcementList > tr:not(:first-of-type)').length
-        const lastDate = Luxon.DateTime.fromFormat(document('#announcementList > tr:last-of-type td:first-of-type').text(), 'dd MMM yyyy')
-        const hasMorePages = document('.navBottom').length
-        if (hasMorePages && totalResults < maximumResults && lastDate >= maximumDate) {
-            const query = {
-                identifier: response.passthrough.ticker,
-                url: response.url,
-                params: {
-                    qsArticleType: 'ann',
-                    qsSearchFor: 'S2',
-                    qsContains: response.passthrough.ticker,
-                    qsSpan: '120', // all time
-                    ...(response.passthrough.category ? { qsCategory: response.passthrough.category } : {}),
-                    pno: document('.navBottom').attr('href').split('pno=')[1]
-                },
-                passthrough: {
-                    ...response.passthrough
+        const hasMorePages = document('.text-muted span:last-of-type').text()
+        const results = document('tbody tr').length
+        const totalResults = hasMorePages ? Number(hasMorePages) : results
+        if (hasMorePages && results < maximumResults) {
+            const pageTotal = Math.ceil(Math.min(totalResults, maximumResults) / 100)
+            const pageNumbers = Array.from(Array(pageTotal).keys()).map(i => i + 1).slice(1) // slice off first page as we already have that
+            const pageRequests = pageNumbers.map(async page => {
+                const query = {
+                    identifier: response.passthrough.ticker,
+                    url: 'https://www.investegate.co.uk/advanced-search/draw',
+                    params: {
+                        search_for: 2,
+                        search_word: response.passthrough.ticker,
+                        ...(parameters.maximumDate ? { date_from: Luxon.DateTime.fromISO(parameters.maximumDate).toFormat('d MMMM yyyy') } : {}),
+                        ...(response.passthrough.category ? { 'categories[]': [response.passthrough.category] } : {}),
+                        exclude_navs: false,
+                        page
+                    },
+                    passthrough: {
+                        ...response.passthrough,
+                        page
+                    }
                 }
-            }
-            return paginate(await request(query), responses.concat(response), totalResults)
+                return request(query)
+            })
+            const pageResponses = await Promise.all(pageRequests)
+            return [response].concat(pageResponses)
         }
-        return responses.concat(response)
+        else return [response]
     }
 
     function details(response) {
+        if (!response) return null
         const document = Cheerio.load(response.data)
-        const results = document('#announcementList > tr:not(:first-of-type)').get()
+        const results = document('tbody tr').get()
         if (results.length === 0) {
             const ticker = response.passthrough.ticker
             alert({
@@ -103,11 +113,11 @@ function initialise(parameters, requestor, alert) {
         return results.map((element, i) => {
             const row = Cheerio.load(element)
             const fields = {
-                announcementTime: row('td:nth-of-type(2)').text(),
-                announcementSource: row('td:nth-of-type(3) a').text(),
-                announcementCompany: row('td:nth-of-type(6) strong').text(),
-                announcementTitle: row('td:nth-of-type(7) a').text(),
-                announcementURL: 'https://www.investegate.co.uk' + row('td:nth-of-type(7) a').attr('href')
+                announcementTime: row('td:nth-of-type(1)').text(),
+                announcementSource: row('td:nth-of-type(3)').text().trim(),
+                announcementCompany: row('td:nth-of-type(2) div div:last-of-type').text().trim(),
+                announcementTitle: row('td:nth-of-type(4)').text().trim(),
+                announcementURL: row('td:nth-of-type(4) a').attr('href')
             }
             return {
                 identifier: response.passthrough.ticker,
@@ -120,18 +130,12 @@ function initialise(parameters, requestor, alert) {
         })
     }
 
-    function filter(entry) {
-        if (!parameters.maximumDate) return true
-        const maximumDate = Luxon.DateTime.fromISO(parameters.maximumDate)
-        const thisDate = Luxon.DateTime.fromFormat(entry.passthrough.announcementDate, 'dd MMM yyyy')
-        return thisDate >= maximumDate
-    }
-
     function parse(response) {
+        if (!response) return null
         const document = Cheerio.load(response.data)
         return {
             ...response.passthrough,
-            announcementBody: document('#ArticleContent').html().replace(/\r|\n/g, '').replace(/ +/g, ' ').replace(/> /g, '>').replace(/ </g, '<')
+            announcementBody: document('.news-window').html().replace(/[\r\n]/g, '').replace(/ +/g, ' ')
         }
     }
 
@@ -140,7 +144,7 @@ function initialise(parameters, requestor, alert) {
         const dataLocatedRequested = await request(dataLocated)
         const dataLocatedPaginated = await paginate(dataLocatedRequested)
         const dataDetailed = dataLocatedPaginated.flatMap(details)
-        const dataDetailedFiltered = dataDetailed.filter(filter).slice(0, parameters.maximumResults || Infinity)
+        const dataDetailedFiltered = dataDetailed.slice(0, parameters.maximumResults || Infinity)
         const dataDetailedFilteredRequested = await Promise.all(dataDetailedFiltered.map(request))
         const dataParsed = dataDetailedFilteredRequested.map(parse)
         return dataParsed
@@ -161,7 +165,7 @@ const details = {
             name: 'category',
             description: 'Only include annoucements in this category.',
             defaults: 'all',
-            choices: '"m-and-a", "results", "dividends", "exec-changes", "director-dealings", "advance-results"'
+            choices: '"general", "mergers-acquisitions-disposals", "results-and-trading-reports", "dividends", "executive-changes", "directors-dealings", "advance-notice-of-results"'
         },
         {
             name: 'maximumResults',
