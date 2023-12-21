@@ -51,7 +51,7 @@ function initialise(parameters, requestor, alert) {
             companyName: company.company_name,
             companyUKJurisdiction: company.jurisdiction,
             companyCreationDate: company.date_of_creation,
-            companyCessationDate: company.date_of_cessation | null,
+            companyCessationDate: company.date_of_cessation || null,
             companyType: company.type,
             companySubtype: company.subtype || null,
             companyStatus: company.company_status,
