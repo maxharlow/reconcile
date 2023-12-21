@@ -95,13 +95,7 @@ async function setup() {
         const total = await reconcillation.length()
         const processing = await reconcillation.run()
         await processing
-            .catch(async e => {
-                alert({
-                    message: instructions.argv.verbose ? e.stack : `Fatal error: ${e.message}`,
-                    importance: 'error'
-                })
-                await finalise('error')
-            })
+            .catch(e => finalise('error', e))
             .each(progress('Working...', total))
             .flatten()
             .CSVStringify()
@@ -110,11 +104,7 @@ async function setup() {
         await finalise('complete')
     }
     catch (e) {
-        alert({
-            message: instructions.argv.verbose ? e.stack : e.message,
-            importance: 'error'
-        })
-        await finalise('error')
+        await finalise('error', e)
         Process.exit(1)
     }
 

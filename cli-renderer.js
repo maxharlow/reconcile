@@ -140,7 +140,11 @@ function setup(verbose) {
         alerts[key] = details
         isDirty = true
     }
-    const finalise = mode => {
+    const finalise = (mode, e) => {
+        if (e) {
+            alert({ message: `Fatal error: ${e.message}`, importance: 'error' })
+            if (verbose) e.stack.split('\n').slice(1).forEach((line, i) => alert({ message: line, importance: 'error' }))
+        }
         if (!doRedisplay && !finalisation) formatFinalisation(mode).map(text => console.error(text))
         finalisation = mode
         if (doRedisplay) return new Promise(resolve => events.on('finished', resolve))
