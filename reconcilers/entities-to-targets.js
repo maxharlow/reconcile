@@ -58,8 +58,8 @@ function initialise(parameters, requestor, alert) {
                 return {
                     targetID: target.id,
                     targetCaption: target.caption,
-                    targetFirstSeen: target.first_seen,
-                    targetLastSeen: target.last_seen
+                    targetFirstSeenDate: target.first_seen,
+                    targetLastSeenDate: target.last_seen
                 }
             })
         })
@@ -111,8 +111,8 @@ const details = {
     columns: [
         { name: 'targetID' },
         { name: 'targetCaption' },
-        { name: 'targetFirstSeen' },
-        { name: 'targetLastSeen' }
+        { name: 'targetFirstSeenDate' },
+        { name: 'targetLastSeenDate' }
     ]
 }
 
