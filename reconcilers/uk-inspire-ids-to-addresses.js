@@ -5,6 +5,7 @@ function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         errors: response => {
+            if (!response.data.includes('Property description')) return { message: 'request failed', retry: true }
             if (response.status >= 400) return { message: `received code ${response.status}`, retry: true }
         },
         validator: async location => {
@@ -16,25 +17,30 @@ function initialise(parameters, requestor, alert) {
                 },
                 args: ['--window-size=800,800']
             })
-            const page = (await browser.pages())[0]
-            await page.goto('https://search-property-information.service.gov.uk/search/search-by-inspire-id')
-            await page.evaluate(() => {
-                document.querySelector('body').replaceChildren(document.querySelector('#inspire-id-search'))
-                document.querySelectorAll('fieldset, .govuk-form-group:nth-of-type(1), button').forEach(element => element.remove())
-                document.querySelector('#inspire-id-search').style.cssText += 'display:grid;place-items:center;min-height:100vh;'
-            })
-            await page.waitForFunction(() => grecaptcha.getResponse() !== '', { timeout: 60 * 1000 })
-            const info = await page.evaluate(() => {
-                return {
-                    token: document.querySelector('#inspire-id-search [name=csrf_token]').value,
-                    session: document.cookie.split('; ').find(cookie => cookie.includes('session=')),
-                    captcha: grecaptcha.getResponse()
-                }
-            })
-            await browser.close()
-            location.dataQuery.csrf_token = info.token
-            location.dataQuery['g-recaptcha-response'] = info.captcha
-            location.headers.cookie = info.session
+            try {
+                const page = (await browser.pages())[0]
+                await page.goto('https://search-property-information.service.gov.uk/search/search-by-inspire-id')
+                await page.evaluate(() => {
+                    document.querySelector('body').replaceChildren(document.querySelector('#inspire-id-search'))
+                    document.querySelectorAll('fieldset, .govuk-form-group:nth-of-type(1), button').forEach(element => element.remove())
+                    document.querySelector('#inspire-id-search').style.cssText += 'display:grid;justify-items:center;min-height:100vh;padding:25px;'
+                })
+                await page.waitForFunction(() => grecaptcha.getResponse() !== '', { timeout: 5 * 60 * 1000 })
+                const info = await page.evaluate(() => {
+                    return {
+                        token: document.querySelector('#inspire-id-search [name=csrf_token]').value,
+                        session: document.cookie.split('; ').find(cookie => cookie.includes('session=')),
+                        captcha: grecaptcha.getResponse()
+                    }
+                })
+                await browser.close()
+                location.dataQuery.csrf_token = info.token
+                location.dataQuery['g-recaptcha-response'] = info.captcha
+                location.headers.cookie = info.session
+            }
+            catch (e) {
+                await browser.close()
+            }
         }
     })
 
