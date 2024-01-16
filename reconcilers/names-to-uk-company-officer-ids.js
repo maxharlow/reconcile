@@ -86,7 +86,7 @@ function initialise(parameters, requestor, alert) {
             if (!entry.data[parameters.dateOfBirthField]) return true // column for this row is blank
             if (!officer.date_of_birth?.year || !officer.date_of_birth?.month) return false // date of birth specified in source, but no date of birth listed in this search result
             return officer.date_of_birth.year.toString() === entry.data[parameters.dateOfBirthField].slice(0, 4)
-                && officer.date_of_birth.month.toString().padStart(2, '0') === entry.data[parameters.dateOfBirthField].slice(5, 7)
+                && officer.date_of_birth.month.toString().padStart(2, '0') === entry.data[parameters.dateOfBirthField].slice(5, 7).padStart(2, '0')
         }
         const normalised = name => {
             return name?.toLowerCase()
