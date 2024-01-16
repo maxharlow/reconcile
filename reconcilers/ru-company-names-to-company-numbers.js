@@ -99,7 +99,9 @@ function initialise(parameters, requestor, alert) {
         return response.data.rows.filter(byPreciseMatch).slice(0, maximumResults).map(result => {
             return {
                 companyNumber: result.i,
+                companyNumberOGRN: result.o,
                 companyName: result.n,
+                companyNameShort: result.c,
                 companyAddress: result.a
             }
         })
@@ -138,7 +140,9 @@ const details = {
     ],
     columns: [
         { name: 'companyNumber', description: '(INN)' },
+        { name: 'companyNumberOGRN' },
         { name: 'companyName' },
+        { name: 'companyNameShort' },
         { name: 'companyAddress' }
     ]
 }

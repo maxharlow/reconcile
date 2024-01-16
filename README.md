@@ -624,7 +624,9 @@ Parameters:
 
 Produces a CSV including columns:
 * `companyNumber` (INN)
+* `companyNumberOGRN`
 * `companyName`
+* `companyNameShort`
 * `companyAddress`
 
 <hr>
