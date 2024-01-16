@@ -620,6 +620,7 @@ Use the [FTS Business Registers search](https://egrul.nalog.ru/) to take a list 
 Parameters:
 * `companyNameField` Company name (or OGRN company number) column.
 * `maximumResults` Maximum number of results to include for each entity. Optional. Default is all.
+* `preciseMatch` Match name precisely. Ignores non-alphabetical differences and prefixes. Optional.
 
 Produces a CSV including columns:
 * `companyNumber` (INN)

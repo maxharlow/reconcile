@@ -81,10 +81,22 @@ function initialise(parameters, requestor, alert) {
         else return [response]
     }
 
-    function parse(response) {
+    function parse(response, entry) {
         if (!response) return
         const maximumResults = parameters.maximumResults || Infinity
-        return response.data.rows.slice(0, maximumResults).map(result => {
+        const normalised = name => {
+            if (name.includes('«') || name.includes('"')) return name?.toLowerCase() // extract out quoted name portions if they exist
+                .match(/(?<=[«"]).+(?=[»"])/).join('')
+                .replace(/[^а-яa-z0-9]/g, '')
+            return name?.toLowerCase()
+                .replace(/[^а-яa-z0-9]/g, '')
+        }
+        const byPreciseMatch = company => {
+            if (!parameters.preciseMatch) return true
+            const entryCompanyName = normalised(entry.data[parameters.companyNameField])
+            return normalised(company.n) === entryCompanyName
+        }
+        return response.data.rows.filter(byPreciseMatch).slice(0, maximumResults).map(result => {
             return {
                 companyNumber: result.i,
                 companyName: result.n,
@@ -99,7 +111,7 @@ function initialise(parameters, requestor, alert) {
         const dataDetailed = details(dataLocatedRequested)
         const dataDetailedRequested = await request(dataDetailed)
         const dataDetailedPaginated = await paginate(dataDetailedRequested)
-        const dataParsed = dataDetailedPaginated.flatMap(parse)
+        const dataParsed = dataDetailedPaginated.flatMap(response => parse(response, input))
         return dataParsed
     }
 
@@ -113,6 +125,10 @@ const details = {
             name: 'companyNameField',
             description: 'Company name (or OGRN company number) column.',
             required: true
+        },
+        {
+            name: 'preciseMatch',
+            description: 'Match company name precisely. Ignores non-alphanumeric differences.'
         },
         {
             name: 'maximumResults',
