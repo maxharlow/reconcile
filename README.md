@@ -613,7 +613,7 @@ Produces a CSV including columns:
 
 ### Using FTS 'Egrul' Business Registers (Russia)
 
-#### `ru-company-names-to-company-numbers`
+#### `ru-company-names-to-ru-company-numbers`
 
 Use the [FTS Business Registers search](https://egrul.nalog.ru/) to take a list of company names (or OGRN company numbers), and retrieve all their company numbers (INN numbers) and names.
 
