@@ -186,7 +186,8 @@ async function load(command, filename, parameters = {}, retries = 5, cache = fal
         })
     }
     const columnsReconciler = reconciler.details.columns.map(column => column.name)
-    const columnsSource = Object.keys((await source().slice(0, 1).toArray())[0].data)
+    const columnsSource = Object.keys((await source().slice(0, 1).toArray())[0]?.data || {})
+    if (columnsSource.length === 0) throw new Error('input data is empty!')
     const columnMapEntries = columnsReconciler.map(column => {
         const columnUnique = (i = '') => {
             const attempt = `${column}${i}`
