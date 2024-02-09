@@ -144,6 +144,7 @@ function requestify(retries, cache, alert) {
                     await FSExtra.writeJson(`${cacheDirectory}/${hash}`, {
                         version: cacheCurrentVersion,
                         timestamp: new Date().toISOString(),
+                        etag: response.headers.etag,
                         data: response.data
                     })
                 }
