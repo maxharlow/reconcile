@@ -8,6 +8,8 @@ import AxiosRateLimit from 'axios-rate-limit'
 import FormData from 'form-data'
 import Querystring from 'querystring'
 
+const cacheCurrentVersion = 1
+
 function enhash(location) {
     const contents = structuredClone(location)
     delete contents.auth
@@ -104,18 +106,21 @@ function requestify(retries, cache, alert) {
                     else alert({ message: 'No existing cached data found' })
                     cacheChecked = true
                 }
-                const isCached = await FSExtra.pathExists(`${cacheDirectory}/${hash}`)
-                if (isCached) {
-                    alert({
-                        identifier: location.identifier,
-                        source: locationName,
-                        message: `cached @ ${hash}`
-                    })
+                const cacheExists = await FSExtra.pathExists(`${cacheDirectory}/${hash}`)
+                if (cacheExists) {
                     const cacheData = await FSExtra.readJson(`${cacheDirectory}/${hash}`)
-                    return {
-                        url: toUrl(location),
-                        data: cacheData,
-                        passthrough: location.passthrough
+                    const cacheCurrent = cacheData.version === cacheCurrentVersion
+                    if (cacheCurrent) {
+                        alert({
+                            identifier: location.identifier,
+                            source: locationName,
+                            message: `cached @ ${hash}`
+                        })
+                        return {
+                            url: toUrl(location),
+                            data: cacheData.data,
+                            passthrough: location.passthrough
+                        }
                     }
                 }
             }
@@ -136,7 +141,11 @@ function requestify(retries, cache, alert) {
                 const response = await instance(location)
                 if (cache) {
                     await FSExtra.ensureDir(cacheDirectory)
-                    await FSExtra.writeJson(`${cacheDirectory}/${hash}`, response.data)
+                    await FSExtra.writeJson(`${cacheDirectory}/${hash}`, {
+                        version: cacheCurrentVersion,
+                        timestamp: new Date().toISOString(),
+                        data: response.data
+                    })
                 }
                 alert({
                     identifier: location.identifier,
