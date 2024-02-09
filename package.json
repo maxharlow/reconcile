@@ -20,14 +20,14 @@
         "html-entities": "2.4.x",
         "luxon": "3.4.x",
         "papaparse": "5.3.x",
-        "puppeteer": "21.6.x",
+        "puppeteer": "22.0.x",
         "scramjet": "4.37.x",
         "simple-wcswidth": "1.0.x",
         "yaml": "2.3.x",
         "yargs": "17.7.x"
     },
     "devDependencies": {
-        "ava": "6.0.x"
+        "ava": "6.1.x"
     },
     "bin": {
         "reconcile": "./bin.js"
