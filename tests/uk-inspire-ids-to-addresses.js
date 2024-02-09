@@ -3,7 +3,7 @@ import FSExtra from 'fs-extra'
 import Reconcile from '../reconcile.js'
 
 Ava('standard', async test => {
-    test.timeout(60 * 1000, 'as this reconciler requires manual validation')
+    test.timeout(5 * 60 * 1000, 'as this reconciler requires manual validation')
     const filename = './tests/data/uk-inspire-ids.csv'
     const reconcillation = await Reconcile('uk-inspire-ids-to-addresses', filename, {
         inspireIDField: 'inspireID',
