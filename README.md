@@ -632,6 +632,86 @@ Produces a CSV including columns:
 <hr>
 
 
+### Using ITSoft 'Egrul' Business Registers (Russia)
+
+ITSoft run an unofficial but free API which mirrors the paid-for data published by the Federal Tax Service of Russia.
+
+#### `ru-company-numbers-to-company-details`
+
+Use the [ITSoft Business Registers API](https://egrul.itsoft.ru/) to take a list of company numbers (INN or OGRN), and retrieve various details for each.
+
+Parameters:
+* `companyNumberField` Company number (INN or OGRN) column.
+
+Produces a CSV including columns:
+* `companyNumberOGRN`
+* `companyName`
+* `companyNameShort`
+* `companyCreationDate`
+* `companyCessationDate`
+* `companyType`
+* `companyAddress`
+* `companyManagementCompanyName`
+* `companyManagementCompanyNumber`
+* `companyManagementCompanyNumberOGRN`
+* `companyActivityCodeMain`
+* `companyActivityCodesAdditional`
+
+<hr>
+
+#### `ru-company-numbers-to-shareholders`
+
+Use the [ITSoft Business Registers API](https://egrul.itsoft.ru/) to take a list of company numbers (INN or OGRN), and retrieve a list of shareholders for each.
+
+Parameters:
+* `companyNumberField` Company number (INN or OGRN) column.
+
+Produces a CSV including columns:
+* `shareholderType`
+* `shareholderName`
+* `shareholderCompanyNumber`
+* `shareholderCompanyNumberOGRN`
+* `shareholderCompanyNameLatin`
+* `shareholderCompanyJurisdiction`
+* `shareholderCompanyRegistrar`
+* `shareholderCompanyAddress`
+* `shareholderIndividualForename`
+* `shareholderIndividualPatronymic`
+* `shareholderIndividualSurname`
+* `shareholderIndividualTaxNumber`
+* `shareholderIndividualCitizenship`
+* `shareholderSinceDate`
+* `shareholderShareNumber`
+* `shareholderSharePercentage`
+* `shareholderShareLastChangedDate`
+* `shareholderRegistrationLastChangedDate`
+* `shareholderRestrictedSinceDate`
+
+<hr>
+
+
+### Using FTS Accounting Reporting (Russia)
+
+#### `ru-company-numbers-to-accounting-periods`
+
+Use the [Federal Tax Service's accounting reporting site](https://bo.nalog.ru/) to take a list of company numbers (INN), and retrieve all the accounting indicators available for each accounting period.
+
+Parameters:
+* `companyNumberField` Company number (INN) column.
+
+Produces a CSV including columns:
+* `companyAccountingNumber`
+* `companyAccountingPeriodID`
+* `companyAccountingPeriod`
+* `companyAccountingSection`
+* `companyAccountingIndicatorCode`
+* `companyAccountingIndicatorValueCurrent`
+* `companyAccountingIndicatorValuePrevious`
+* `companyAccountingIndicatorValueBeforePrevious`
+
+<hr>
+
+
 ### Using Wikipedia & Wikidata
 
 #### `terms-to-wikidata-concepts`
