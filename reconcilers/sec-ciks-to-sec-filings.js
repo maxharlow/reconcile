@@ -5,7 +5,7 @@ function initialise(parameters, requestor, alert) {
     const request = requestor({
         limit: 10,
         errors: response => {
-            if (response.status === 429) throw new Error('the rate limit has been reached')
+            if (response.status === 403) return { message: 'hit rate limit', retry: true }
             if (response.status >= 400) return { message: `received code ${response.status}`, retry: true }
         }
     })
@@ -41,7 +41,8 @@ function initialise(parameters, requestor, alert) {
         const maximumResults = parameters.maximumResults || Infinity
         const document = Cheerio.load(response.data)
         const hasMorePages = document('[value="Next 100"]').length
-        if (hasMorePages && totalResults < maximumResults) {
+        const results = responses.length
+        if (hasMorePages && results < maximumResults) {
             const query = {
                 identifier: `CIK ${response.passthrough.cik}`,
                 url: 'https://www.sec.gov/cgi-bin/browse-edgar',
