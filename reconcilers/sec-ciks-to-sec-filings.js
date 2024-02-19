@@ -30,6 +30,9 @@ function initialise(parameters, requestor, alert) {
                 count: 100,
                 ...(parameters.maximumDate ? { datea: parameters.maximumDate } : {})
             },
+            headers: {
+                'user-agent': 'Reconcile.'
+            },
             passthrough: {
                 cik
             }
@@ -53,6 +56,9 @@ function initialise(parameters, requestor, alert) {
                     count: 100,
                     start: (responses.length + 1) * 100,
                     ...(parameters.maximumDate ? { datea: parameters.maximumDate } : {})
+                },
+                headers: {
+                    'user-agent': 'Reconcile.'
                 },
                 passthrough: {
                     ...response.passthrough
@@ -94,6 +100,9 @@ function initialise(parameters, requestor, alert) {
             return {
                 identifier: `CIK ${response.passthrough.cik}`,
                 url,
+                headers: {
+                    'user-agent': 'Reconcile.'
+                },
                 passthrough: {
                     cik: response.passthrough.cik,
                     filingDate: element('td:nth-of-type(4)').text(),
