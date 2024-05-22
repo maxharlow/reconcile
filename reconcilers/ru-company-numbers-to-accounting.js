@@ -18,7 +18,7 @@ function initialise(parameters, requestor, alert) {
         }
         return {
             identifier: `Company ${companyNumber}`,
-            url: 'https://bo.nalog.ru/nbo/organizations',
+            url: 'https://bo.nalog.ru/advanced-search/organizations',
             params: {
                 inn: companyNumber
             },
@@ -50,15 +50,14 @@ function initialise(parameters, requestor, alert) {
     }
 
     function parse(response) {
-        if (!response) return
+        if (!response || !response.data) return
         return response.data.flatMap(period => {
             const companyAccountingNumber = response.passthrough.companyAccountingNumber
             const companyAccountingPeriod = period.period
-            const periodLatest = period.corrections.find(correction => correction.lastCorrection)
-            const companyAccountingPeriodID = periodLatest.id
+            const companyAccountingPeriodID = period.correction.id
             const sectionNames = ['balance', 'financialResult', 'capitalChange', 'fundsMovement']
-            return sectionNames.filter(sectionName => sectionName in periodLatest).flatMap(sectionName => {
-                const section = periodLatest[sectionName]
+            return sectionNames.filter(sectionName => sectionName in period.correction).flatMap(sectionName => {
+                const section = period.correction[sectionName]
                 const companyAccountingSection = sectionName.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`)
                 const codes = Object.keys(section).filter(key => key.startsWith('current')).map(key => key.replace('current', ''))
                 return codes.map(code => {
