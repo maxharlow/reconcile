@@ -11,6 +11,11 @@ Installing
 
 Alternatively, don't install it and just prepend the below commands with `npx`.
 
+Completions for Zsh will also be installed if a directory exists:
+
+    $ mkdir -p /usr/local/share/zsh/site-functions
+    $ chown -R $(whoami) /usr/local/share/zsh/site-functions
+
 
 Usage
 -----
