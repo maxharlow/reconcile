@@ -2,7 +2,7 @@ function initialise(parameters, requestor, alert) {
 
     const request = requestor({
         errors: response => {
-            if (response.status === 404) return { message: `could not find company` }
+            if (response.status === 404) return { message: 'could not find company' }
             if (response.status >= 400) return { message: `received code ${response.status}`, retry: true }
         }
     })
