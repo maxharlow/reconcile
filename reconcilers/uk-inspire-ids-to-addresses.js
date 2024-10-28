@@ -1,4 +1,4 @@
-import Cheerio from 'cheerio'
+import * as Cheerio from 'cheerio'
 import Puppeteer from 'puppeteer'
 
 function initialise(parameters, requestor, alert) {
