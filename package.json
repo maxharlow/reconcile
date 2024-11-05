@@ -27,7 +27,7 @@
         "yargs": "17.7.x"
     },
     "devDependencies": {
-        "ava": "6.1.x"
+        "ava": "6.2.x"
     },
     "bin": {
         "reconcile": "./bin.js"
