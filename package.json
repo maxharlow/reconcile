@@ -30,7 +30,7 @@
         "ava": "6.2.x"
     },
     "bin": {
-        "reconcile": "./bin.js"
+        "reconcile": "bin.js"
     },
     "scripts": {
         "test": "ava",
