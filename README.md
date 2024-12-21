@@ -912,18 +912,6 @@ Produces a CSV including columns:
 
 <hr>
 
-#### `urls-to-google-analytics-ids`
-
-Download each page and extract out anything that looks like a Google Analytics ID.
-
-Parameters:
-* `urlField` URL column.
-
-Produces a CSV including columns:
-* `googleAnalyticsID`
-
-<hr>
-
 ### Using the Domain Name System (DNS)
 
 #### `urls-to-domain-records`
