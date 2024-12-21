@@ -32,7 +32,7 @@ function initialise(parameters, requestor, alert) {
         const regex = /(?<="|')[A-Z][A-Z]?-[A-Z0-9]{4,10}(?=\-[0-9]+)/ig
         const document = Cheerio.load(response.data)
         return document('script').get().flatMap(element => {
-            const script = Cheerio(element).text()
+            const script = Cheerio.load(element)('*').text()
             if (!script.includes('google-analytics.com')) return []
             return Array.from(new Set(script.matchAll(regex) || [])).map(([googleAnalyticsID]) => {
                 return {

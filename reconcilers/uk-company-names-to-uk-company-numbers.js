@@ -69,7 +69,15 @@ function initialise(parameters, requestor, alert) {
             const entryCompanyName = normalised(entry.data[parameters.companyNameField])
             return normalised(company.title) === entryCompanyName || normalised(company.snippet) === entryCompanyName
         }
-        return companies.filter(byPostcode).filter(byPreciseMatch).slice(0, maximumResults).map(company => {
+        const companiesFiltered = companies.filter(byPostcode).filter(byPreciseMatch)
+        if ((parameters.preciseMatch || parameters.postcodeField) && companiesFiltered.length > maximumResults) {
+            alert({
+                identifier: `"${response.passthrough.companyName}"`,
+                message: `${companiesFiltered.length} matches, but only returning ${maximumResults}`,
+                importance: 'warning'
+            })
+        }
+        return companiesFiltered.slice(0, maximumResults).map(company => {
             const fields = {
                 companyNumber: company.company_number,
                 companyName: company.title,

@@ -11,7 +11,7 @@ Ava('standard', async test => {
     })
     const processing = await reconcillation.run()
     const results = await processing.flatten().toArray()
-    // await FSExtra.writeJson('./tests/expectations/ru-company-names-to-company-numbers.json', results) // for updates!
+    // await FSExtra.writeJson('./tests/expectations/ru-company-names-to-ru-company-numbers.json', results) // for updates!
     const resultsExpected = await FSExtra.readJson('./tests/expectations/ru-company-names-to-ru-company-numbers.json')
     test.deepEqual(results, resultsExpected)
 })

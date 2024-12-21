@@ -57,11 +57,11 @@ function initialise(parameters, requestor, alert) {
         return ships.map(ship => {
             const element = Cheerio.load(ship)
             return {
-                shipIMONumber: HTMLEntities.decode(element('dt:nth-of-type(1) dd').html().trim()),
+                shipIMONumber: HTMLEntities.decode(element('dd:nth-of-type(1)').html().trim()),
                 shipName: HTMLEntities.decode(element('h3 a').text().trim()),
-                shipType: HTMLEntities.decode(element('dt:nth-of-type(2) dd').html().trim()),
-                shipInsurerClub: HTMLEntities.decode(element('dt:nth-of-type(2) dt dd').html().trim()),
-                shipInsurer: HTMLEntities.decode(element('dt:nth-of-type(2) dt dt dd').html().trim())
+                shipType: HTMLEntities.decode(element('dd:nth-of-type(2)').html().trim()),
+                shipInsurerClub: HTMLEntities.decode(element('dd:nth-of-type(3)').html().trim()),
+                shipInsurer: HTMLEntities.decode(element('dd:nth-of-type(4)').html().trim())
             }
         })
     }

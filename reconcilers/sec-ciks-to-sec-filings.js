@@ -31,7 +31,7 @@ function initialise(parameters, requestor, alert) {
                 ...(parameters.maximumDate ? { datea: parameters.maximumDate } : {})
             },
             headers: {
-                'user-agent': 'Reconcile.'
+                'user-agent': 'xx@xx.xx'
             },
             passthrough: {
                 cik
@@ -58,7 +58,7 @@ function initialise(parameters, requestor, alert) {
                     ...(parameters.maximumDate ? { datea: parameters.maximumDate } : {})
                 },
                 headers: {
-                    'user-agent': 'Reconcile.'
+                    'user-agent': 'xx@xx.xx'
                 },
                 passthrough: {
                     ...response.passthrough
@@ -101,7 +101,7 @@ function initialise(parameters, requestor, alert) {
                 identifier: `CIK ${response.passthrough.cik}`,
                 url,
                 headers: {
-                    'user-agent': 'Reconcile.'
+                    'user-agent': 'xx@xx.xx'
                 },
                 passthrough: {
                     cik: response.passthrough.cik,

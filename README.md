@@ -609,7 +609,6 @@ Produces a CSV including columns:
 * `companyNumberOGRN`
 * `companyName`
 * `companyNameShort`
-* `companyAddress`
 
 <hr>
 

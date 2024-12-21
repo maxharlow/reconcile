@@ -3,7 +3,7 @@ import FSExtra from 'fs-extra'
 import Reconcile from '../reconcile.js'
 
 Ava('standard', async test => {
-    test.timeout(30 * 1000)
+    test.timeout(45 * 1000)
     const filename = './tests/data/ru-company-numbers.csv'
     const reconcillation = await Reconcile('ru-company-numbers-to-accounting', filename, {
         companyNumberField: 'companyNumber'

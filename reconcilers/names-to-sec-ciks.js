@@ -26,8 +26,8 @@ function initialise(parameters, requestor, alert) {
             method: 'POST',
             headers: {
                 'content-type': 'application/x-www-form-urlencoded',
-                'user-agent': 'Reconcile',
-                referer: 'https://www.sec.gov/edgar/searchedgar/cik',
+                'user-agent': 'Chrome/150',
+                referer: 'https://www.sec.gov/search-filings/cik-lookup',
                 cookie: 'x=x'
             },
             dataQuery: {
@@ -54,10 +54,11 @@ function initialise(parameters, requestor, alert) {
         }
         const maximumResults = parameters.maximumResults || 1
         return results.split('\n').slice(0, maximumResults).map(name => {
-            const element = Cheerio(name)
+            const element = Cheerio.load(name)
+            const cik = element('a').text()
             return {
-                name: element.eq(1).text().trim(),
-                cik: element.eq(0).text()
+                name: element.text().replace(cik, '').trim(),
+                cik
             }
         })
     }

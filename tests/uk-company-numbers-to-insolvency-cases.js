@@ -4,7 +4,7 @@ import Process from 'process'
 import Reconcile from '../reconcile.js'
 
 Ava('standard', async test => {
-    test.timeout(30 * 1000)
+    test.timeout(120 * 1000)
     test.truthy(Process.env.COMPANIES_HOUSE_API_KEY)
     const filename = './tests/data/uk-company-numbers.csv'
     const reconcillation = await Reconcile('uk-company-numbers-to-insolvency-cases', filename, {

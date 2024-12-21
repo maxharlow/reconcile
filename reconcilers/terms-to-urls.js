@@ -75,13 +75,12 @@ function initialise(parameters, requestor, alert) {
             })
             return []
         }
-        return results.get().flatMap(result => {
-            const element = Cheerio.load(result)
-            if (element('h3').length === 0) return []
-            const location = Cheerio(result).attr('href')
+        return results.get().flatMap(element => {
+            const result = Cheerio.load(element)
+            if (result('h3').length === 0) return []
             return {
-                resultTitle: element('h3').text().trim(),
-                resultLocation: location.split('/url?q=')[1].split('&sa')[0]
+                resultTitle: result('h3').text().trim(),
+                resultLocation: result('*').attr('href').split('/url?q=')[1].split('&sa')[0]
             }
         })
     }
