@@ -505,6 +505,22 @@ Produces a CSV including columns:
 <hr>
 
 
+### Using HMRC (UK)
+
+#### `uk-vat-numbers-to-business-details`
+
+Use [HMRC's VAT number checking service](https://www.gov.uk/check-uk-vat-number) to look up VAT numbers, and find the business details associated with them.
+
+Parameters:
+* `vatNumberField` VAT number column.
+
+Produces a CSV including columns:
+* `businessName`
+* `businessAddress`
+
+<hr>
+
+
 ### Using Valuation Office Agency (UK)
 
 #### `uk-addresses-to-council-tax-bands`
