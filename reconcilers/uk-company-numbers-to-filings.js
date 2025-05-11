@@ -31,13 +31,14 @@ function initialise(parameters, requestor, alert) {
             return
         }
         return {
+            identifier: `Company ${companyNumber}`,
             url: `https://api.company-information.service.gov.uk/company/${companyNumber.padStart(8, '0').toUpperCase()}/filing-history`,
             auth: {
                 username: apiKeysRotated(),
                 password: ''
             },
             params: {
-                category: parameters.filingCategory,
+                ...(parameters.filingCategory ? { category: parameters.filingCategory } : {}),
                 items_per_page: 100
             },
             passthrough: {
@@ -66,7 +67,7 @@ function initialise(parameters, requestor, alert) {
                         password: ''
                     },
                     params: {
-                        category: parameters.filingCategory,
+                        ...(parameters.filingCategory ? { category: parameters.filingCategory } : {}),
                         items_per_page: 100,
                         start_index: page * 100
                     },
