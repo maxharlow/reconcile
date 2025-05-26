@@ -42,11 +42,12 @@ function requestify(retries, cache, alert) {
                 + (location.dataRaw ? ' [' + objectToString(location.dataRaw) + ']' : '')
         }
         const toErrorMessage = e => {
-            if (!e.response) return e.message // request not made
-            const reconcilerError = errors(e.response)
-            if (reconcilerError) return reconcilerError.message // look for reconciler-specific errors
+            if (!e.response) throw e // rethrow error thrown by reconciler
             if (e.code === 'ECONNABORTED') return `timed out after ${timeout / 1000}ms` // request timed out
             if (e.code) return `received ${e.code}` // request failed, with error code
+            const reconcilerError = errors(e.response)
+            if (reconcilerError) return reconcilerError.message // look for reconciler-specific errors
+            if (e.response.status) return `recieved code ${e.response.status}` // response recieved, but not handled by reconciler
             return `unexpected ${e.message}` // something else
         }
         const instance = Axios.create({
@@ -71,6 +72,7 @@ function requestify(retries, cache, alert) {
             retries,
             shouldResetTimeout: true,
             retryCondition: e => {
+                if (!e.response) return true // eg. ECONNRESET
                 const error = config.errors(e.response)
                 return error?.retry
             },
