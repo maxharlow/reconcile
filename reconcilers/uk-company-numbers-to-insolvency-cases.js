@@ -14,8 +14,8 @@ function initialise(parameters, requestor, alert) {
     const request = requestor({
         limit: apiKeys.length * 2,
         errors: response => {
-            if (response.status === 429) throw new Error('the rate limit has been reached')
             if (response.status === 401) throw new Error(`API key ${response.config.auth.username} is invalid`)
+            if (response.status === 429) return { message: 'the rate limit has been reached', retry: true } // don't throw as this happens from time to time
             if (response.status >= 400) return { message: `received code ${response.status}`, retry: true }
         }
     })
