@@ -1,7 +1,7 @@
 import Axios from 'axios'
 import Querystring from 'querystring'
 import * as Cheerio from 'cheerio'
-import HTMLEntities from 'html-entities'
+import * as HTMLEntities from 'html-entities'
 
 function initialise(parameters, requestor, alert) {
 
