@@ -10,24 +10,24 @@
         "url": "https://github.com/maxharlow/reconcile.git"
     },
     "dependencies": {
-        "axios": "1.9.x",
+        "axios": "1.10.x",
         "axios-rate-limit": "1.4.x",
         "axios-retry": "4.5.x",
         "chalk": "5.4.x",
-        "cheerio": "1.0.x",
+        "cheerio": "1.1.x",
         "form-data": "4.0.x",
         "fs-extra": "11.3.x",
         "html-entities": "2.6.x",
         "luxon": "3.6.x",
         "papaparse": "5.3.x",
-        "puppeteer": "24.9.x",
+        "puppeteer": "24.10.x",
         "scramjet": "4.37.x",
-        "simple-wcswidth": "1.0.x",
+        "simple-wcswidth": "1.1.x",
         "yaml": "2.8.x",
         "yargs": "18.0.x"
     },
     "devDependencies": {
-        "ava": "6.3.x"
+        "ava": "6.4.x"
     },
     "bin": {
         "reconcile": "bin.js"
