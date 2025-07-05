@@ -199,6 +199,8 @@ Produces a CSV including columns:
 * `companyAddress`
 * `companyAddressIsInDispute`
 * `companyAddressIsUndeliverable`
+* `companyForeignCountry`
+* `companyForeignNumber`
 * `companyPreviousNames`
 * `companySICCodes`
 * `companyCanFile`
