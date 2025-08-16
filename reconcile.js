@@ -1,3 +1,4 @@
+import URL from 'url'
 import Crypto from 'crypto'
 import FSExtra from 'fs-extra'
 import Papaparse from 'papaparse'
@@ -175,7 +176,7 @@ function requestify(retries, cache, alert) {
 
 async function load(command, filename, parameters = {}, retries = 5, cache = false, join = 'inner', verbose = false, alert = () => {}) {
     const requestor = requestify(retries, cache, alert)
-    const { default: reconciler } = await import(`./reconcilers/${command}.js`)
+    const { default: reconciler } = command.startsWith('./') ? await import(URL.pathToFileURL(command).href) : await import(`./reconcilers/${command}.js`)
     Object.keys(parameters).forEach(parameter => {
         if (!reconciler.details.parameters.find(p => p.name === parameter)) alert({
             message: `${parameter}: unexpected parameter will be ignored`,

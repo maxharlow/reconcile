@@ -60,20 +60,32 @@ async function setup() {
         .option('V', { alias: 'verbose', type: 'boolean', describe: 'Print every request made', default: false })
         .help('?').alias('?', 'help')
         .version().alias('v', 'version')
-    await reconcilers.reduce(async (previous, command) => {
-        await previous
-        const { default: reconciler } = await import(`./reconcilers/${command}.js`)
-        const commandArgs = args => args
-            .usage(`Usage: reconcile ${command} <filename>`)
-            .demandCommand(1, '')
-            .positional('filename', { type: 'string', describe: 'The input file to process' })
-            .epilog(display(reconciler.details))
-        return instructions.command(command, '', commandArgs)
-    }, Promise.resolve())
-    if (instructions.argv['get-yargs-completions']) Process.exit(0)
-    if (instructions.argv._.length === 0) instructions.showHelp().exit(0)
     const { alert, progress, finalise } = cliRenderer(instructions.argv.verbose)
     try {
+        await reconcilers.reduce(async (previous, commandStandard) => {
+            await previous
+            const { default: reconciler } = await import(`./reconcilers/${commandStandard}.js`)
+            const commandArgs = args => args
+                .usage(`Usage: reconcile ${commandStandard} <filename>`)
+                .demandCommand(1, '')
+                .positional('filename', { type: 'string', describe: 'The input file to process' })
+                .epilog(display(reconciler.details))
+            return instructions.command(commandStandard, '', commandArgs)
+        }, Promise.resolve())
+        const commandDirect = instructions.argv._[0]
+        if (commandDirect && commandDirect.startsWith('./')) {
+            const commandExists = await FSExtra.pathExists(commandDirect)
+            if (!commandExists) throw new Error(`${commandDirect}: reconciler not found`)
+            const { default: reconciler } = await import(URL.pathToFileURL(commandDirect).href)
+            const commandArgs = args => args
+                .usage(`Usage: reconcile ${commandDirect} <filename>`)
+                .demandCommand(1, '')
+                .positional('filename', { type: 'string', describe: 'The input file to process' })
+                .epilog(display(reconciler.details))
+            await instructions.command(commandDirect, '', commandArgs)
+        }
+        if (instructions.argv['get-yargs-completions']) Process.exit(0)
+        if (instructions.argv._.length === 0) instructions.showHelp().exit(0)
         const {
             _: [command, filename],
             parameters,
@@ -83,7 +95,7 @@ async function setup() {
             verbose
         } = instructions.argv
         const parametersParsed = await parse(parameters)
-        if (!reconcilers.includes(command)) throw new Error(`${command}: reconciler not found`)
+        if (!command.startsWith('./') && !reconcilers.includes(command)) throw new Error(`${command}: reconciler not found`)
         if (filename === '-') throw new Error('reading from standard input not supported')
         const exists = await FSExtra.pathExists(filename)
         if (!exists) throw new Error(`${filename}: could not find file`)
