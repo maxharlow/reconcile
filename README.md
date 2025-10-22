@@ -491,22 +491,6 @@ Produces a CSV including columns:
 <hr>
 
 
-### Using Land Registry (UK)
-
-#### `uk-inspire-ids-to-addresses`
-
-Use the [Land Registry land and property information service](https://search-property-information.service.gov.uk/) to look up Inspire ID numbers, and find their addresses. Note this will require you to manually fill in a Captcha for each row.
-
-Parameters:
-* `inspireIDField` Inspire ID column.
-
-Produces a CSV including columns:
-* `titleAddress`
-* `titleTenure` Leasehold or freehold.
-
-<hr>
-
-
 ### Using HMRC (UK)
 
 #### `uk-vat-numbers-to-business-details`
