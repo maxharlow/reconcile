@@ -44,11 +44,11 @@ function requestify(retries, cache, alert) {
         }
         const toErrorMessage = e => {
             if (e.code === 'ECONNABORTED') return `timed out after ${timeout / 1000}ms` // request timed out
-            if (e.code) return `received ${e.code}` // request failed, with error code
+            if (e.code && e.code !== 'ERR_BAD_RESPONSE') return `received ${e.code}` // request failed, with error code
             if (!e.response) throw e // rethrow error thrown by reconciler
             const reconcilerError = errors(e.response)
             if (reconcilerError) return reconcilerError.message // look for reconciler-specific errors
-            if (e.response.status) return `recieved code ${e.response.status}` // response recieved, but not handled by reconciler
+            if (e.response.status) return `received code ${e.response.status}` // response received, but not handled by reconciler
             return `unexpected ${e.message}` // something else
         }
         const instance = Axios.create({
