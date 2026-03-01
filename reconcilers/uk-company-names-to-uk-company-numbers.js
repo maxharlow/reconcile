@@ -21,6 +21,31 @@ function initialise(parameters, requestor, alert) {
         }
     })
 
+    function companyNameNormalised(companyName) {
+        if (!companyName) return null
+        return companyName
+            .toLowerCase()
+            .replace(/^the /, '')
+            .replace(/&/g, 'and')
+            .replace(/[^a-z0-9 ]/g, '')
+            .replace(/  +/g, ' ')
+            .replace(/ limited$/, ' ltd')
+            .replace(/ public limited company$/, ' plc')
+            .replace(/ (unlimited|unlimited company)$/, ' uc')
+            .replace(/ limited liability partnership$/, ' llp')
+            .replace(/ limited partnership$/, ' lp')
+    }
+
+    function companyNameUnsuffixed(companyName) {
+        if (!companyName) return null
+        return companyNameNormalised(companyName)
+            .replace(/ ltd$/, '')
+            .replace(/ plc$/, '')
+            .replace(/ uc$/, '')
+            .replace(/ llp$/, '')
+            .replace(/ lp$/, '')
+    }
+
     function locate(entry) {
         const companyName = entry.data[parameters.companyNameField]
         if (!companyName) {
@@ -39,7 +64,7 @@ function initialise(parameters, requestor, alert) {
                 password: ''
             },
             params: {
-                q: companyName.replace(/[^A-Za-z0-9\-\.,& ]/g, ''), // special characters can mean no matches are returned
+                q: companyName.toLowerCase().replace(/[^a-z0-9\-\.,& ]/g, ''),
                 items_per_page: 100 // as there's a bug in their API where giving 1 produces zero results when there is only one match
             },
             passthrough: {
@@ -57,28 +82,55 @@ function initialise(parameters, requestor, alert) {
             if (!company.address?.postal_code) return false // postcode specified in source, but no postcode listed in this search result
             return company.address.postal_code.replace(/ /g, '').toLowerCase() === entry.data[parameters.postcodeField].replace(/ /g, '').toLowerCase()
         }
-        const normalised = name => {
-            return name?.toLowerCase()
-                .replace(/^the /, '')
-                .replace(/&/g, 'and')
-                .replace(/[^a-z0-9]/g, '')
-                .replace(/(limited|ltd|publiclimitedcompany|plc|llp|limitedliabilitypartnership)(the)?$/, '')
+        const withMatchType = company => {
+            const entryNameNormalised = companyNameNormalised(entry.data[parameters.companyNameField])
+            const sourceNameNormalised = companyNameNormalised(company.title)
+            const sourcePreviousNameNormalised = companyNameNormalised(company.snippet)
+            if (entryNameNormalised === sourceNameNormalised || entryNameNormalised === sourcePreviousNameNormalised) return {
+                matchType: 'normal',
+                company
+            }
+            const entryNameUnsuffixed = companyNameUnsuffixed(entry.data[parameters.companyNameField])
+            const sourceNameUnsuffixed = companyNameUnsuffixed(company.title)
+            const sourcePreviousNameUnsuffixed = companyNameUnsuffixed(company.snippet)
+            if (entryNameUnsuffixed === sourceNameUnsuffixed || entryNameUnsuffixed === sourcePreviousNameUnsuffixed) return {
+                matchType: 'stem-only',
+                company
+            }
+            return {
+                matchType: 'other',
+                company
+            }
         }
-        const byPreciseMatch = company => {
+        const byPreciseMatch = match => {
             if (!parameters.preciseMatch) return true
-            const entryCompanyName = normalised(entry.data[parameters.companyNameField])
-            return normalised(company.title) === entryCompanyName || normalised(company.snippet) === entryCompanyName
+            return match.matchType !== 'other'
         }
-        const companiesFiltered = companies.filter(byPostcode).filter(byPreciseMatch)
-        if ((parameters.preciseMatch || parameters.postcodeField) && companiesFiltered.length > maximumResults) {
-            alert({
-                identifier: `"${response.passthrough.companyName}"`,
-                message: `${companiesFiltered.length} matches, but only returning ${maximumResults}`,
-                importance: 'warning'
-            })
+        const companiesFiltered = companies
+            .filter(byPostcode)
+            .map(withMatchType)
+            .filter(byPreciseMatch)
+        if (companiesFiltered.length > maximumResults) alert({
+            identifier: `"${response.passthrough.companyName}"`,
+            message: `${companiesFiltered.length} matches, but only returning ${maximumResults}`,
+            importance: 'warning'
+        })
+        const byMatchType = (a, b) => {
+            if (a.matchType === 'normal' && b.matchType === 'normal') return 0
+            if (a.matchType === 'normal' && b.matchType !== 'normal') return -1
+            if (a.matchType !== 'normal' && b.matchType === 'normal') return +1
+            if (a.matchType === 'stem-only' && b.matchType === 'stem-only') return 0
+            if (a.matchType === 'stem-only' && b.matchType !== 'stem-only') return -1
+            if (a.matchType !== 'stem-only' && b.matchType === 'stem-only') return +1
+            return 0
         }
-        return companiesFiltered.slice(0, maximumResults).map(company => {
+        const companiesOutput = companiesFiltered
+            .slice(0, maximumResults)
+            .sort(byMatchType)
+        return companiesOutput.map(match => {
+            const company = match.company
             const fields = {
+                matchType: match.matchType,
                 companyNumber: company.company_number,
                 companyName: company.title,
                 companyCreationDate: company.date_of_creation,
@@ -128,6 +180,7 @@ const details = {
         }
     ],
     columns: [
+        { name: 'matchType' },
         { name: 'companyNumber' },
         { name: 'companyName' },
         { name: 'companyCreationDate' },

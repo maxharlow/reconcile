@@ -397,6 +397,7 @@ Parameters:
 * `maximumResults` Maximum number of results to include for each name. Optional. Default is 1, maximum is 100.
 
 Produces a CSV including columns:
+* `matchType`
 * `companyNumber`
 * `companyName`
 * `companyCreationDate`
