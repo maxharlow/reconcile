@@ -160,7 +160,7 @@ function setup(verbose) {
             Process.exit(0)
         }
     })
-    Process.stdin.unref()
+    if (Process.stdin.unref) Process.stdin.unref()
     Process.stderr.on('resize', () => isDirty = true)
     if (doRedisplay) draw() // start loop
     return { progress, alert, finalise }
