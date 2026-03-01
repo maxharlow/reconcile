@@ -55,7 +55,7 @@ async function setup() {
         .completion('completion', false)
         .option('p', { alias: 'parameters', type: 'string', describe: 'Parameters to be passed to the reconciler, either in Json or Yaml' })
         .option('r', { alias: 'retries', type: 'number', nargs: 1, describe: 'Number of times a request should be retried', default: 5 })
-        .option('c', { alias: 'cache', type: 'boolean', describe: 'Whether to cache HTTP requests', default: false })
+        .option('c', { alias: 'cache', type: 'number', describe: 'Whether to cache cache responses for, in days, or infinity if no number specified' })
         .option('j', { alias: 'join', type: 'string', describe: 'Whether to include unmatched rows (outer) or not (inner)', choices: ['outer', 'inner'], default: 'inner' })
         .option('V', { alias: 'verbose', type: 'boolean', describe: 'Print every request made', default: false })
         .help('?').alias('?', 'help')
@@ -94,6 +94,7 @@ async function setup() {
             join,
             verbose
         } = instructions.argv
+        const cacheWithDefault = !cache && Object.keys(instructions.argv).includes('cache') ? Infinity : cache
         const parametersParsed = await parse(parameters)
         if (!command.startsWith('./') && !reconcilers.includes(command)) throw new Error(`${command}: reconciler not found`)
         if (filename === '-') throw new Error('reading from standard input not supported')
@@ -103,7 +104,7 @@ async function setup() {
             message: 'Starting up...',
             importance: 'info'
         })
-        const reconcillation = await reconcile(command, filename, parametersParsed, retries, cache, join, verbose, alert)
+        const reconcillation = await reconcile(command, filename, parametersParsed, retries, cacheWithDefault, join, verbose, alert)
         const total = await reconcillation.length()
         const processing = await reconcillation.run()
         await processing

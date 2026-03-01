@@ -102,29 +102,27 @@ function requestify(retries, cache, alert) {
             if (!location) return
             const hash = enhash(location)
             const locationName = toLocationName(location)
-            if (cache) {
-                if (!cacheChecked) {
-                    const cacheExists = await FSExtra.pathExists(cacheDirectory)
-                    if (cacheExists) alert({ message: 'Cached data found!' })
-                    else alert({ message: 'No existing cached data found' })
-                    cacheChecked = true
-                }
-                const cacheExists = await FSExtra.pathExists(`${cacheDirectory}/${hash}`)
-                if (cacheExists) {
-                    const cacheData = await FSExtra.readJson(`${cacheDirectory}/${hash}`)
-                    const cacheCurrent = cacheData.version === cacheCurrentVersion
-                    if (cacheCurrent) {
-                        alert({
-                            identifier: location.identifier,
-                            source: locationName,
-                            message: `cached @ ${hash}`
-                        })
-                        return {
-                            url: toUrl(location),
-                            data: cacheData.data,
-                            passthrough: location.passthrough
-                        }
-                    }
+            const cacheExists = cache && await FSExtra.pathExists(`${cacheDirectory}/${hash}`)
+            const cacheValid = cacheExists && (await FSExtra.stat(`${cacheDirectory}/${hash}`)).size > 0
+            const cacheData = cacheValid && await FSExtra.readJson(`${cacheDirectory}/${hash}`)
+            const cacheCurrent = cacheData && cacheData.version === cacheCurrentVersion
+            const cacheClean = cacheCurrent && ((Date.now() - new Date(cacheData.timestamp).getTime()) <= cache * 864e5) // number of milliseconds in a day
+            if (cache >= 0 && !cacheChecked) {
+                const cacheDirectoryExists = await FSExtra.pathExists(cacheDirectory)
+                if (cacheDirectoryExists) alert({ message: 'Cached data found!' })
+                else alert({ message: 'No existing cached data found' })
+                cacheChecked = true
+            }
+            if (cacheClean) {
+                alert({
+                    identifier: location.identifier,
+                    source: locationName,
+                    message: `cached @ ${hash}`
+                })
+                return {
+                    url: toUrl(location),
+                    data: cacheData.data,
+                    passthrough: location.passthrough
                 }
             }
             if (config.validator) await config.validator(location)
@@ -142,7 +140,7 @@ function requestify(retries, cache, alert) {
             }
             try {
                 const response = await instance(location)
-                if (cache) {
+                if (cache >= 0) {
                     await FSExtra.ensureDir(cacheDirectory)
                     await FSExtra.writeJson(`${cacheDirectory}/${hash}`, {
                         version: cacheCurrentVersion,
@@ -150,8 +148,13 @@ function requestify(retries, cache, alert) {
                         etag: response.headers.etag,
                         data: response.data
                     })
+                    alert({
+                        identifier: location.identifier,
+                        source: locationName,
+                        message: 'done, cache written'
+                    })
                 }
-                alert({
+                else alert({
                     identifier: location.identifier,
                     source: locationName,
                     message: 'done'
@@ -174,7 +177,7 @@ function requestify(retries, cache, alert) {
     }
 }
 
-async function load(command, filename, parameters = {}, retries = 5, cache = false, join = 'inner', verbose = false, alert = () => {}) {
+async function load(command, filename, parameters = {}, retries = 5, cache, join = 'inner', verbose = false, alert = () => {}) {
     const requestor = requestify(retries, cache, alert)
     const { default: reconciler } = command.startsWith('./') ? await import(URL.pathToFileURL(command).href) : await import(`./reconcilers/${command}.js`)
     Object.keys(parameters).forEach(parameter => {
