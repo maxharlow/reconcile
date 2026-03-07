@@ -85,7 +85,7 @@ function initialise(parameters, requestor, alert) {
             const fields = {
                 beneficialOwnershipStatement: statement.statement,
                 beneficialOwnershipStatementNotifiedDate: statement.notified_on,
-                beneficialOwnershipStatementCeasedDate: statement.ceased_on
+                beneficialOwnershipStatementCeasedDate: statement.ceased_on || null
             }
             return fields
         })
