@@ -123,7 +123,8 @@ function initialise(parameters, requestor, alert) {
                 chargeClassificationType: charge.classification?.type || null,
                 chargeClassificationDescription: charge.classification?.description || null,
                 chargeSecuredType: charge.secured_details?.type || null,
-                chargeSecuredDescription: charge.secured_details?.description || null
+                chargeSecuredDescription: charge.secured_details?.description || null,
+                chargeURL: charge.links.self ? `https://find-and-update.company-information.service.gov.uk${charge.links.self}` : null
             }
             return fields
         })
@@ -181,7 +182,8 @@ const details = {
         { name: 'chargeClassificationType' },
         { name: 'chargeClassificationDescription' },
         { name: 'chargeSecuredType' },
-        { name: 'chargeSecuredDescription' }
+        { name: 'chargeSecuredDescription' },
+        { name: 'chargeURL' }
     ]
 }
 

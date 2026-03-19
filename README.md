@@ -382,6 +382,7 @@ Produces a CSV including columns:
 * `chargeClassificationDescription`
 * `chargeSecuredType`
 * `chargeSecuredDescription`
+* `chargeURL`
 
 <hr>
 
