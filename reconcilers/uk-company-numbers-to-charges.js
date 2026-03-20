@@ -96,7 +96,7 @@ function initialise(parameters, requestor, alert) {
                 chargeTransactions: charge.transactions?.map((transaction, i) => {
                     return `#${i + 1}`
                         + (transaction.filing_type ? ` ${transaction.filing_type}` : '')
-                        + (transaction.links && transaction.links.filing ? `: https://beta.companieshouse.gov.uk${transaction.links.filing}/document` : '')
+                        + (transaction.links && transaction.links.filing ? `: https://find-and-update.company-information.service.gov.uk${transaction.links.filing}/document` : '')
                         + (transaction.delivered_on ? ` (${transaction.delivered_on})` : '')
                         + (transaction.transaction_id ? ` [transaction ${transaction.transaction_id}]` : '')
                         + (transaction.insolvency_case_number || (transaction.links && transaction.links.insolvency_case) ? ' [insolvency case' : '')
