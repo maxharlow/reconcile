@@ -50,8 +50,8 @@ function initialise(parameters, requestor, alert) {
 
     async function paginate(response) {
         if (!response) return
-        if (response.data.total_results > 100) {
-            const pageTotal = Math.ceil(response.data.total_results / 100)
+        if (response.data.total_count > 100) {
+            const pageTotal = Math.ceil(response.data.total_count / 100)
             const pageNumbers = Array.from(Array(pageTotal).keys()).slice(1) // slice off first page as we already have that
             const pageRequests = pageNumbers.map(async page => {
                 const query = {
