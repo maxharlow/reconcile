@@ -1,6 +1,7 @@
 import URL from 'url'
 import Crypto from 'crypto'
 import FSExtra from 'fs-extra'
+import BetterSqlite3 from 'better-sqlite3'
 import Papaparse from 'papaparse'
 import Scramjet from 'scramjet'
 import Axios from 'axios'
@@ -31,7 +32,7 @@ function requestify(retries, cache, alert) {
     return config => {
         const limit = config.limit || Infinity
         const errors = config.errors || (() => {})
-        const cacheDirectory = '.reconcile-cache'
+        const cacheName = '.reconcile-cache'
         const timeout = 45 * 1000
         const toUrl = location => typeof location === 'string' ? location : location.url
         const toLocationName = location => {
@@ -98,31 +99,38 @@ function requestify(retries, cache, alert) {
             perMilliseconds: limit >= 1 ? 1000 : (1 / limit) * 1000
         })
         let cacheChecked = false
+        let cacheData = null
+        let cacheRead = null
+        let cacheWrite = null
         return async location => {
             if (!location) return
-            const hash = enhash(location)
-            const locationName = toLocationName(location)
-            const cacheExists = cache && await FSExtra.pathExists(`${cacheDirectory}/${hash}`)
-            const cacheValid = cacheExists && (await FSExtra.stat(`${cacheDirectory}/${hash}`)).size > 0
-            const cacheData = cacheValid && await FSExtra.readJson(`${cacheDirectory}/${hash}`)
-            const cacheCurrent = cacheData && cacheData.version === cacheCurrentVersion
-            const cacheClean = cacheCurrent && ((Date.now() - new Date(cacheData.timestamp).getTime()) <= cache * 864e5) // number of milliseconds in a day
             if (cache >= 0 && !cacheChecked) {
-                const cacheDirectoryExists = await FSExtra.pathExists(cacheDirectory)
-                if (cacheDirectoryExists) alert({ message: 'Cached data found!' })
+                const cacheExists = await FSExtra.pathExists(cacheName)
+                cacheData = new BetterSqlite3(cacheName)
+                cacheData.exec('CREATE TABLE IF NOT EXISTS cache (hash TEXT PRIMARY KEY, version INTEGER, timestamp TEXT, etag TEXT, data TEXT)')
+                cacheRead = cacheData.prepare('SELECT version, timestamp, etag, data FROM cache WHERE hash = @hash')
+                cacheWrite = cacheData.prepare('INSERT OR REPLACE INTO cache (hash, version, timestamp, etag, data) VALUES (@hash, @version, @timestamp, @etag, @data)')
+                if (cacheExists) alert({ message: 'Cached data found!' })
                 else alert({ message: 'No existing cached data found' })
                 cacheChecked = true
             }
-            if (cacheClean) {
-                alert({
-                    identifier: location.identifier,
-                    source: locationName,
-                    message: `cached @ ${hash}`
-                })
-                return {
-                    url: toUrl(location),
-                    data: cacheData.data,
-                    passthrough: location.passthrough
+            const hash = enhash(location)
+            const locationName = toLocationName(location)
+            if (cache >= 0) {
+                const row = cacheRead.get({ hash })
+                const cacheCurrent = row && row.version === cacheCurrentVersion
+                const cacheClean = cacheCurrent && (Date.now() - new Date(row.timestamp).getTime()) <= cache * 864e5 // number of milliseconds in a day
+                if (cacheClean) {
+                    alert({
+                        identifier: location.identifier,
+                        source: locationName,
+                        message: `cached @ ${hash}`
+                    })
+                    return {
+                        url: toUrl(location),
+                        data: JSON.parse(row.data),
+                        passthrough: location.passthrough
+                    }
                 }
             }
             if (config.validator) await config.validator(location)
@@ -141,12 +149,12 @@ function requestify(retries, cache, alert) {
             try {
                 const response = await instance(location)
                 if (cache >= 0) {
-                    await FSExtra.ensureDir(cacheDirectory)
-                    await FSExtra.writeJson(`${cacheDirectory}/${hash}`, {
+                    cacheWrite.run({
+                        hash,
                         version: cacheCurrentVersion,
                         timestamp: new Date().toISOString(),
-                        etag: response.headers.etag,
-                        data: response.data
+                        etag: response.headers.etag || null,
+                        data: JSON.stringify(response.data)
                     })
                     alert({
                         identifier: location.identifier,
