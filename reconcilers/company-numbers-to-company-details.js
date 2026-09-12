@@ -79,6 +79,7 @@ const details = {
         {
             name: 'apiToken',
             description: 'An OpenCorporates API token.',
+            environment: 'OPEN_CORPORATES_API_TOKEN',
             required: true
         },
         {

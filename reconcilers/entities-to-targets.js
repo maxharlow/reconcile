@@ -82,6 +82,7 @@ const details = {
         {
             name: 'apiKey',
             description: 'An OpenSanctions API key.',
+            environment: 'OPEN_SANCTIONS_API_KEY',
             required: true
         },
         {

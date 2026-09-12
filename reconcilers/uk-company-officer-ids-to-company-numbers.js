@@ -118,6 +118,7 @@ const details = {
         {
             name: 'apiKey',
             description: 'A Companies House API key.',
+            environment: 'COMPANIES_HOUSE_API_KEY',
             required: true
         },
         {

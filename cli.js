@@ -37,7 +37,7 @@ function display(details) {
         return rows.join('\n')
     }
     const detailsParameters = details.parameters.map(item => {
-        const restrictions = `${item.required ? '' : '[optional]'}${item.choices ? ' [choices: ' + item.choices + ']' : ''}${item.defaults ? ' [default: ' + item.defaults + ']' : ''}`
+        const restrictions = `${item.required ? '' : '[optional]'}${item.choices ? ' [choices: ' + item.choices + ']' : ''}${item.defaults ? ' [default: ' + item.defaults + ']' : ''}${item.environment ? ' [' + item.environment + ']' : ''}`
         return {
             name: item.name,
             description: `${item.description || ''}${restrictions ? '  ' + restrictions : ''}`

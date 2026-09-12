@@ -1,5 +1,6 @@
 import URL from 'url'
 import Crypto from 'crypto'
+import Process from 'process'
 import FSExtra from 'fs-extra'
 import BetterSqlite3 from 'better-sqlite3'
 import Papaparse from 'papaparse'
@@ -185,18 +186,38 @@ function requestify(retries, cache, alert) {
     }
 }
 
-async function load(command, filename, parameters = {}, retries = 5, cache, join = 'inner', verbose = false, alert = () => {}) {
-    const requestor = requestify(retries, cache, alert)
-    const { default: reconciler } = command.startsWith('./') ? await import(URL.pathToFileURL(command).href) : await import(`./reconcilers/${command}.js`)
-    Object.keys(parameters).forEach(parameter => {
-        if (!reconciler.details.parameters.find(p => p.name === parameter)) alert({
+async function resolveParameters(parametersList, parametersDetails, alert) {
+    Object.keys(parametersList).forEach(parameter => {
+        if (!parametersDetails.find(detail => detail.name === parameter)) alert({
             message: `${parameter}: unexpected parameter will be ignored`,
             importance: 'warning'
         })
     })
-    reconciler.details.parameters.filter(parameter => parameter.required).forEach(parameter => {
-        if (!parameters[parameter.name]) throw new Error(`${parameter.name}: parameter is required but was not found`)
+    const environmentFile = '.env'
+    const environmentFileExists = await FSExtra.pathExists(environmentFile)
+    if (environmentFileExists) {
+        Process.loadEnvFile(environmentFile) // values already in the environment take precedence
+    }
+    const entries = parametersDetails.filter(parameter => parameter.environment).map(parameter => {
+        if (parametersList[parameter.name] !== undefined) return null // a value given directly always wins
+        const value = Process.env[parameter.environment]
+        if (!value) return null
+        const values = value.split(',').map(entry => entry.trim()).filter(entry => entry)
+        if (values.length === 0) return null
+        alert({ message: `${parameter.name}: using the value of ${parameter.environment}` })
+        return [parameter.name, values.length > 1 ? values : values[0]]
     })
+    const parametersResolved = { ...parametersList, ...Object.fromEntries(entries.filter(entry => entry)) }
+    parametersDetails.filter(parameter => parameter.required).forEach(parameter => {
+        if (!parametersResolved[parameter.name]) throw new Error(`${parameter.name}: parameter is required but was not found`)
+    })
+    return parametersResolved
+}
+
+async function load(command, filename, parametersList = {}, retries = 5, cache, join = 'inner', verbose = false, alert = () => {}) {
+    const requestor = requestify(retries, cache, alert)
+    const { default: reconciler } = command.startsWith('./') ? await import(URL.pathToFileURL(command).href) : await import(`./reconcilers/${command}.js`)
+    const parameters = await resolveParameters(parametersList, reconciler.details.parameters, alert)
     const batch = reconciler.details.batch || 1
     const execute = reconciler.initialise(parameters, requestor, alert)
     const source = () => {

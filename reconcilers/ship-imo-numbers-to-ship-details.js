@@ -126,6 +126,7 @@ const details = {
         {
             name: 'credentials',
             description: 'A email address and password pair, separated by a colon, for a registered Equasis account.',
+            environment: 'EQUASIS_CREDENTIALS',
             required: true
         },
         {

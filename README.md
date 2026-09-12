@@ -32,6 +32,8 @@ Note this also uses redirection (`>`) to send the output into a new CSV file. If
 
 If there are a lot of parameters, it may be more convenient to put them in a separate file, and pass the name of that file to `-p`.
 
+Parameters that take a credential can also be given as environment variables. The name of the variable is listed alongside each parameter below, and is also shown in the help for each command. A value given inline with `-p` always takes precidence. If there is an `.env` file in the directory you are running Reconcile from it will be loaded automatically, though anything already set in your environment will take precidence.
+
 HTTP requests are automatically retried if they fail, five times by default, but this can be adjusted with the `-r` flag.
 
 Request caching can be specified with the `-c` flag. This will save a copy of each HTTP request in a `.reconcile-cache` database, and look for a cached copy of a request before making one. Note that if the data is likely to have changed since it was cached, you will still be getting the cached copy. You can optionally specify a value for how old an already-cached value should be used for, eg. `-c 365`, after which the request will be made again and a fresh cached copy saved. Beware that the cache can become quite large.
@@ -53,7 +55,7 @@ Double-press the tab key to autocomplete these names from the command line.
 Use [OpenCorporates](https://opencorporates.com/) to look up a list of company numbers and jurisdiction codes, and retrieve various details for each.
 
 Parameters:
-* `apiToken` An OpenCorporates API token.
+* `apiToken` An OpenCorporates API token. Can also be given as the `OPEN_CORPORATES_API_TOKEN` environment variable.
 * `companyNumberField` Company number column.
 * `companyJurisdictionField` Jurisdiction code column. It should use [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes). Required unless `jurisdiction` is specified.
 * `jurisdiction` If all companies have the same jurisdiction you can specify it here instead of in a column. Required unless `companyJurisdictionField` is specified.
@@ -80,7 +82,7 @@ Produces a CSV including columns:
 Use [OpenCorporates](https://opencorporates.com/) to look up a list of company numbers and jurisdiction codes, and retrieve the names of their officers.
 
 Parameters:
-* `apiToken` An OpenCorporates API token.
+* `apiToken` An OpenCorporates API token. Can also be given as the `OPEN_CORPORATES_API_TOKEN` environment variable.
 * `companyNumberField` Company number column.
 * `companyJurisdictionField` Jurisdiction code column, if any. It should use [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes). Required unless `jurisdiction` is specified.
 * `jurisdiction` If all companies have the same jurisdiction you can specify it here instead of in a column. Required unless `companyJurisdictionField` is specified.
@@ -120,7 +122,7 @@ Produces a CSV including columns:
 Use [OpenCorporates](https://opencorporates.com/) to look up a list of names and find which companies they are officers of (typically either as directors or secretaries).
 
 Parameters:
-* `apiToken` An OpenCorporates API token.
+* `apiToken` An OpenCorporates API token. Can also be given as the `OPEN_CORPORATES_API_TOKEN` environment variable.
 * `nameField` Name column.
 * `dateOfBirthField` Birth date column. It should use [ISO 8601 format](https://en.wikipedia.org/wiki/ISO_8601). For a range the two dates should be separated with a colon. Optional.
 * `jurisdictionField` Jurisdiction code column, if any. It should use [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes). Required unless jurisdiction is specified.
@@ -146,7 +148,7 @@ Produces a CSV including columns:
 Use [OpenCorporates](https://opencorporates.com/) to look up a list of names of companies or individuals and find which companies they are beneficial owners of. Includes past beneficial owners.
 
 Parameters:
-* `apiToken` An OpenCorporates API token.
+* `apiToken` An OpenCorporates API token. Can also be given as the `OPEN_CORPORATES_API_TOKEN` environment variable.
 * `nameField` Name column.
 * `dateOfBirthField` Date of birth column, in ISO 8601 format. If given will use the month and year to filter results. Optional.
 * `nonMiddleNameMatch` Match name only based on the first and last names. Ignores non-alphabetical differences and titles. Optional.
@@ -182,7 +184,7 @@ Produces a CSV including columns:
 Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of company numbers, and retrieve various details for each.
 
 Parameters:
-* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications).
+* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications). Can also be given as the `COMPANIES_HOUSE_API_KEY` environment variable.
 * `companyNumberField` Company number column.
 
 Produces a CSV including columns:
@@ -220,7 +222,7 @@ Produces a CSV including columns:
 Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of company numbers, and retrieve the filings for each.
 
 Parameters:
-* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications).
+* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications). Can also be given as the `COMPANIES_HOUSE_API_KEY` environment variable.
 * `companyNumberField` Company number column.
 * `filingCategory` Category of filings to include, eg. "accounts". Optional. Default is all filings. Can be: `accounts`, `address`, `annual-return`, `capital`, `change-of-name`, `incorporation`, `liquidation`, `miscellaneous`, `mortgage`, `officers`, `resolution`, `confirmation-statement`.
 * `filingDescription` Descriptions of filings to include. Optional.
@@ -246,7 +248,7 @@ Produces a CSV including columns:
 Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of company numbers, and retrieve the names of their beneficial owners.
 
 Parameters:
-* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications).
+* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications). Can also be given as the `COMPANIES_HOUSE_API_KEY` environment variable.
 * `companyNumberField` Company number column.
 
 Produces a CSV including columns:
@@ -279,7 +281,7 @@ Produces a CSV including columns:
 Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of company numbers, and retrieve their beneficial ownership statements.
 
 Parameters:
-* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications).
+* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications). Can also be given as the `COMPANIES_HOUSE_API_KEY` environment variable.
 * `companyNumberField` Company number column.
 
 Produces a CSV including columns:
@@ -294,7 +296,7 @@ Produces a CSV including columns:
 Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of company numbers, and retrieve the IDs and names of their officers.
 
 Parameters:
-* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications).
+* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications). Can also be given as the `COMPANIES_HOUSE_API_KEY` environment variable.
 * `companyNumberField` Company number column.
 
 Produces a CSV including columns:
@@ -323,7 +325,7 @@ Produces a CSV including columns:
 Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of company numbers, and retrieve the insolvency cases for each.
 
 Parameters:
-* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications).
+* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications). Can also be given as the `COMPANIES_HOUSE_API_KEY` environment variable.
 * `companyNumberField` Company number column.
 
 Produces a CSV including columns:
@@ -352,7 +354,7 @@ Produces a CSV including columns:
 Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of company numbers, and retrieve the charges for each.
 
 Parameters:
-* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications).
+* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications). Can also be given as the `COMPANIES_HOUSE_API_KEY` environment variable.
 * `companyNumberField` Company number column.
 
 Produces a CSV including columns:
@@ -391,7 +393,7 @@ Produces a CSV including columns:
 Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of company names and find the most likely registration number for each. Beware incorrect matches! Company names are terrible unique identifiers.
 
 Parameters:
-* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications).
+* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications). Can also be given as the `COMPANIES_HOUSE_API_KEY` environment variable.
 * `companyNameField` Company name column.
 * `postcodeField` Postcode column. If given will use it to filter results. Only looks at the current company postcode. Optional.
 * `preciseMatch` Match company name precisely. Ignores non-alphanumeric differences. Optional.
@@ -413,7 +415,7 @@ Produces a CSV including columns:
 Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of company types and retrieve all the companies of that type, up to a maximum of 10,000.
 
 Parameters:
-* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications).
+* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications). Can also be given as the `COMPANIES_HOUSE_API_KEY` environment variable.
 * `companyTypeField` Company type column. Identify the specific type using the [advanced search web interface](https://find-and-update.company-information.service.gov.uk/advanced-search).
 
 Produces a CSV including columns:
@@ -433,7 +435,7 @@ Produces a CSV including columns:
 Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of place names and retrieve all the companies who include that term in their registered address.
 
 Parameters:
-* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications).
+* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications). Can also be given as the `COMPANIES_HOUSE_API_KEY` environment variable.
 * `placeNameField` Place name column.
 * `maximumResults` Maximum number of results to include for each name. Optional. Default is all. Maximum is 10,000.
 
@@ -454,7 +456,7 @@ Produces a CSV including columns:
 Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of names of companies or individuals and find the ID numbers for each. Many officers will have multiple IDs associated with them. This is limited to bringing back the first 10 pages of matches.
 
 Parameters:
-* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications).
+* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications). Can also be given as the `COMPANIES_HOUSE_API_KEY` environment variable.
 * `nameField` Name column.
 * `dateOfBirthField` Date of birth column, in ISO 8601 format. If given will use the month and year to filter results. Optional.
 * `nonMiddleNameMatch` Match name only based on the first and last names. Ignores non-alphabetical differences and titles. Optional.
@@ -473,7 +475,7 @@ Produces a CSV including columns:
 Use [Companies House](https://find-and-update.company-information.service.gov.uk/) to look up a list of officer IDs, and retrieve the company numbers for their appointments.
 
 Parameters:
-* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications).
+* `apiKey` A Companies House [API key](https://developer.company-information.service.gov.uk/manage-applications). Can also be given as the `COMPANIES_HOUSE_API_KEY` environment variable.
 * `officerIDField` Officer ID column.
 
 Produces a CSV including columns:
@@ -704,7 +706,7 @@ Produces a CSV including columns:
 Use [OpenSanctions](https://www.opensanctions.org/) to look up a list of entities (which can be companies, individuals, or many other types), and retrieve matched target entities in their various databases.
 
 Parameters:
-* `apiKey` An OpenSanctions [API key](https://www.opensanctions.org/api/).
+* `apiKey` An OpenSanctions [API key](https://www.opensanctions.org/api/). Can also be given as the `OPEN_SANCTIONS_API_KEY` environment variable.
 * `entityFields` Mapping object from OpenSanctions schema properties to column names.
 * `entitySchemaField` Schema column, if any. It should be an [OpenSanctions schema](https://www.opensanctions.org/reference/#schema). Required unless `schema` is specified.
 * `schema` If all entities have the same schema type you can specify it here instead of in a column. Required unless `schemaField` is specified.
@@ -768,7 +770,7 @@ Produces a CSV including columns:
 Use [Equasis](https://www.equasis.org/) to take a list of ship IMO numbers, and retrieve all their connected companies, as well as other details. Note Equasis only allows around 500 lookups per day. If you exceed that two days in a row you get blocked for seven days.
 
 Parameters:
-* `credentials` A email address and password pair, separated by a colon, for a registered Equasis account.
+* `credentials` A email address and password pair, separated by a colon, for a registered Equasis account. Can also be given as the `EQUASIS_CREDENTIALS` environment variable.
 * `shipIMONumberField` Ship IMO number column.
 
 Produces a CSV including columns:
@@ -794,7 +796,7 @@ Produces a CSV including columns:
 Use [Equasis](https://www.equasis.org/) to take a list of ship MMSI numbers, and retrieve the IMO number for each. Note Equasis only allows around 500 lookups per day. If you exceed that two days in a row you get blocked for seven days.
 
 Parameters:
-* `credentials` A email address and password pair, separated by a colon, for a registered Equasis account.
+* `credentials` A email address and password pair, separated by a colon, for a registered Equasis account. Can also be given as the `EQUASIS_CREDENTIALS` environment variable.
 * `shipMMSINumberField` Ship MMSI number column.
 
 Produces a CSV including columns:
@@ -812,7 +814,7 @@ Produces a CSV including columns:
 Use [Equasis](https://www.equasis.org/) to take a list of ship names, and retrieve their IMO numbers. Note Equasis only allows around 500 lookups per day. If you exceed that two days in a row you get blocked for seven days.
 
 Parameters:
-* `credentials` A email address and password pair, separated by a colon, for a registered Equasis account.
+* `credentials` A email address and password pair, separated by a colon, for a registered Equasis account. Can also be given as the `EQUASIS_CREDENTIALS` environment variable.
 * `shipNameField` Ship name column.
 
 Produces a CSV including columns:
